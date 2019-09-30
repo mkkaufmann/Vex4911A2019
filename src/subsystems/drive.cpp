@@ -70,10 +70,10 @@ double Drive::getWheelOutput(PolarPoint stick, double angleOffset, bool isManual
 
     scale output by radius
   */
-  double radians = std::fmod((stick.getAngle() + angleOffset - M_3PI_4 + 2 * M_PI - (isManual ? M_PI_4: 0)), (2 * M_PI));
-  // if(fieldCentric){
-  //   radians += std::fmod(PositionTracker::getTheta(), M_2_PI);
-  // }
+  double radians = std::fmod((stick.getAngle() + angleOffset + M_PI_2 + 2 * M_PI - (isManual ? M_PI_4: 0)), (2 * M_PI));
+  if(fieldCentric){
+    radians -= /*std::fmod(*/PositionTracker::getTheta()/*, M_2_PI)*/;
+  }
   return stick.getRadius() * std::sin(radians);
 };
 
@@ -92,11 +92,19 @@ void Drive::generateOutputs(int x, int y, int r, int outputs[], bool isManual){
   //rotation input
   double rotInput = isManual ? smoothRotation(r) :Util::convertToPercent(r);
 
+
   //create fake joystick values for rotation of each wheel based on the angles of the wheels
   PolarPoint l1Turn = PolarPoint(rotInput, Util::toRadians(45));
   PolarPoint l2Turn = PolarPoint(rotInput, Util::toRadians(135));
   PolarPoint r1Turn = PolarPoint(rotInput, Util::toRadians(135));
   PolarPoint r2Turn = PolarPoint(rotInput, Util::toRadians(45));
+
+  if(rotInput < 0){
+    l1Turn = PolarPoint(rotInput, Util::toRadians(225));
+    l2Turn = PolarPoint(rotInput, Util::toRadians(315));
+    r1Turn = PolarPoint(rotInput, Util::toRadians(315));
+    r2Turn = PolarPoint(rotInput, Util::toRadians(225));
+  }
 
   //get translation outputs (PI/2 offset converts from sin to cos)
   double l1Out = getWheelOutput(translationInput, M_PI_2, isManual);
@@ -114,7 +122,12 @@ void Drive::generateOutputs(int x, int y, int r, int outputs[], bool isManual){
   //put outputs into array form for easy iteration
   double outArr [] = {l1Out, l2Out, r1Out, r2Out};
   double rotArr [] = {l1Rot, l2Rot, r1Rot, r2Rot};
-
+  if(rotInput < 0){
+    for(int i = 0; i < sizeof(rotArr)/8; i++){
+      //TODO figure out permanent fix
+      rotArr[i] = rotArr[i] * -1;
+    }
+  }
   //calculate largest outputs and divide each by the largest
   double largestOut = Util::largest(outArr, sizeof(outArr)/8);
   for(int i = 0; i < sizeof(outArr)/8; i++){

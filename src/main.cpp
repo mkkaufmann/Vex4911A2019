@@ -14,10 +14,10 @@
 #include "ui/uihelper.hpp"
 
 //starting orientations
-double facingForward = Util::toRadians(270);
-double facingLeft = Util::toRadians(180);
-double facingRight = Util::toRadians(0);
-double facingBackward = Util::toRadians(90);
+double facingForward = Util::toRadians(0);
+double facingLeft = Util::toRadians(90);//not sure
+double facingRight = Util::toRadians(180);
+double facingBackward = Util::toRadians(270);
 
 //initialize static values
 
@@ -36,8 +36,8 @@ int Constants::REAR_TRACKING_ENCODER_TOP = 5;
 int Constants::REAR_TRACKING_ENCODER_BOTTOM = 6;
 
 //measured constants for odometry
-double Constants::LEFT_WHEEL_TO_TRACKING_CENTER = 7.25;
-double Constants::RIGHT_WHEEL_TO_TRACKING_CENTER = 6.5;
+double Constants::LEFT_WHEEL_TO_TRACKING_CENTER = 6.5;
+double Constants::RIGHT_WHEEL_TO_TRACKING_CENTER = 7.25;
 double Constants::REAR_WHEEL_TO_TRACKING_CENTER = 7.75;
 int Constants::ENCODER_TICKS_PER_INCH = 360/(2.75 * M_PI);
 
