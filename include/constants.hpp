@@ -8,7 +8,8 @@ public:
   static int LEFT_REAR_MOTOR_PORT;
   static int RIGHT_FRONT_MOTOR_PORT;
   static int RIGHT_REAR_MOTOR_PORT;
-  static int STACKER_TREAD_MOTOR_PORT;
+  static int STACKER_TREAD_1_MOTOR_PORT;
+  static int STACKER_TREAD_2_MOTOR_PORT;
 
   //SENSOR PORTS
   static int LEFT_TRACKING_ENCODER_TOP;

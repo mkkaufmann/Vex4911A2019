@@ -84,49 +84,6 @@ int Stacker::getOutput(){
 Stacker::Stacker(){
   output = 0;
   intakeToggle = LatchedBoolean();
-  outtakeToggle = LatchedBoolean(); 
+  outtakeToggle = LatchedBoolean();
   state = NEUTRAL;
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

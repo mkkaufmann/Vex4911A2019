@@ -26,7 +26,8 @@
  Stacker stacker = *Stacker::getInstance();
  OI oi = *OI::getInstance();
 
- pros::Motor stackerMotor = pros::Motor(Constants::STACKER_TREAD_MOTOR_PORT);
+ pros::Motor stacker1Motor = pros::Motor(Constants::STACKER_TREAD_1_MOTOR_PORT);
+pros::Motor stacker2Motor = pros::Motor(Constants::STACKER_TREAD_2_MOTOR_PORT);
  pros::Controller master = pros::Controller(pros::E_CONTROLLER_MASTER);
 
 void runSubsystems(){
@@ -37,7 +38,8 @@ void runSubsystems(){
   stacker.in();
   stacker.stateChangeRequest(master.get_digital(DIGITAL_UP), master.get_digital(DIGITAL_DOWN));
   stacker.out();
-  stackerMotor.move(stacker.getOutput());
+  stacker1Motor.move(stacker.getOutput());
+  stacker2Motor.move(stacker.getOutput());
   drive.in();
   drive.out();
   tracker.in();
