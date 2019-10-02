@@ -1,6 +1,6 @@
 .vscode
 /bin
-/test/CMakeFiles
+/CMakeFiles
 /firmware
 /include/display
 /include/okapi
