@@ -7,6 +7,7 @@
 #include "util/pointutil.hpp"
 #include "subsystem.hpp"
 #include "main.h"
+#include <functional>
 //tracks absolute position of the bot
 class PositionTracker : public Subsystem{
 public:
@@ -101,6 +102,10 @@ public:
   //   rightEncAtLastReset = pRightEnc;
   //   thetaAtLastReset = pTheta;
   // }
+
+  static std::function<bool()> getIsNearRotationTrigger(){
+
+  }
 private:
   static PositionTracker* instance;
   PositionTracker(){

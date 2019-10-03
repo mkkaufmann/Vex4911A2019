@@ -48,7 +48,8 @@ void Stacker::in(){};
 
 
 void Stacker::out(){
-  stackerMotor.move(output);
+  stacker1Motor.move(output);
+  stacker2Motor.move(output);
 };
 
 

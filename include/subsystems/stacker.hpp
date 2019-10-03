@@ -8,10 +8,10 @@
 class Stacker : public Subsystem{
 public:
   //return singleton
-  static Stacker* getInstance();  
- 
+  static Stacker* getInstance();
+
   void intake();
- 
+
   void outtake();
 
   void manual(int out);
@@ -39,17 +39,18 @@ private:
 
   int output;
 
-  pros::Motor stackerMotor = pros::Motor(Constants::STACKER_TREAD_MOTOR_PORT);
- 
+  pros::Motor stacker1Motor = pros::Motor(Constants::STACKER_TREAD_1_MOTOR_PORT);
+  pros::Motor stacker2Motor = pros::Motor(Constants::STACKER_TREAD_2_MOTOR_PORT);
+
   Stacker();
 
   static Stacker* instance;
- 
+
   StackerState state = NEUTRAL;
- 
-  LatchedBoolean intakeToggle; 
- 
-  LatchedBoolean outtakeToggle; 
+
+  LatchedBoolean intakeToggle;
+
+  LatchedBoolean outtakeToggle;
 
 };
 #endif
