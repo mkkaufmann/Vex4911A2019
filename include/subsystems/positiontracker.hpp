@@ -103,9 +103,9 @@ public:
   //   thetaAtLastReset = pTheta;
   // }
 
-  static std::function<bool()> getIsNearRotationTrigger(){
-
-  }
+  // static std::function<bool()> getIsNearRotationTrigger(){
+  //
+  // }
 private:
   static PositionTracker* instance;
   PositionTracker(){
