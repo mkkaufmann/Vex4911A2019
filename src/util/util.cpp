@@ -1,5 +1,4 @@
 #include "util.hpp"
-
 //see util.hpp
 
 double Util::toRadians(double degrees){

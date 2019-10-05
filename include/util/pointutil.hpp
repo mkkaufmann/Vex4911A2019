@@ -18,5 +18,7 @@ public:
 
   //converts polar point to cartesian point
   static Point toCartesian(PolarPoint p);
+
+  static double distance(Point a, Point b);
 };
 #endif

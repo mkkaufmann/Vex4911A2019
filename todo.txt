@@ -1,0 +1,8 @@
+file IO for PID  and autonomous
+autonomous sequence
+pid tuner
+pure pursuit
+setpoints for stacker angle
+programming skills
+commenting
+refactor certain pointers to references

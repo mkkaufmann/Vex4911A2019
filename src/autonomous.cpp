@@ -3,6 +3,14 @@
 #include "subsystems/subsystemmanager.hpp"
 #include "motionprofiles/pathfollower.hpp"
 #include "util/point.hpp"
+#include "util/autontimer.hpp"
+#include "util/action.hpp"
+#include "util/actions.hpp"
+#include "util/asyncaction.hpp"
+#include "util/actiontrigger.hpp"
+#include "util/asyncactionfactory.hpp"
+#include "subsystems/stacker.hpp"
+#include "util/triggers.hpp"
 
 /**
  * Runs the user autonomous code. This function will be started in its own task
@@ -17,18 +25,45 @@
  */
 void autonomous() {
   //initialize subsystems and manager
+  // PositionTracker tracker = *PositionTracker::getInstance();
+  // Subsystem* subsystems[] = {&drive, &tracker};
+  // SubsystemManager subsystemManager = SubsystemManager(subsystems);
+  //we'll see if pathfollower needs to be a subsystem
+  // PathFollower testPathFollower = PathFollower(Point(10,10), M_PI_2);
+
   Drive drive = *Drive::getInstance();
   PositionTracker tracker = *PositionTracker::getInstance();
-  Subsystem* subsystems[] = {&drive, &tracker};
-  SubsystemManager subsystemManager = SubsystemManager(subsystems);
-  //we'll see if pathfollower needs to be a subsystem
-  PathFollower testPathFollower = PathFollower(Point(10,10), M_PI_2);
+  Stacker stacker = *Stacker::getInstance();
+
+  //runs all subsystems for 15 seconds (or regular autonomous)
+  AsyncAction manageSubsystems =
+  *AsyncActionFactory::makeAsyncAction()->hasTrigger(ActionTrigger(
+      Triggers::trueTrigger()))->hasAction(Action(
+      Actions::parallelAction(
+        stacker.inAction(), Actions::parallelAction(
+          stacker.outAction(), Actions::parallelAction(
+            drive.inAction(), Actions::parallelAction(
+              drive.outAction(), Actions::parallelAction(
+                tracker.inAction(),
+                  tracker.outAction()))))),
+      AutonTimer::timeHasPassedTrigger(15)));
+
+  AsyncAction driveFor3Seconds =
+  *AsyncActionFactory::makeAsyncAction()->hasTrigger(ActionTrigger(
+      Triggers::trueTrigger()))->hasAction(Action(
+      drive.driveManuallyAction(0, 40, 30, true),
+      AutonTimer::timeHasPassedTrigger(3)));
+
+
+  AutonTimer::start();
 	while (true) {
-    if(!testPathFollower.isComplete()){
-      testPathFollower.run();
-    }
-    //run every subsystem
-    subsystemManager.cycle();
+    // if(!testPathFollower.isComplete()){
+    //   testPathFollower.run();
+    // }
+    //
+    // //run every subsystem
+    // subsystemManager.cycle();
+
 		pros::delay(20);
 	}
 }

@@ -4,6 +4,7 @@
 #include "main.h"
 #include "constants.hpp"
 #include "util/latchedboolean.hpp"
+#include <functional>
 //stacker subsystem
 class Stacker : public Subsystem{
 public:
@@ -19,6 +20,9 @@ public:
   void stateChangeRequest(bool intakePressed, bool outtakePressed);
 
   void in();
+
+  std::function<void()> inAction();
+  std::function<void()> outAction();
 
   void out();
 

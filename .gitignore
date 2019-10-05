@@ -1,7 +1,21 @@
-.vscode
-/bin
-/tests/CMakeFiles
-/firmware
-/include/display
-/include/okapi
-/include/pros
+# Compiled Object files
+*.o
+*.obj
+
+# Executables
+*.bin
+*.elf
+
+# PROS
+bin/
+.vscode/
+compile_commands.json
+temp.log
+temp.errors
+*.ini
+.d/
+
+include/pros
+include/display
+include/okapi
+firmware/

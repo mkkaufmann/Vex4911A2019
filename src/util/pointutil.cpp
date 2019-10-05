@@ -29,3 +29,7 @@ PolarPoint PointUtil::toPolar(Point other){
 Point PointUtil::toCartesian(PolarPoint p){
   return Point(p.getRadius() * std::cos(p.getAngle()), p.getRadius() * std::sin(p.getAngle()));
 };
+
+double PointUtil::distance(Point a, Point b){
+  return std::sqrt((a.getX() - b.getX())*(a.getX() - b.getX()) + (a.getY() - b.getY())*(a.getY() - b.getY()));
+}

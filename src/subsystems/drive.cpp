@@ -9,6 +9,7 @@ Drive* Drive::getInstance(){
 
 void Drive::stop(){
   state = NEUTRAL;
+  out();
 }
 
 void Drive::drivePath(int x, int y, int r){
@@ -22,6 +23,13 @@ void Drive::driveManually(int x, int y, int r){
   generateOutputs(x, y, r, outputs, true);
 }
 
+std::function<void()> Drive::driveManuallyAction(int x, int y, int r, bool isFieldCentric){
+  return [&]()->void{
+    fieldCentric = isFieldCentric;
+    driveManually(x, y, r);
+  };
+}
+
 void Drive::updateFieldCentric(bool pressed){
   if(fieldCentricToggle.update(pressed)){
     fieldCentric = !fieldCentric;
@@ -29,6 +37,12 @@ void Drive::updateFieldCentric(bool pressed){
 };
 
 void Drive::in() {}
+
+std::function<void()> Drive::inAction(){
+  return [&]()->void{
+    in();
+  };
+}
 
 void Drive::out(){
   switch(state){
@@ -52,6 +66,12 @@ void Drive::out(){
       break;
   }
 };
+
+std::function<void()> Drive::outAction(){
+  return [&]()->void{
+    in();
+  };
+}
 
 Drive::Drive(): state(NEUTRAL){}
 

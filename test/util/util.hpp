@@ -32,7 +32,7 @@ public:
 
   //converts voltage value [-127, 127] to percent [-1, 1]
   static double convertToPercent(int t);
-
+  
   //check whether two values are approximately equal
   //https://floating-point-gui.de/errors/comparison/
   static bool epsilonEquals(double a, double b, double epsilon);

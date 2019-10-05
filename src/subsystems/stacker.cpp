@@ -46,12 +46,22 @@ void Stacker::stateChangeRequest(bool intakePressed, bool outtakePressed){
 
 void Stacker::in(){};
 
+std::function<void()> Stacker::inAction(){
+  return [&]()->void{
+    in();
+  };
+}
 
 void Stacker::out(){
   stacker1Motor.move(output);
   stacker2Motor.move(output);
 };
 
+std::function<void()> Stacker::outAction(){
+  return [&]()->void{
+    out();
+  };
+}
 
 void Stacker::stop(){
   state = NEUTRAL;

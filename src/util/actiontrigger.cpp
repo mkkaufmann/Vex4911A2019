@@ -1,4 +1,4 @@
-#include "actiontrigger.hpp"
+ #include "actiontrigger.hpp"
 
 ActionTrigger::ActionTrigger(){
   triggerActivated = []()->bool{return false;};

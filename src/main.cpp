@@ -12,6 +12,7 @@
 #include "pros/apix.h"
 #include "ui/ui.hpp"
 #include "ui/uihelper.hpp"
+#include "util/autontimer.hpp"
 
 //starting orientations
 double facingForward = Util::toRadians(0);
@@ -66,7 +67,7 @@ LatchedBoolean Drive::fieldCentricToggle = LatchedBoolean();
 //number of loops for PID to count as settled
 double PathFollower::iterationsForSettle = 5;//100ms
 
-
+int AutonTimer::startTime = -1;
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.

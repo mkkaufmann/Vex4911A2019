@@ -22,17 +22,21 @@ public:
 
 	void driveManually(int x, int y, int r);
 
-  void driveWhileSeekingRotationTarget(int x, int y, double theta){
-
-  }
+  std::function<void()> driveManuallyAction(int x, int y, int r, bool fieldCentric);
+  // void driveWhileSeekingRotationTarget(int x, int y, double theta){
+  //
+  // }
 
   //used for changing between field and robot centric
 	static void updateFieldCentric(bool pressed);
 
   void in();
 
+  std::function<void()> inAction();
 	//run motors
   void out();
+
+  std::function<void()> outAction();
 
   enum DriveState {
     NEUTRAL,
