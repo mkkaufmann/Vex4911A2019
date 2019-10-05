@@ -54,9 +54,29 @@ void autonomous() {
       drive.driveManuallyAction(0, 40, 30, true),
       AutonTimer::timeHasPassedTrigger(3)));
 
+  AsyncAction startIntaking =
+  *AsyncActionFactory::makeAsyncAction()->hasTrigger(ActionTrigger(
+      AutonTimer::timeHasPassedTrigger(3)))->hasAction(Action(
+      stacker.getIntakeAction(),
+      Triggers::trueTrigger()));
 
+    std::vector<AsyncAction> actions;
+    actions.push_back(manageSubsystems);
+    actions.push_back(driveFor3Seconds);
+    actions.push_back(startIntaking);
+    std::vector<AsyncAction>::iterator it;
+    //
+    // 	while(true){
+    // 		for(auto &it : actions){
+    // 			it.run();
+    // 		}
+    // 	}
   AutonTimer::start();
 	while (true) {
+
+    for(auto &it : actions){
+     			it.run();
+    }
     // if(!testPathFollower.isComplete()){
     //   testPathFollower.run();
     // }

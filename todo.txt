@@ -6,3 +6,4 @@ setpoints for stacker angle
 programming skills
 commenting
 refactor certain pointers to references
+convert static trigger/action functions to static class members (variables)

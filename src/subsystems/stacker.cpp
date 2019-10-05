@@ -91,10 +91,19 @@ int Stacker::getOutput(){
   return output;
 };
 
+std::function<void()> Stacker::getIntakeAction(){
+  return intakeAction;
+};
+
+std::function<void()> Stacker::getOuttakeAction(){
+  return outtakeAction;
+};
 
 Stacker::Stacker(){
   output = 0;
   intakeToggle = LatchedBoolean();
   outtakeToggle = LatchedBoolean();
+  intakeAction = [&]()->void{intake();};
+  outtakeAction = [&]()->void{intake();};
   state = NEUTRAL;
 };

@@ -32,6 +32,9 @@ public:
 
   int getOutput();
 
+  std::function<void()> getIntakeAction();
+  std::function<void()> getOuttakeAction();
+
   enum StackerState{
     NEUTRAL,
     MANUAL,
@@ -40,6 +43,10 @@ public:
   };
 
 private:
+
+  std::function<void()> intakeAction;
+
+  std::function<void()> outtakeAction;
 
   int output;
 
