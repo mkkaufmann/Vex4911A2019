@@ -73,3 +73,16 @@ bool Util::epsilonEquals(double a, double b, double epsilon){
     return diff / std::min((absA + absB), DBL_MAX) < epsilon;
   }
 };
+
+//graph of red and blue lines from 5225A here
+//https://www.desmos.com/calculator/fatajfuuxu
+int Util::curveJoystick(bool red, int input, double t){
+  int val = 0;
+  if(red){
+    val = (std::exp(-t/10)+std::exp((std::abs(input)-127)/10)*(1-std::exp(-t/10))) * input;
+  }else{
+    //blue
+    val = std::exp(((std::abs(input)-127)*t)/1000) * input;
+  }
+  return val;
+}

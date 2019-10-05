@@ -23,10 +23,25 @@ void Drive::driveManually(int x, int y, int r){
   generateOutputs(x, y, r, outputs, true);
 }
 
+void Drive::drivePseudoManual(int x, int y, int r){
+  state = MANUAL;
+  generateOutputs(x, y, r, outputs, false);
+}
+
 std::function<void()> Drive::driveManuallyAction(int x, int y, int r, bool isFieldCentric){
   return [&]()->void{
     fieldCentric = isFieldCentric;
-    driveManually(x, y, r);
+    drivePseudoManual(x, y, r);
+  };
+}
+
+std::function<void()> Drive::driveTowardsPointAction(Point a){
+  return [&]()->void{
+    //target - position, scale to right speed based on distance.
+    Point pos = PositionTracker::getGlobalPosition();
+    double distanceInches = PointUtil::distance(pos, a);
+
+    //TODO
   };
 }
 
@@ -75,6 +90,7 @@ std::function<void()> Drive::outAction(){
 
 Drive::Drive(): state(NEUTRAL){}
 
+//deprecated for Util::curveJoystick
 double Drive::smoothRotation(int r){
   return 0.75*sin((M_PI*r)/254);
 };
@@ -94,7 +110,8 @@ double Drive::getWheelOutput(PolarPoint stick, double angleOffset, bool isManual
   if(fieldCentric){
     radians -= /*std::fmod(*/PositionTracker::getTheta()/*, M_2_PI)*/;
   }
-  return stick.getRadius() * std::sin(radians);
+  //multiply by curved radius if it's manual
+  return (!isManual ? stick.getRadius() : Util::convertToPercent(Util::curveJoystick(true, Util::convertToVoltage(stick.getRadius()), 5))) * std::sin(radians);
 };
 
 Point Drive::getWheelVector(double speed, double rotation){
@@ -110,7 +127,8 @@ void Drive::generateOutputs(int x, int y, int r, int outputs[], bool isManual){
   translationInput.limitRadius();
 
   //rotation input
-  double rotInput = isManual ? smoothRotation(r) :Util::convertToPercent(r);
+  //TODO tune values here/extract them
+  double rotInput = isManual ? Util::convertToPercent(Util::curveJoystick(true, r, 5)) :Util::convertToPercent(r);
 
 
   //create fake joystick values for rotation of each wheel based on the angles of the wheels

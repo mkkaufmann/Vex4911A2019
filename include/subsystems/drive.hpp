@@ -22,11 +22,14 @@ public:
 
 	void driveManually(int x, int y, int r);
 
+  void drivePseudoManual(int x, int y, int r);
+
   std::function<void()> driveManuallyAction(int x, int y, int r, bool fieldCentric);
   // void driveWhileSeekingRotationTarget(int x, int y, double theta){
   //
   // }
 
+  std::function<void()> driveTowardsPointAction(Point a);
 
 
   //used for changing between field and robot centric

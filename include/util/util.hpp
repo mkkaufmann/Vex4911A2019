@@ -36,5 +36,7 @@ public:
   //check whether two values are approximately equal
   //https://floating-point-gui.de/errors/comparison/
   static bool epsilonEquals(double a, double b, double epsilon);
+
+  static int curveJoystick(bool red, int input, double t);
 };
 #endif
