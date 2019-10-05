@@ -35,6 +35,10 @@ void autonomous() {
   PositionTracker tracker = *PositionTracker::getInstance();
   Stacker stacker = *Stacker::getInstance();
 
+
+  double startTime = 0;
+  double driveEndTime = startTime + 3;//3
+  double endTime = 15;
   //runs all subsystems for 15 seconds (or regular autonomous)
   AsyncAction manageSubsystems =
   *AsyncActionFactory::makeAsyncAction()->hasTrigger(ActionTrigger(
@@ -52,11 +56,11 @@ void autonomous() {
   *AsyncActionFactory::makeAsyncAction()->hasTrigger(ActionTrigger(
       Triggers::trueTrigger()))->hasAction(Action(
       drive.driveManuallyAction(0, 40, 30, true),
-      AutonTimer::timeHasPassedTrigger(3)));
+      AutonTimer::timeHasPassedTrigger(driveEndTime)));
 
   AsyncAction startIntaking =
   *AsyncActionFactory::makeAsyncAction()->hasTrigger(ActionTrigger(
-      AutonTimer::timeHasPassedTrigger(3)))->hasAction(Action(
+      AutonTimer::timeHasPassedTrigger(driveEndTime)))->hasAction(Action(
       stacker.getIntakeAction(),
       Triggers::trueTrigger()));
 
@@ -65,12 +69,6 @@ void autonomous() {
     actions.push_back(driveFor3Seconds);
     actions.push_back(startIntaking);
     std::vector<AsyncAction>::iterator it;
-    //
-    // 	while(true){
-    // 		for(auto &it : actions){
-    // 			it.run();
-    // 		}
-    // 	}
   AutonTimer::start();
 	while (true) {
 
