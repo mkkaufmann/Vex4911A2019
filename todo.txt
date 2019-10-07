@@ -10,7 +10,6 @@ TODO
 3 | H autonomous sequence
 4 | L pid tuner
 5 | L pure pursuit
-2 | H setpoints for stacker angle
 5 | L programming skills
 4 | M commenting
 3 | L refactor certain pointers to references
@@ -25,5 +24,6 @@ TODO
 UNTESTED
 3 | H drive towards point
 1 | H rotation trigger
+2 | H setpoints for stacker angle
 
 COMPLETED

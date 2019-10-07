@@ -28,7 +28,7 @@ void PositionTracker::updatePosition(double leftEnc, double rightEnc, double bac
   double dX;
   double dY;
   if(dTheta == 0){
-    dX = backEnc;
+    dX = dBackEnc;
     dY = dRightEnc;
   }else{
     //math

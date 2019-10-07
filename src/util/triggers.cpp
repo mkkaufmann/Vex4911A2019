@@ -1,7 +1,14 @@
 #include "triggers.hpp"
+#include <iostream>
 
 std::function<bool()> Triggers::trueTrigger(){
-  return []()->bool{return true;};
+  return []()->bool{
+    return true;};
+}
+
+std::function<bool()> Triggers::falseTrigger(){
+  return []()->bool{
+    return false;};
 }
 
 std::function<bool()> Triggers::compoundAndTrigger(std::function<bool()> a, std::function<bool()> b){

@@ -12,7 +12,11 @@ public:
 
   static double getTimeSinceStartSeconds();
 
+  static bool timeHasPassed(double seconds);
+
   static std::function<bool()> timeHasPassedTrigger(double seconds);
+
+  static std::function<bool()> fifteenSecondsPassed;
 
 private:
   static int startTime;

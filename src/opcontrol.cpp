@@ -7,7 +7,7 @@
 #include "util/util.hpp"
 #include "subsystems/stacker.hpp"
 #include "ui/uihelper.hpp"
-
+#include "subsystems/tilter.hpp"
 /**
  * Runs the operator control code. This function will be started in its own task
  * with the default priority and stack size whenever the robot is enabled via
@@ -24,10 +24,13 @@
  Drive drive = *Drive::getInstance();
  PositionTracker tracker = *PositionTracker::getInstance();
  Stacker stacker = *Stacker::getInstance();
+ Tilter tilter = *Tilter::getInstance();
  OI oi = *OI::getInstance();
 
+ LatchedBoolean left = LatchedBoolean();
+ LatchedBoolean right = LatchedBoolean();
  pros::Motor stacker1Motor = pros::Motor(Constants::STACKER_TREAD_1_MOTOR_PORT);
-pros::Motor stacker2Motor = pros::Motor(Constants::STACKER_TREAD_2_MOTOR_PORT);
+ pros::Motor stacker2Motor = pros::Motor(Constants::STACKER_TREAD_2_MOTOR_PORT);
  pros::Controller master = pros::Controller(pros::E_CONTROLLER_MASTER);
 
 void runSubsystems(){
@@ -44,6 +47,14 @@ void runSubsystems(){
   drive.out();
   tracker.in();
   tracker.out();
+  if(left.update(master.get_digital(DIGITAL_LEFT))){
+    tilter.shiftDown();
+  }
+  if(right.update(master.get_digital(DIGITAL_RIGHT))){
+    tilter.shiftUp();
+  }
+  tilter.in();
+  tilter.out();
 }
 
 void updateScreen(){

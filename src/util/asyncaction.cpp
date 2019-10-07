@@ -128,7 +128,10 @@ private:
 	}
 	//tun yhr action once triggered
 	void AsyncAction::run(){
+
+	  // std::cout << "asyncAction run" << std::endl;
 		if(trigger.isTriggered()){
+			// std::cout << "asyncAction triggered" << std::endl;
 			action.run();
 		}
 	}

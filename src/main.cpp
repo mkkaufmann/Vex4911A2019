@@ -13,6 +13,7 @@
 #include "ui/ui.hpp"
 #include "ui/uihelper.hpp"
 #include "util/autontimer.hpp"
+#include "subsystems/tilter.hpp"
 
 //starting orientations
 double facingForward = Util::toRadians(0);
@@ -41,12 +42,13 @@ int Constants::REAR_TRACKING_ENCODER_BOTTOM = 6;
 //measured constants for odometry
 double Constants::LEFT_WHEEL_TO_TRACKING_CENTER = 6.5;
 double Constants::RIGHT_WHEEL_TO_TRACKING_CENTER = 7.25;
-double Constants::REAR_WHEEL_TO_TRACKING_CENTER = 7.75;
+double Constants::REAR_WHEEL_TO_TRACKING_CENTER = 7;
 int Constants::ENCODER_TICKS_PER_INCH = 360/(2.75 * M_PI);
 
 //initialize singletons
 OI* OI::instance = OI::getInstance();
 Drive* Drive::instance = Drive::getInstance();
+Tilter* Tilter::instance = Tilter::getInstance();
 Stacker* Stacker::instance = Stacker::getInstance();
 PositionTracker* PositionTracker::instance = PositionTracker::getInstance();
 

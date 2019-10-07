@@ -55,6 +55,7 @@ std::function<void()> Stacker::inAction(){
 void Stacker::out(){
   stacker1Motor.move(output);
   stacker2Motor.move(output);
+  // std::cout << "stacker out" << std::endl;
 };
 
 std::function<void()> Stacker::outAction(){

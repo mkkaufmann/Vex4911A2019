@@ -52,12 +52,24 @@ void autonomous() {
                   tracker.outAction()))))),
       AutonTimer::timeHasPassedTrigger(15)));
 
+      // AsyncAction manageSubsystems =
+      // *AsyncActionFactory::makeAsyncAction()->hasTrigger(ActionTrigger(
+      //     Triggers::trueTrigger()))->hasAction(Action(
+      //     Actions::parallelAction(
+      //       stacker.inAction(), Actions::parallelAction(
+      //         stacker.outAction(), Actions::parallelAction(
+      //           drive.inAction(), Actions::parallelAction(
+      //             drive.outAction(), Actions::parallelAction(
+      //               tracker.inAction(),
+      //                 tracker.outAction()))))),
+      //     Triggers::falseTrigger()));
+
   AsyncAction driveFor3Seconds =
   *AsyncActionFactory::makeAsyncAction()->hasTrigger(ActionTrigger(
       Triggers::trueTrigger()))->hasAction(Action(
       drive.driveManuallyAction(0, 40, 30, true),
       Triggers::compoundOrTrigger(
-        AutonTimer::timeHasPassedTrigger(driveEndTime),
+        AutonTimer::fifteenSecondsPassed,
         PositionTracker::isNearPointTrigger(Point(0, 10), 1))));
 
   AsyncAction startIntaking =
@@ -66,14 +78,23 @@ void autonomous() {
       stacker.getIntakeAction(),
       Triggers::trueTrigger()));
 
+  AsyncAction test =
+  *AsyncActionFactory::makeAsyncAction()->hasTrigger(ActionTrigger(
+    Triggers::trueTrigger()))->hasAction(Action(
+      drive.driveManuallyAction(0, 40, 30, true),
+      Triggers::falseTrigger()));
+
     std::vector<AsyncAction> actions;
     actions.push_back(manageSubsystems);
     actions.push_back(driveFor3Seconds);
     actions.push_back(startIntaking);
+    actions.push_back(test);
     std::vector<AsyncAction>::iterator it;
   AutonTimer::start();
 	while (true) {
-
+    if(AutonTimer::fifteenSecondsPassed()){
+      std::cout << "time passed" << std::endl;
+    }
     for(auto &it : actions){
      			it.run();
     }

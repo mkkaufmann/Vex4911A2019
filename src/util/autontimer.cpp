@@ -19,8 +19,20 @@ double AutonTimer::getTimeSinceStartSeconds(){
   return getTimeSinceStartMillis()/1000.0;
 }
 
+bool AutonTimer::timeHasPassed(double seconds){
+  std::cout << seconds << std::endl;
+  std::cout << AutonTimer::getTimeSinceStartSeconds() - seconds << std::endl;
+  return AutonTimer::getTimeSinceStartSeconds() > seconds;
+}
+
 std::function<bool()> AutonTimer::timeHasPassedTrigger(double seconds){
+  std::cout << seconds << std::endl;
   return [&]()->bool{
-    return getTimeSinceStartSeconds() - seconds > 0;
+    std::cout << seconds << std::endl;
+    return timeHasPassed(seconds);
   };
 }
+
+std::function<bool()> AutonTimer::fifteenSecondsPassed = []()->bool{
+  return timeHasPassed(15);
+};

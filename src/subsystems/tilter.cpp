@@ -13,22 +13,36 @@ void Tilter::stop(){
 }
 
 void Tilter::in(){
+  std::cout << tilterMotor.get_position() << std::endl;
   switch(state){
     case TO_DOWN:
-      if(Util::epsilonEquals(tilterMotor.get_position(), DOWN_ENC, 20)){
+      if(tilterMotor.get_position() > -10 && tilterMotor.get_position() < 10){
         state = DOWN;
       }
+      std::cout << "tilter to down" << std::endl;
       break;
     case TO_UP:
-      if(Util::epsilonEquals(tilterMotor.get_position(), UP_ENC, 20)){
+      if(tilterMotor.get_position() > UP_ENC){
         state = UP;
       }
+      std::cout << "tilter to up" << std::endl;
       break;
     case TO_MID:
-      if(Util::epsilonEquals(tilterMotor.get_position(), MID_ENC, 20)){
+      // if(Util::epsilonEquals(tilterMotor.get_position(), MID_ENC, 50)){
+      if(tilterMotor.get_position() > MID_ENC){
         state = MID;
       }
+      std::cout << "tilter to mid" << std::endl;
       break;
+    case DOWN:
+      std::cout << "tilter down" << std::endl;
+      break;
+    case MID:
+        std::cout << "tilter mid" << std::endl;
+        break;
+    case UP:
+          std::cout << "tilter up" << std::endl;
+          break;
     default:
       //sitting at position
       break;
@@ -43,12 +57,15 @@ std::function<void()> Tilter::inAction(){
 
 void Tilter::out(){
   switch(state){
+    case DOWN:
     case TO_DOWN:
-      tilterMotor.move_absolute(DOWN_ENC, 127);
+      tilterMotor.move_absolute(DOWN_ENC, 40);
       break;
+    case MID:
     case TO_MID:
       tilterMotor.move_absolute(MID_ENC, 127);
       break;
+    case UP:
     case TO_UP:
       tilterMotor.move_absolute(UP_ENC, 50);
       break;
@@ -103,5 +120,5 @@ Tilter::Tilter(){
 }
 
 const int Tilter::DOWN_ENC = 0;
-const int Tilter::MID_ENC = 0;//tune
-const int Tilter::UP_ENC = 0;//tune
+const int Tilter::MID_ENC = 280;//tune
+const int Tilter::UP_ENC = 590;//tune
