@@ -18,17 +18,36 @@ public:
 
   std::function<void()> outAction();
 
+  void shiftUp();
+
+  std::function<void()> shiftUpAction;
+
+  void shiftDown();
+
+  std::function<void()> shiftDownAction;
+
 
   enum TilterState {
     DOWN,
-    DOWN_TO_MID,
     MID,
-    MID_TO_UP,
-    UP
+    UP,
+    TO_DOWN,
+    TO_UP,
+    TO_MID
   };
+
+  TilterState getState();
 private:
+  static const int DOWN_ENC;
+  static const int MID_ENC;
+  static const int UP_ENC;
   pros::Motor tilterMotor = pros::Motor(Constants::TILTER_MOTOR_PORT);
 
   static Tilter* instance;
+
+  TilterState state;
+
+  Tilter();
+
 };
 #endif
