@@ -56,7 +56,9 @@ void autonomous() {
   *AsyncActionFactory::makeAsyncAction()->hasTrigger(ActionTrigger(
       Triggers::trueTrigger()))->hasAction(Action(
       drive.driveManuallyAction(0, 40, 30, true),
-      AutonTimer::timeHasPassedTrigger(driveEndTime)));
+      Triggers::compoundOrTrigger(
+        AutonTimer::timeHasPassedTrigger(driveEndTime),
+        PositionTracker::isNearPointTrigger(Point(0, 10), 1))));
 
   AsyncAction startIntaking =
   *AsyncActionFactory::makeAsyncAction()->hasTrigger(ActionTrigger(

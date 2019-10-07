@@ -38,5 +38,9 @@ public:
   static bool epsilonEquals(double a, double b, double epsilon);
 
   static int curveJoystick(bool red, int input, double t);
+
+  //used when the closest distance between two angles might go through 0
+  static double rotateHalfway(double radians);
+
 };
 #endif

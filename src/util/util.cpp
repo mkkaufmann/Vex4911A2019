@@ -86,3 +86,7 @@ int Util::curveJoystick(bool red, int input, double t){
   }
   return val;
 }
+
+double Util::rotateHalfway(double radians){
+  return std::fmod(radians + M_PI, M_2_PI);
+}

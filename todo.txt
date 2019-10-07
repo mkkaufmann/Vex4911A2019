@@ -15,12 +15,15 @@ TODO
 4 | M commenting
 3 | L refactor certain pointers to references
 3 | L convert static trigger/action functions to static class members (variables)
-1 | H rotation trigger
 2 | M display field centric on controller
 4 | L display joystick customizability on screen
 3 | L move hard coded values out of rotation and translation curves
+1 | L refactor manual rotations to Util::rotateHalfway()
+1 | L implement Util::loopAngle() and replace use cases
+3 | M ability to set starting position in auton
 
 UNTESTED
 3 | H drive towards point
+1 | H rotation trigger
 
 COMPLETED

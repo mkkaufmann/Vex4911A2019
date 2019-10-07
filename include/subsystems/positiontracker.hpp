@@ -22,10 +22,15 @@ public:
   double getREncValue();
   double getBEncValue();
   static double getTheta();
+  static double getLoopedTheta();
   //returns whether the bot is located in the rectangle with corners a and b
   static bool isInRegion(Point a, Point b);
   static bool isNearPoint(Point a, double epsilonInches);
+  static bool isNearAngle(double target, double epsilonRadians);
   static std::function<bool()> isInRegionTrigger(Point a, Point b);
+  static std::function<bool()> isNearPointTrigger(Point target, double epsilonInches);
+  static std::function<bool()> isNearAngleTrigger(double target, double epsilonRadians);
+
   // void reset(){
   //   leftEncAtLastReset = pLeftEnc;
   //   rightEncAtLastReset = pRightEnc;
