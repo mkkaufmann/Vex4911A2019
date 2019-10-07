@@ -3,6 +3,9 @@ Ease 1-5, 5 being the hardest
 Priority L, M, H, URGENT
 Ease | Priority
 
+
+TODO
+
 4 | M file IO for PID  and autonomous
 3 | H autonomous sequence
 4 | L pid tuner
@@ -12,8 +15,12 @@ Ease | Priority
 4 | M commenting
 3 | L refactor certain pointers to references
 3 | L convert static trigger/action functions to static class members (variables)
-3 | H drive towards point
 1 | H rotation trigger
 2 | M display field centric on controller
 4 | L display joystick customizability on screen
 3 | L move hard coded values out of rotation and translation curves
+
+UNTESTED
+3 | H drive towards point
+
+COMPLETED

@@ -30,6 +30,8 @@ public:
   // }
 
   std::function<void()> driveTowardsPointAction(Point a);
+  //radians measured counterclockwise??
+  std::function<void()> driveTowardsPointAndOrientationAction(Point a, double radians);
 
 
   //used for changing between field and robot centric

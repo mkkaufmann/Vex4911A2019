@@ -38,10 +38,60 @@ std::function<void()> Drive::driveManuallyAction(int x, int y, int r, bool isFie
 std::function<void()> Drive::driveTowardsPointAction(Point a){
   return [&]()->void{
     //target - position, scale to right speed based on distance.
+    //a little naive rn
     Point pos = PositionTracker::getGlobalPosition();
     double distanceInches = PointUtil::distance(pos, a);
+    double dx = a.getX() - pos.getX();
+    double dy = a.getY() - pos.getY();
 
-    //TODO
+    double smoothFactor = 127;
+    if(distanceInches < 36){
+      smoothFactor = std::exp(distanceInches * std::log(128)/36) - 1;
+    }
+
+    double d[] = {dx, dy};
+    double largest_dmag = Util::largestMagnitude(d, 2);
+    int scaled_dx = dx/largest_dmag;
+    int scaled_dy = dy/largest_dmag;
+
+    int xSpeed = scaled_dx * smoothFactor;
+    int ySpeed = scaled_dy * smoothFactor;
+    drivePseudoManual(xSpeed, ySpeed, 0);
+  };
+}
+
+std::function<void()> Drive::driveTowardsPointAndOrientationAction(Point a, double radians){
+  return [&]()->void{
+    //target - position, scale to right speed based on distance.
+    //a little naive rn
+    Point pos = PositionTracker::getGlobalPosition();
+    double currentRot = std::fmod(PositionTracker::getTheta(), M_2_PI);
+    double distanceInches = PointUtil::distance(pos, a);
+    double dx = a.getX() - pos.getX();
+    double dy = a.getY() - pos.getY();
+    double dr = radians - currentRot;
+    //other direction is closer
+    if(std::abs(dr) > M_PI){
+      dr = std::fmod(radians + M_PI, M_2_PI) - std::fmod(currentRot + M_PI, M_2_PI);
+    }
+
+    double smoothFactor = 127;
+    if(distanceInches < 36){
+      smoothFactor = std::exp(distanceInches * std::log(128)/36) - 1;
+    }
+
+    double d[] = {dx, dy};
+    double largest_dmag = Util::largestMagnitude(d, 2);
+    int scaled_dx = dx/largest_dmag;
+    int scaled_dy = dy/largest_dmag;
+
+    int xSpeed = scaled_dx * smoothFactor;
+    int ySpeed = scaled_dy * smoothFactor;
+
+    int rSpeed =  -127*std::sin(dr/2);
+
+    fieldCentric = true;
+    drivePseudoManual(xSpeed, ySpeed, rSpeed);
   };
 }
 
