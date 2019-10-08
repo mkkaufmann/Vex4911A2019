@@ -20,10 +20,11 @@ TODO
 1 | L refactor manual rotations to Util::rotateHalfway()
 1 | L implement Util::loopAngle() and replace use cases
 3 | M ability to set starting position in auton
+4 | L make lambda captures more efficient using const refs
 
 UNTESTED
 3 | H drive towards point
 1 | H rotation trigger
-2 | H setpoints for stacker angle
 
 COMPLETED
+2 | H setpoints for stacker angle
