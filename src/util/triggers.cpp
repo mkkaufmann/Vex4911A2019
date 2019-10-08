@@ -12,13 +12,13 @@ std::function<bool()> Triggers::falseTrigger(){
 }
 
 std::function<bool()> Triggers::compoundAndTrigger(std::function<bool()> a, std::function<bool()> b){
-  return [&]()->bool{
+  return [=]()->bool{
     return a() && b();
   };
 }
 
 std::function<bool()> Triggers::compoundOrTrigger(std::function<bool()> a, std::function<bool()> b){
-  return [&]()->bool{
+  return [=]()->bool{
     return a() || b();
   };
 }

@@ -29,16 +29,19 @@ void Drive::drivePseudoManual(int x, int y, int r){
 }
 
 std::function<void()> Drive::driveManuallyAction(int x, int y, int r, bool isFieldCentric){
-  return [&]()->void{
+  return [=]()->void{
     fieldCentric = isFieldCentric;
     drivePseudoManual(x, y, r);
   };
 }
 
-std::function<void()> Drive::driveTowardsPointAction(Point a){
-  return [&]()->void{
+std::function<void()> Drive::driveTowardsPointAction(double x, double y){
+  return [=]()->void{
     //target - position, scale to right speed based on distance.
     //a little naive rn
+
+    Point a = Point(x, y);
+
     Point pos = PositionTracker::getGlobalPosition();
     double distanceInches = PointUtil::distance(pos, a);
     double dx = a.getX() - pos.getX();
@@ -60,10 +63,12 @@ std::function<void()> Drive::driveTowardsPointAction(Point a){
   };
 }
 
-std::function<void()> Drive::driveTowardsPointAndOrientationAction(Point a, double radians){
-  return [&]()->void{
+std::function<void()> Drive::driveTowardsPointAndOrientationAction(double x, double y, double radians){
+  return [=]()->void{
     //target - position, scale to right speed based on distance.
     //a little naive rn
+    Point a = Point(x, y);
+
     Point pos = PositionTracker::getGlobalPosition();
     double currentRot = std::fmod(PositionTracker::getTheta(), M_2_PI);
     double distanceInches = PointUtil::distance(pos, a);
@@ -104,7 +109,7 @@ void Drive::updateFieldCentric(bool pressed){
 void Drive::in() {}
 
 std::function<void()> Drive::inAction(){
-  return [&]()->void{
+  return [this]()->void{
     in();
   };
 }
@@ -133,8 +138,8 @@ void Drive::out(){
 };
 
 std::function<void()> Drive::outAction(){
-  return [&]()->void{
-    in();
+  return [this]()->void{
+    out();
   };
 }
 

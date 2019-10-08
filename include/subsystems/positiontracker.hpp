@@ -27,8 +27,8 @@ public:
   static bool isInRegion(Point a, Point b);
   static bool isNearPoint(Point a, double epsilonInches);
   static bool isNearAngle(double target, double epsilonRadians);
-  static std::function<bool()> isInRegionTrigger(Point a, Point b);
-  static std::function<bool()> isNearPointTrigger(Point target, double epsilonInches);
+  static std::function<bool()> isInRegionTrigger(double x1, double y1, double x2, double y2);
+  static std::function<bool()> isNearPointTrigger(double x, double y, double epsilonInches);
   static std::function<bool()> isNearAngleTrigger(double target, double epsilonRadians);
 
   // void reset(){

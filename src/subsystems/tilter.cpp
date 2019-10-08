@@ -50,7 +50,7 @@ void Tilter::in(){
 }
 
 std::function<void()> Tilter::inAction(){
-  return [&]()->void{
+  return [this]()->void{
     in();
   };
 }
@@ -76,7 +76,7 @@ void Tilter::out(){
 }
 
 std::function<void()> Tilter::outAction(){
-  return [&]()->void{
+  return [this]()->void{
     out();
   };
 }
@@ -115,8 +115,8 @@ Tilter::TilterState Tilter::getState(){
 Tilter::Tilter(){
   state = DOWN;
   tilterMotor.tare_position();
-  shiftUpAction = [&]()->void{shiftUp();};
-  shiftDownAction = [&]()->void{shiftDown();};
+  shiftUpAction = [this]()->void{shiftUp();};
+  shiftDownAction = [this]()->void{shiftDown();};
 }
 
 const int Tilter::DOWN_ENC = 0;

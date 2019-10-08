@@ -7,7 +7,7 @@ std::function<void()> Actions::nothingAction(){
 }
 
 std::function<void()> Actions::parallelAction(std::function<void ()> a, std::function<void ()> b){
-  return [&]()->void{
+  return [=]()->void{
     // std::cout << "parallelAction" << std::endl;
     a();
     b();

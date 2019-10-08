@@ -47,7 +47,7 @@ void Stacker::stateChangeRequest(bool intakePressed, bool outtakePressed){
 void Stacker::in(){};
 
 std::function<void()> Stacker::inAction(){
-  return [&]()->void{
+  return [this]()->void{
     in();
   };
 }
@@ -59,7 +59,7 @@ void Stacker::out(){
 };
 
 std::function<void()> Stacker::outAction(){
-  return [&]()->void{
+  return [this]()->void{
     out();
   };
 }
@@ -104,7 +104,7 @@ Stacker::Stacker(){
   output = 0;
   intakeToggle = LatchedBoolean();
   outtakeToggle = LatchedBoolean();
-  intakeAction = [&]()->void{intake();};
-  outtakeAction = [&]()->void{intake();};
+  intakeAction = [this]()->void{intake();};
+  outtakeAction = [this]()->void{intake();};
   state = NEUTRAL;
 };

@@ -67,13 +67,13 @@ void PositionTracker::out(){
 };
 
 std::function<void()> PositionTracker::outAction(){
-  return [&]()->void{
+  return [this]()->void{
     out();
   };
 }
 
 std::function<void()> PositionTracker::inAction(){
-  return [&]()->void{
+  return [this]()->void{
     in();
   };
 }
@@ -119,20 +119,22 @@ bool PositionTracker::isNearAngle(double target, double epsilonRadians){
   || Util::epsilonEquals(Util::rotateHalfway(PositionTracker::getLoopedTheta()), Util::rotateHalfway(target), epsilonRadians);
 }
 
-std::function<bool()> PositionTracker::isInRegionTrigger(Point a, Point b){
-  return [&]()->bool{
+std::function<bool()> PositionTracker::isInRegionTrigger(double x1, double y1, double x2, double y2){
+  return [=]()->bool{
+    Point a = Point(x1, y1);
+    Point b = Point(x2, y2);
     return PositionTracker::isInRegion(a, b);
   };
 }
 
-std::function<bool()> PositionTracker::isNearPointTrigger(Point a, double epsilonInches){
-  return [&]()->bool{
-    return PositionTracker::isNearPoint(a, epsilonInches);
+std::function<bool()> PositionTracker::isNearPointTrigger(double x, double y, double epsilonInches){
+  return [=]()->bool{
+    return PositionTracker::isNearPoint(Point(x, y), epsilonInches);
   };
 }
 
 std::function<bool()> PositionTracker::isNearAngleTrigger(double target, double epsilonRadians){
-  return [&]()->bool{
+  return [=]()->bool{
     return PositionTracker::isNearAngle(target, epsilonRadians);
   };
 }

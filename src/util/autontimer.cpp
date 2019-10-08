@@ -26,9 +26,7 @@ bool AutonTimer::timeHasPassed(double seconds){
 }
 
 std::function<bool()> AutonTimer::timeHasPassedTrigger(double seconds){
-  std::cout << seconds << std::endl;
-  return [&]()->bool{
-    std::cout << seconds << std::endl;
+  return [=]()->bool{
     return timeHasPassed(seconds);
   };
 }
