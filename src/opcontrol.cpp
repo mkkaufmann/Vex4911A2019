@@ -42,7 +42,7 @@ void runSubsystems(){
   stacker.stateChangeRequest(master.get_digital(DIGITAL_UP), master.get_digital(DIGITAL_DOWN));
   stacker.out();
   stacker1Motor.move(stacker.getOutput());
-  stacker2Motor.move(stacker.getOutput());
+  stacker2Motor.move(-stacker.getOutput());
   drive.in();
   drive.out();
   tracker.in();

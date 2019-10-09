@@ -31,9 +31,6 @@ public:
     DOWN,
     MID,
     UP,
-    TO_DOWN,
-    TO_UP,
-    TO_MID
   };
 
   TilterState getState();

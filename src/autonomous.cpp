@@ -69,7 +69,7 @@ void autonomous() {
       Triggers::trueTrigger()))->hasAction(Action(
       drive.driveManuallyAction(0, 40, 30, true),
       Triggers::compoundOrTrigger(
-        AutonTimer::fifteenSecondsPassed,
+        AutonTimer::timeHasPassedTrigger(3),
         PositionTracker::isNearPointTrigger(Point(0, 10), 1))));
 
   AsyncAction startIntaking =
@@ -88,7 +88,7 @@ void autonomous() {
     actions.push_back(manageSubsystems);
     actions.push_back(driveFor3Seconds);
     actions.push_back(startIntaking);
-    actions.push_back(test);
+   // actions.push_back(test);
     std::vector<AsyncAction>::iterator it;
   AutonTimer::start();
 	while (true) {
