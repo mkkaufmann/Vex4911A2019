@@ -18,4 +18,4 @@ temp.errors
 include/pros
 include/display
 include/okapi
-firmware/
+firmware

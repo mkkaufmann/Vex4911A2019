@@ -70,7 +70,7 @@ void autonomous() {
       drive.driveManuallyAction(0, 40, 30, true),
       Triggers::compoundOrTrigger(
         AutonTimer::timeHasPassedTrigger(3),
-        PositionTracker::isNearPointTrigger(Point(0, 10), 1))));
+        PositionTracker::isNearPointTrigger(0, 10, 1))));
 
   AsyncAction startIntaking =
   *AsyncActionFactory::makeAsyncAction()->hasTrigger(ActionTrigger(
