@@ -140,9 +140,9 @@ std::function<bool()> PositionTracker::isNearAngleTrigger(double target, double 
 }
 
 void PositionTracker::resetRotation(){
-		leftEnc.reset();
-		rightEnc.reset();
-		backEnc.reset();
+		lEnc.reset();
+		rEnc.reset();
+		bEnc.reset();
 		pLeftEnc = 0;
 		pRightEnc = 0;
 		pBackEnc = 0;

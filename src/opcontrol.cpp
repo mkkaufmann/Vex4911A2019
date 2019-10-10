@@ -57,7 +57,7 @@ void runSubsystems(){
   }
   tilter.in();
   tilter.out();
-  if(master.get_digital(DIGITAL_X){
+  if(master.get_digital(DIGITAL_X)){
 		tracker.resetRotation();
   }
 }
