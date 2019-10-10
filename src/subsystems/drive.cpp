@@ -167,7 +167,7 @@ double Drive::getWheelOutput(PolarPoint stick, double angleOffset, bool isManual
     radians -= /*std::fmod(*/PositionTracker::getTheta()/*, M_2_PI)*/;
   }
   //multiply by curved radius if it's manual
-  return (!isManual ? stick.getRadius() : Util::convertToPercent(Util::curveJoystick(true, Util::convertToVoltage(stick.getRadius()), 5))) * std::sin(radians);
+  return (!isManual ? stick.getRadius() : Util::convertToPercent(Util::curveJoystick(false, Util::convertToVoltage(stick.getRadius()), 15))) * std::sin(radians);
 };
 
 Point Drive::getWheelVector(double speed, double rotation){
@@ -184,7 +184,7 @@ void Drive::generateOutputs(int x, int y, int r, int outputs[], bool isManual){
 
   //rotation input
   //TODO tune values here/extract them
-  double rotInput = isManual ? Util::convertToPercent(Util::curveJoystick(true, r, 5)) :Util::convertToPercent(r);
+  double rotInput = isManual ? Util::convertToPercent(Util::curveJoystick(false, r, 20)) :Util::convertToPercent(r);
 
 
   //create fake joystick values for rotation of each wheel based on the angles of the wheels
