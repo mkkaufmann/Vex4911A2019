@@ -31,7 +31,8 @@ void Drive::drivePseudoManual(int x, int y, int r){
 std::function<void()> Drive::driveManuallyAction(int x, int y, int r, bool isFieldCentric){
   return [=]()->void{
     fieldCentric = isFieldCentric;
-    drivePseudoManual(x, y, r);
+//    drivePseudoManual(x, y, r);
+    driveManually(x,y,r);//test this
   };
 }
 
