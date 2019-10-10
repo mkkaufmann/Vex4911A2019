@@ -21,11 +21,13 @@ TODO
 1 | L implement Util::loopAngle() and replace use cases
 3 | M ability to set starting position in auton
 4 | L make lambda captures more efficient using const refs
-3 | H reset odometry button
+3 | L reset odometry button
 
 UNTESTED
 3 | H drive towards point
 1 | H rotation trigger
+2 | H reset rotation button
+2 | moved controls to partner controller
 
 COMPLETED
 2 | H setpoints for stacker angle

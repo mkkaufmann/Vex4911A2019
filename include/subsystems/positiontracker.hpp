@@ -30,16 +30,8 @@ public:
   static std::function<bool()> isInRegionTrigger(double x1, double y1, double x2, double y2);
   static std::function<bool()> isNearPointTrigger(double x, double y, double epsilonInches);
   static std::function<bool()> isNearAngleTrigger(double target, double epsilonRadians);
+  void resetRotation();
 
-  // void reset(){
-  //   leftEncAtLastReset = pLeftEnc;
-  //   rightEncAtLastReset = pRightEnc;
-  //   thetaAtLastReset = pTheta;
-  // }
-
-  // static std::function<bool()> getIsNearRotationTrigger(){
-  //
-  // }
 private:
   static PositionTracker* instance;
   PositionTracker();

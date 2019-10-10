@@ -139,6 +139,19 @@ std::function<bool()> PositionTracker::isNearAngleTrigger(double target, double 
   };
 }
 
+void PositionTracker::resetRotation(){
+		leftEnc.reset();
+		rightEnc.reset();
+		backEnc.reset();
+		pLeftEnc = 0;
+		pRightEnc = 0;
+		pBackEnc = 0;
+		pTheta = 0;
+		leftEncAtLastReset = 0;
+		rightEncAtLastReset = 0;
+		thetaAtLastReset = 0;
+}
+
 PositionTracker::PositionTracker(){
   //previous values
   pLeftEnc = 0;

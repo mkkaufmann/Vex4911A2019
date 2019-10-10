@@ -33,6 +33,7 @@
  pros::Motor stacker1Motor = pros::Motor(Constants::STACKER_TREAD_1_MOTOR_PORT);
  pros::Motor stacker2Motor = pros::Motor(Constants::STACKER_TREAD_2_MOTOR_PORT);
  pros::Controller master = pros::Controller(pros::E_CONTROLLER_MASTER);
+ pros::Controller partner = pros::Controller(pros::E_CONTROLLER_PARTNER);
 
 void runSubsystems(){
   //update drive output
@@ -40,7 +41,7 @@ void runSubsystems(){
   drive.updateFieldCentric(master.get_digital(DIGITAL_B));
   //run every subsystem
   stacker.in();
-  stacker.stateChangeRequest(master.get_digital(DIGITAL_UP), master.get_digital(DIGITAL_DOWN));
+  stacker.stateChangeRequest(partner.get_digital(DIGITAL_UP), partner.get_digital(DIGITAL_DOWN));
   stacker.out();
   stacker1Motor.move(stacker.getOutput());
   stacker2Motor.move(-stacker.getOutput());
@@ -48,14 +49,17 @@ void runSubsystems(){
   drive.out();
   tracker.in();
   tracker.out();
-  if(left.update(master.get_digital(DIGITAL_LEFT))){
+  if(left.update(partner.get_digital(DIGITAL_LEFT))){
     tilter.shiftDown();
   }
-  if(right.update(master.get_digital(DIGITAL_RIGHT))){
+  if(right.update(partner.get_digital(DIGITAL_RIGHT))){
     tilter.shiftUp();
   }
   tilter.in();
   tilter.out();
+  if(master.get_digital(DIGITAL_X){
+		tracker.resetRotation();
+  }
 }
 
 void updateScreen(){
