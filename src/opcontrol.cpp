@@ -41,7 +41,7 @@ void runSubsystems(){
   drive.updateFieldCentric(master.get_digital(DIGITAL_B));
   //run every subsystem
   stacker.in();
-  stacker.stateChangeRequest(partner.get_digital(DIGITAL_UP), partner.get_digital(DIGITAL_DOWN));
+  stacker.stateChangeRequest(master.get_digital(DIGITAL_L1), master.get_digital(DIGITAL_L2));
   stacker.out();
   stacker1Motor.move(stacker.getOutput());
   stacker2Motor.move(-stacker.getOutput());
@@ -49,10 +49,10 @@ void runSubsystems(){
   drive.out();
   tracker.in();
   tracker.out();
-  if(left.update(partner.get_digital(DIGITAL_LEFT))){
+  if(left.update(master.get_digital(DIGITAL_R1))){
     tilter.shiftDown();
   }
-  if(right.update(partner.get_digital(DIGITAL_RIGHT))){
+  if(right.update(master.get_digital(DIGITAL_R2))){
     tilter.shiftUp();
   }
   tilter.in();

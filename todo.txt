@@ -22,12 +22,13 @@ TODO
 3 | M ability to set starting position in auton
 4 | L make lambda captures more efficient using const refs
 3 | L reset odometry button
+4 | M drive towards and face point
 
 UNTESTED
 3 | H drive towards point
 1 | H rotation trigger
 2 | H reset rotation button
-2 | moved controls to partner controller
+2 | H moved controls to partner controller
 
 COMPLETED
 2 | H setpoints for stacker angle

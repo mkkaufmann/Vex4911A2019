@@ -52,7 +52,7 @@ void Tilter::out(){
       tilterMotor.move_absolute(DOWN_ENC, 40);
       break;
     case MID:
-      tilterMotor.move_absolute(MID_ENC, 127);
+      tilterMotor.move_absolute(MID_ENC, 100);
       break;
     case UP:
       tilterMotor.move_absolute(UP_ENC, 50);

@@ -57,10 +57,22 @@ void autonomous() {
   AsyncAction driveFor3Seconds =
   *AsyncActionFactory::makeAsyncAction()->hasTrigger(ActionTrigger(
       Triggers::trueTrigger()))->hasAction(Action(
-      drive.driveManuallyAction(0, 40, 0, true),
-      Triggers::compoundOrTrigger(
-        AutonTimer::timeHasPassedTrigger(3),
-        PositionTracker::isNearPointTrigger(0, 10, 1))));
+      drive.driveManuallyAction(0, 100, 0, true),
+        PositionTracker::isNearPointTrigger(0, 10, 1)));
+
+
+  AsyncAction backDriving =
+  *AsyncActionFactory::makeAsyncAction()->hasTrigger(ActionTrigger(
+      (Triggers::compoundOrTrigger(AutonTimer::timeHasPassedTrigger(3), PositionTracker::isNearPointTrigger(0,10,1)))))->hasAction(Action(
+      drive.driveManuallyAction(0, -127, 0, true),
+      AutonTimer::timeHasPassedTrigger(6)));
+
+  
+  AsyncAction stopDriving =
+  *AsyncActionFactory::makeAsyncAction()->hasTrigger(ActionTrigger(
+      (Triggers::compoundOrTrigger(AutonTimer::timeHasPassedTrigger(6), PositionTracker::isNearPointTrigger(0,10,1)))))->hasAction(Action(
+      drive.driveManuallyAction(0, 0, 0, true),
+      AutonTimer::timeHasPassedTrigger(15)));
 
   AsyncAction startIntaking =
   *AsyncActionFactory::makeAsyncAction()->hasTrigger(ActionTrigger(
@@ -68,9 +80,35 @@ void autonomous() {
       stacker.getIntakeAction(),
       Triggers::trueTrigger()));
 
+		/*
+		 * start intake
+		 * drive forward and seek forward orientation 2 ft
+		 * seek facing and drive towards scoring zone
+		 * move the arms out?
+		 * tilt up
+		 * back up 1 ft
+		 * 
+		 *
+		 *
+		 * AsyncAction startIntake =
+		 * *AsyncActionFactory::makeAsyncAction()->hasTrigger(ActionTrigger(
+		 *	Triggers::trueTrigger()))->hasAction(Action(
+		 *		Stacker::UNDEFINED_INTAKE_ACTION(),
+		 *		Triggers::timeHasPassedTrigger(15)));
+		 *
+		 *
+		 *
+		 *
+		 *
+		 *
+		 *
+		 *
+		 */
     std::vector<AsyncAction> actions;
     actions.push_back(manageSubsystems);
     actions.push_back(driveFor3Seconds);
+    actions.push_back(backDriving);
+    actions.push_back(stopDriving);
     actions.push_back(startIntaking);
     std::vector<AsyncAction>::iterator it;
   AutonTimer::start();

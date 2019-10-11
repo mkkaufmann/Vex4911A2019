@@ -28,19 +28,21 @@ void Stacker::manual(int out){
 
 
 void Stacker::stateChangeRequest(bool intakePressed, bool outtakePressed){
-  if(intakeToggle.update(intakePressed)){
+  if(intakePressed){
     if(state == IN){
       stop();
     }else{
       intake();
     }
-  }else if(outtakeToggle.update(outtakePressed)){
+  }else if(outtakePressed){//untoggled
     if(state == OUT){
       stop();
     }else{
       outtake();
     }
-  }
+  }else{
+		  stop();
+		}
 }
 
 
@@ -84,6 +86,8 @@ int Stacker::getState(){
     case OUT:
       return 3;
       break;
+    default:
+	  return -1;
   }
 }
 
@@ -105,6 +109,6 @@ Stacker::Stacker(){
   intakeToggle = LatchedBoolean();
   outtakeToggle = LatchedBoolean();
   intakeAction = [this]()->void{intake();};
-  outtakeAction = [this]()->void{intake();};
-  state = NEUTRAL;
+  outtakeAction = [this]()->void{outtake();};
+  state = NEUTRAL; 
 };
