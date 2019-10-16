@@ -11,7 +11,8 @@
 #include "util/asyncactionfactory.hpp"
 #include "subsystems/stacker.hpp"
 #include "util/triggers.hpp"
-
+#include "main.h"
+#include <memory>
 /**
  * Runs the user autonomous code. This function will be started in its own task
  * with the default priority and stack size whenever the robot is enabled via
@@ -34,12 +35,11 @@ void autonomous() {
   Drive drive = *Drive::getInstance();
   PositionTracker tracker = *PositionTracker::getInstance();
   Stacker stacker = *Stacker::getInstance();
-
-
+  okapi::Logger::initialize(std::make_unique<okapi::Timer>(), "/usd/debug.txt", okapi::Logger::LogLevel::debug);
   double startTime = 0;
   double driveEndTime = startTime + 3;//3
   double endTime = 15;
-
+  
   //runs all subsystems for 15 seconds (or regular autonomous)
   AsyncAction manageSubsystems =
   *AsyncActionFactory::makeAsyncAction()->hasTrigger(ActionTrigger(
@@ -114,8 +114,8 @@ void autonomous() {
   AutonTimer::start();
 	while (true) {
     if(AutonTimer::fifteenSecondsPassed()){
-      std::cout << "time passed" << std::endl;
-    }
+		okapi::Logger::instance()->debug("fifteen seconds");
+	}
     for(auto &it : actions){
      			it.run();
     }

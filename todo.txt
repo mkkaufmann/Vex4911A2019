@@ -23,12 +23,13 @@ TODO
 4 | L make lambda captures more efficient using const refs
 3 | L reset odometry button
 4 | M drive towards and face point
-
+5 | URGENT fix triggers and test odometry
+2 | H moved controls to partner controller
+3 | M merge with okapilib
 UNTESTED
 3 | H drive towards point
 1 | H rotation trigger
-2 | H reset rotation button
-2 | H moved controls to partner controller
 
 COMPLETED
 2 | H setpoints for stacker angle
+2 | H reset rotation button

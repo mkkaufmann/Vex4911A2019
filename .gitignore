@@ -14,8 +14,3 @@ temp.log
 temp.errors
 *.ini
 .d/
-
-include/pros
-include/display
-include/okapi
-firmware
