@@ -35,11 +35,11 @@ void autonomous() {
   Drive drive = *Drive::getInstance();
   PositionTracker tracker = *PositionTracker::getInstance();
   Stacker stacker = *Stacker::getInstance();
-  okapi::Logger::initialize(std::make_unique<okapi::Timer>(), "/usd/debug.txt", okapi::Logger::LogLevel::debug);
+  //okapi::Logger::initialize(std::make_unique<okapi::Timer>(), "/usd/debug.txt", okapi::Logger::LogLevel::debug);
   double startTime = 0;
   double driveEndTime = startTime + 3;//3
   double endTime = 15;
-  
+
   //runs all subsystems for 15 seconds (or regular autonomous)
   AsyncAction manageSubsystems =
   *AsyncActionFactory::makeAsyncAction()->hasTrigger(ActionTrigger(
@@ -60,6 +60,12 @@ void autonomous() {
       drive.driveManuallyAction(0, 100, 0, true),
         PositionTracker::isNearPointTrigger(0, 10, 1)));
 
+
+  AsyncAction driveToPoint =
+  *AsyncActionFactory::makeAsyncAction()->hasTrigger(ActionTrigger(
+      Triggers::trueTrigger()))->hasAction(Action(
+      drive.driveTowardsPointAction(20, 20),
+        PositionTracker::isNearPointTrigger(20, 20, 1)));
 
   AsyncAction backDriving =
   *AsyncActionFactory::makeAsyncAction()->hasTrigger(ActionTrigger(
@@ -106,7 +112,7 @@ void autonomous() {
 		 */
     std::vector<AsyncAction> actions;
     actions.push_back(manageSubsystems);
-    actions.push_back(driveFor3Seconds);
+    actions.push_back(driveToPoint);
     actions.push_back(backDriving);
     actions.push_back(stopDriving);
     actions.push_back(startIntaking);
@@ -114,7 +120,7 @@ void autonomous() {
   AutonTimer::start();
 	while (true) {
     if(AutonTimer::fifteenSecondsPassed()){
-		okapi::Logger::instance().debug("fifteen seconds");
+	//	okapi::Logger::instance()->debug("fifteen seconds");
 	}
     for(auto &it : actions){
      			it.run();
