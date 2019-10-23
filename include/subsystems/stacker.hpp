@@ -15,6 +15,8 @@ public:
 
   void outtake();
 
+  void slowOuttake();
+
   void manual(int out);
 
   void stateChangeRequest(bool intakePressed, bool outtakePressed);

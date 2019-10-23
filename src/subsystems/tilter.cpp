@@ -1,4 +1,4 @@
-#include "tilter.hpp"
+#include "subsystems/tilter.hpp"
 #include "util/util.hpp"
 
 Tilter* Tilter::getInstance(){
@@ -26,10 +26,10 @@ void Tilter::out(){
       tilterMotor.move_absolute(DOWN_ENC, 127);
       break;
     case MID:
-      tilterMotor.move_absolute(MID_ENC, 127);
+      tilterMotor.move_absolute(MID_ENC, 127 * 0.8);
       break;
     case UP:
-      tilterMotor.move_absolute(UP_ENC, 127);
+      tilterMotor.move_absolute(UP_ENC, 127 * 0.5);
       break;
     default:
       //do nothing
@@ -46,9 +46,6 @@ std::function<void()> Tilter::outAction(){
 void Tilter::shiftUp(){
   switch(state){
     case DOWN:
-      state = MID;
-      break;
-    case MID:
       state = UP;
       break;
     default:
@@ -61,9 +58,7 @@ void Tilter::shiftDown(){
   switch(state){
     case UP:
       //fall through
-    case MID:
-      state = DOWN;
-      break;
+	  state = DOWN;
     default:
       //rumble
       break;
@@ -82,5 +77,5 @@ Tilter::Tilter(){
 }
 
 const int Tilter::DOWN_ENC = 0;
-const int Tilter::MID_ENC = 280 * 3;//tune
-const int Tilter::UP_ENC = 590 * 3;//tune
+const int Tilter::MID_ENC = -2000;//tune
+const int Tilter::UP_ENC = -2100;//tune

@@ -60,7 +60,7 @@ std::function<void()> Drive::driveTowardsPointAction(double x, double y){
 
     int xSpeed = scaled_dx * smoothFactor;
     int ySpeed = scaled_dy * smoothFactor;
-    drivePseudoManual(xSpeed, ySpeed, 0);
+    drivePseudoManual(-xSpeed, ySpeed, 0);
   };
 }
 

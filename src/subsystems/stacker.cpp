@@ -21,6 +21,11 @@ void Stacker::outtake(){
 };
 
 
+void Stacker::slowOuttake(){
+  state = OUT;
+  output = 127 * 0.5;
+};
+
 void Stacker::manual(int out){
   state = MANUAL;
   output = out;

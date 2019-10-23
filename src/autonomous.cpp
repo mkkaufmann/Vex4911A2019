@@ -61,18 +61,22 @@ void autonomous() {
         PositionTracker::isNearPointTrigger(0, 10, 1)));
 
 
-  AsyncAction driveToPoint =
+  AsyncAction driveToPoint1 =
   *AsyncActionFactory::makeAsyncAction()->hasTrigger(ActionTrigger(
       Triggers::trueTrigger()))->hasAction(Action(
       drive.driveTowardsPointAction(20, 20),
         PositionTracker::isNearPointTrigger(20, 20, 1)));
 
+  AsyncAction stopDriving1 = 
+		*AsyncActionFactory::makeAsyncAction()->hasTrigger(ActionTrigger(
+								PositionTracker::isNearPointTrigger(20, 20, 1)))->hasAction(Action(
+								drive.driveManuallyAction(0, 0, 0, true), 
+								Triggers::trueTrigger()));
   AsyncAction backDriving =
   *AsyncActionFactory::makeAsyncAction()->hasTrigger(ActionTrigger(
       (Triggers::compoundOrTrigger(AutonTimer::timeHasPassedTrigger(3), PositionTracker::isNearPointTrigger(0,10,1)))))->hasAction(Action(
       drive.driveManuallyAction(0, -127, 0, true),
       AutonTimer::timeHasPassedTrigger(6)));
-
   
   AsyncAction stopDriving =
   *AsyncActionFactory::makeAsyncAction()->hasTrigger(ActionTrigger(
@@ -112,9 +116,9 @@ void autonomous() {
 		 */
     std::vector<AsyncAction> actions;
     actions.push_back(manageSubsystems);
-    actions.push_back(driveToPoint);
-    actions.push_back(backDriving);
-    actions.push_back(stopDriving);
+    actions.push_back(driveToPoint1);
+   // actions.push_back(backDriving);
+    actions.push_back(stopDriving1);
     actions.push_back(startIntaking);
     std::vector<AsyncAction>::iterator it;
   AutonTimer::start();
