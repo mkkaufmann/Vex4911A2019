@@ -15,6 +15,7 @@ public:
 private:
 	//used for single run functions
 	bool firstRun;
+	bool hasFinished;
 	std::function<void()> actionMethod;
 	std::function<bool()> finishedMethod;
 };

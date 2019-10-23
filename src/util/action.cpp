@@ -1,4 +1,4 @@
-#include "action.hpp"
+#include "util/action.hpp"
 #include <functional>
 #include <iostream>
 
@@ -6,12 +6,14 @@ Action::Action(){
   actionMethod = [](){};
   finishedMethod = []()->bool{return true;};
   firstRun = true;
+  hasFinished = false;
 }
 
 Action::Action(std::function<void()> _actionMethod, std::function<bool()> finished){
   actionMethod = _actionMethod;
   finishedMethod = finished;
   firstRun = true;
+  hasFinished = false;
 }
 
 void Action::run(){
@@ -20,7 +22,10 @@ void Action::run(){
   // }else{
   //   std::cout << "not finished" << std::endl;
   // }
-  if(!isFinished() || firstRun){
+  if(finishedMethod()){
+		  hasFinished = true;
+  }
+  if(!hasFinished || firstRun){
     // std::cout << "inside action run" << std::endl;
     actionMethod();
     firstRun = false;
@@ -28,5 +33,5 @@ void Action::run(){
 }
 
 bool Action::isFinished(){
-  return finishedMethod() && !firstRun;
+  return hasFinished && !firstRun;
 }

@@ -3,9 +3,9 @@
 #include <future>
 #include <functional>
 #include <vector>
-#include "action.hpp"
-#include "actiontrigger.hpp"
-#include "asyncaction.hpp"
+#include "util/action.hpp"
+#include "util/actiontrigger.hpp"
+#include "util/asyncaction.hpp"
 
 //test subsystem for async actions
 /*class TestSubsystem{
