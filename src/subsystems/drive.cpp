@@ -6,7 +6,7 @@ Drive* Drive::getInstance(){
   }
   return instance;
 };
-
+ 
 void Drive::stop(){
   state = NEUTRAL;
   out();
@@ -60,7 +60,8 @@ std::function<void()> Drive::driveTowardsPointAction(double x, double y){
 
     int xSpeed = scaled_dx * smoothFactor;
     int ySpeed = scaled_dy * smoothFactor;
-    drivePseudoManual(-xSpeed, ySpeed, 0);
+    drivePseudoManual(-xSpeed * 3, ySpeed * 3, 0);
+
   };
 }
 
@@ -124,14 +125,14 @@ void Drive::out(){
       rightRearMotor.move(0);
       break;
     case MANUAL:
-      leftFrontMotor.move(outputs[0]);
-      leftRearMotor.move(outputs[1]);
+      leftFrontMotor.move(-outputs[0]);
+      leftRearMotor.move(-outputs[1]);
       rightFrontMotor.move(outputs[2]);
       rightRearMotor.move(outputs[3]);
       break;
     case PATH_FOLLOWING:
-      leftFrontMotor.move(outputs[0]);
-      leftRearMotor.move(outputs[1]);
+      leftFrontMotor.move(-outputs[0]);
+      leftRearMotor.move(-outputs[1]);
       rightFrontMotor.move(outputs[2]);
       rightRearMotor.move(outputs[3]);
       break;

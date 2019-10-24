@@ -50,13 +50,18 @@ public:
     MANUAL,
 		PATH_FOLLOWING
   };
+
+	okapi::Motor leftFrontMotor = okapi::Motor(Constants::LEFT_FRONT_MOTOR_PORT);
+	okapi::Motor leftRearMotor = okapi::Motor(Constants::LEFT_REAR_MOTOR_PORT);
+	okapi::Motor rightFrontMotor = okapi::Motor(Constants::RIGHT_FRONT_MOTOR_PORT);
+	okapi::Motor rightRearMotor = okapi::Motor(Constants::RIGHT_REAR_MOTOR_PORT);
 private:
 	//initialize motors
-	pros::Motor leftFrontMotor = pros::Motor(Constants::LEFT_FRONT_MOTOR_PORT);
-	pros::Motor leftRearMotor = pros::Motor(Constants::LEFT_REAR_MOTOR_PORT);
-	pros::Motor rightFrontMotor = pros::Motor(Constants::RIGHT_FRONT_MOTOR_PORT);
-	pros::Motor rightRearMotor = pros::Motor(Constants::RIGHT_REAR_MOTOR_PORT);
 
+//	pros::Motor leftFrontMotor = pros::Motor(Constants::LEFT_FRONT_MOTOR_PORT);
+//	pros::Motor leftRearMotor = pros::Motor(Constants::LEFT_REAR_MOTOR_PORT);
+//	pros::Motor rightFrontMotor = pros::Motor(Constants::RIGHT_FRONT_MOTOR_PORT);
+//	pros::Motor rightRearMotor = pros::Motor(Constants::RIGHT_REAR_MOTOR_PORT);
 	//singleton instance
   static Drive* instance;
 

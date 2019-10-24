@@ -24,8 +24,8 @@ double facingBackward = Util::toRadians(270);
 //initialize static values
 
 //ports
-int Constants::LEFT_FRONT_MOTOR_PORT = 1;
-int Constants::LEFT_REAR_MOTOR_PORT = 2;
+int Constants::LEFT_FRONT_MOTOR_PORT = -1;
+int Constants::LEFT_REAR_MOTOR_PORT = -2;
 int Constants::RIGHT_FRONT_MOTOR_PORT = 3;
 int Constants::RIGHT_REAR_MOTOR_PORT = 4;
 int Constants::STACKER_TREAD_2_MOTOR_PORT = 5;
@@ -99,3 +99,122 @@ void disabled() {}
  * starts.
  */
 void competition_initialize() {}
+
+		auto stacker1 = okapi::Motor(6);
+		auto stacker2 = okapi::Motor(-5);
+Drive drive = *Drive::getInstance();
+void autonomous(){
+
+		using namespace okapi;
+		auto topLeft = okapi::Motor(4);
+		auto topRight = okapi::Motor(-1);
+		auto bottomRight = okapi::Motor(-2);
+		auto bottomLeft = okapi::Motor(3);
+		auto drivetrain = okapi::ChassisControllerFactory::create(
+						topLeft, 
+						topRight, 
+						bottomRight, 
+						bottomLeft, 
+						okapi::AbstractMotor::gearset::green, 
+						{4 * okapi::inch, 13 * okapi::inch}
+						);
+		
+		auto profileFollower =okapi::AsyncControllerFactory::motionProfile(
+						0.5,
+						1.0,
+						5.0,
+						drivetrain
+						);
+		bool isLeft = true;
+		profileFollower.generatePath({
+						okapi::Point{0_ft, 0_ft, 0_deg},
+						okapi::Point{1.6_ft, (isLeft?0.2_ft:-0.2_ft), 0_deg}},
+						"B"
+						);
+		profileFollower.generatePath({
+						okapi::Point{0_ft, 0_ft, 0_deg},
+						okapi::Point{0.8_ft, 0_ft, 0_deg}},
+						"A"
+						);
+		profileFollower.setTarget("B", isLeft);
+		profileFollower.waitUntilSettled();
+		profileFollower.setTarget("A", !isLeft);
+		profileFollower.waitUntilSettled();
+		stacker1.move(50);
+		stacker2.move(50);
+		pros::delay(2000);
+		stacker1.move(-50);
+		stacker2.move(-50);
+		pros::delay(2000);
+		stacker1.move(0);
+		stacker2.move(0);
+		drivetrain.moveDistance(1_ft);
+		drivetrain.moveDistance(-1_ft);
+}
+
+
+ PositionTracker tracker = *PositionTracker::getInstance();
+ Stacker stacker = *Stacker::getInstance();
+ Tilter tilter = *Tilter::getInstance();
+ OI oi = *OI::getInstance();
+
+ LatchedBoolean left = LatchedBoolean();
+ LatchedBoolean right = LatchedBoolean();
+ pros::Controller master = pros::Controller(pros::E_CONTROLLER_MASTER);
+ pros::Controller partner = pros::Controller(pros::E_CONTROLLER_PARTNER);
+
+void runSubsystems(){
+  //update drive output
+  drive.driveManually(-master.get_analog(ANALOG_RIGHT_X), master.get_analog(ANALOG_RIGHT_Y), master.get_analog(ANALOG_LEFT_X));
+  drive.updateFieldCentric(master.get_digital(DIGITAL_B));
+  //run every subsystem
+  stacker.in();
+//  stacker.stateChangeRequest(master.get_digital(DIGITAL_L1), master.get_digital(DIGITAL_L2));
+  if(master.get_digital(DIGITAL_A)){
+				  stacker.slowOuttake();
+  }else if(master.get_digital(DIGITAL_R1)){
+		  stacker.outtake();
+  }else if(master.get_digital(DIGITAL_R2)){
+		  stacker.intake();
+  }else{
+		stacker.stop();
+  }
+
+  stacker.out();
+  stacker1.move(stacker.getOutput());
+  stacker2.move(stacker.getOutput());
+  drive.in();
+  drive.out();
+  tracker.in();
+  tracker.out();
+  if(left.update(master.get_digital(DIGITAL_L2))){
+    tilter.shiftDown();
+  }
+  if(right.update(master.get_digital(DIGITAL_L1))){
+    tilter.shiftUp();
+  }
+  tilter.in();
+  tilter.out();
+  if(master.get_digital(DIGITAL_X)){
+tracker.resetRotation();
+  }
+}
+
+void updateScreen(){
+  UIHelper::updateDisplay(
+    tracker.getLEncValue(),
+    tracker.getREncValue(),
+    tracker.getBEncValue(),
+    tracker.getGlobalPosition().getX(),
+    tracker.getGlobalPosition().getY(),
+    tracker.getTheta()
+  );
+}
+
+void opcontrol() {
+	while (true) {
+    runSubsystems();
+    updateScreen();
+		pros::delay(20);
+	}
+}

@@ -67,9 +67,16 @@ void autonomous() {
       drive.driveTowardsPointAction(20, 20),
         PositionTracker::isNearPointTrigger(20, 20, 1)));
 
+
+  AsyncAction driveToPoint2 =
+  *AsyncActionFactory::makeAsyncAction()->hasTrigger(ActionTrigger(
+      PositionTracker::isNearPointTrigger(20,20,1)))->hasAction(Action(
+      drive.driveTowardsPointAction(20, 0),
+        PositionTracker::isNearPointTrigger(20, 0, 1)));
+
   AsyncAction stopDriving1 = 
 		*AsyncActionFactory::makeAsyncAction()->hasTrigger(ActionTrigger(
-								PositionTracker::isNearPointTrigger(20, 20, 1)))->hasAction(Action(
+								PositionTracker::isNearPointTrigger(20, 0, 1)))->hasAction(Action(
 								drive.driveManuallyAction(0, 0, 0, true), 
 								Triggers::trueTrigger()));
   AsyncAction backDriving =
@@ -117,6 +124,7 @@ void autonomous() {
     std::vector<AsyncAction> actions;
     actions.push_back(manageSubsystems);
     actions.push_back(driveToPoint1);
+    actions.push_back(driveToPoint2);
    // actions.push_back(backDriving);
     actions.push_back(stopDriving1);
     actions.push_back(startIntaking);
