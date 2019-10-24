@@ -72,6 +72,34 @@ double PathFollower::iterationsForSettle = 5;//100ms
 
 int AutonTimer::startTime = -1;
 
+
+
+
+
+
+		using namespace okapi; 
+		auto topLeft = okapi::Motor(4);
+		auto topRight = okapi::Motor(-1);
+		auto bottomRight = okapi::Motor(-2);
+		auto bottomLeft = okapi::Motor(3);
+		auto drivetrain = okapi::ChassisControllerFactory::create(
+						topLeft, 
+						topRight, 
+						bottomRight, 
+						bottomLeft, 
+						okapi::AbstractMotor::gearset::green, 
+						{4 * okapi::inch, 13 * okapi::inch}
+						);
+		
+		auto profileFollower =okapi::AsyncControllerFactory::motionProfile(
+						0.5,
+						1.0,
+						5.0,
+						drivetrain
+						);
+		bool isLeft = true;
+
+
 /**
  * Runs initialization code. This occurs as soon as the program is started.
  *
@@ -80,6 +108,16 @@ int AutonTimer::startTime = -1;
  */
 void initialize() {
  UIHelper::initialize();
+		profileFollower.generatePath({
+						okapi::Point{0_ft, 0_ft, 0_deg},
+						okapi::Point{1.6_ft, (isLeft?0.2_ft:-0.2_ft), 0_deg}},
+						"B"
+						);
+		profileFollower.generatePath({
+						okapi::Point{0_ft, 0_ft, 0_deg},
+						okapi::Point{0.8_ft, 0_ft, 0_deg}},
+						"A"
+						);
 }
 
 /**
@@ -102,44 +140,17 @@ void competition_initialize() {}
 
 		auto stacker1 = okapi::Motor(6);
 		auto stacker2 = okapi::Motor(-5);
-Drive drive = *Drive::getInstance();
+        Drive drive = *Drive::getInstance();
 void autonomous(){
 
 		using namespace okapi;
-		auto topLeft = okapi::Motor(4);
-		auto topRight = okapi::Motor(-1);
-		auto bottomRight = okapi::Motor(-2);
-		auto bottomLeft = okapi::Motor(3);
-		auto drivetrain = okapi::ChassisControllerFactory::create(
-						topLeft, 
-						topRight, 
-						bottomRight, 
-						bottomLeft, 
-						okapi::AbstractMotor::gearset::green, 
-						{4 * okapi::inch, 13 * okapi::inch}
-						);
-		
-		auto profileFollower =okapi::AsyncControllerFactory::motionProfile(
-						0.5,
-						1.0,
-						5.0,
-						drivetrain
-						);
-		bool isLeft = true;
-		profileFollower.generatePath({
-						okapi::Point{0_ft, 0_ft, 0_deg},
-						okapi::Point{1.6_ft, (isLeft?0.2_ft:-0.2_ft), 0_deg}},
-						"B"
-						);
-		profileFollower.generatePath({
-						okapi::Point{0_ft, 0_ft, 0_deg},
-						okapi::Point{0.8_ft, 0_ft, 0_deg}},
-						"A"
-						);
 		profileFollower.setTarget("B", isLeft);
 		profileFollower.waitUntilSettled();
+	    profileFollower.removePath("B");
 		profileFollower.setTarget("A", !isLeft);
 		profileFollower.waitUntilSettled();
+	    profileFollower.removePath("A");
+
 		stacker1.move(50);
 		stacker2.move(50);
 		pros::delay(2000);
