@@ -29,7 +29,7 @@ void Tilter::out(){
       tilterMotor.move_absolute(MID_ENC, 127 * 0.8);
       break;
     case UP:
-      tilterMotor.move_absolute(UP_ENC, 127 * 0.5);
+      tilterMotor.move_absolute(UP_ENC, 127 * 0.4);
       break;
     default:
       //do nothing
@@ -78,4 +78,4 @@ Tilter::Tilter(){
 
 const int Tilter::DOWN_ENC = 0;
 const int Tilter::MID_ENC = -2000;//tune
-const int Tilter::UP_ENC = -2100;//tune
+const int Tilter::UP_ENC = -2200;//tune

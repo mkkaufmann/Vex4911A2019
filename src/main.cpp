@@ -63,7 +63,7 @@ double PositionTracker::thetaAtLastReset = PositionTracker::pTheta;
 Point PositionTracker::globalPosition = Point(0,0);
 
 //set initial drive setting
-bool Drive::fieldCentric = true;
+bool Drive::fieldCentric = false;
 //used for changing the above setting during a match
 LatchedBoolean Drive::fieldCentricToggle = LatchedBoolean();
 
@@ -181,7 +181,7 @@ void runSubsystems(){
   //run every subsystem
   stacker.in();
 //  stacker.stateChangeRequest(master.get_digital(DIGITAL_L1), master.get_digital(DIGITAL_L2));
-  if(master.get_digital(DIGITAL_A)){
+  if(master.get_digital(DIGITAL_LEFT)){
 				  stacker.slowOuttake();
   }else if(master.get_digital(DIGITAL_R1)){
 		  stacker.outtake();
