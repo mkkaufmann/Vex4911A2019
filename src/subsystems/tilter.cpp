@@ -25,11 +25,13 @@ void Tilter::out(){
     case DOWN:
       tilterMotor.move_absolute(DOWN_ENC, 127);
       break;
-    case MID:
-      tilterMotor.move_absolute(MID_ENC, 127 * 0.8);
-      break;
     case UP:
-      tilterMotor.move_absolute(UP_ENC, 127 * 0.4);
+		//macro
+		if(tilterMotor.get_position() > MID_ENC){
+				tilterMotor.move_absolute(UP_ENC, 127 * 0.8);
+		}else{
+				tilterMotor.move_absolute(UP_ENC, 127 * 0.4);
+		}
       break;
     default:
       //do nothing
@@ -49,7 +51,7 @@ void Tilter::shiftUp(){
       state = UP;
       break;
     default:
-      //rumble
+      //TODO: rumble
       break;
   }
 }
@@ -57,7 +59,6 @@ void Tilter::shiftUp(){
 void Tilter::shiftDown(){
   switch(state){
     case UP:
-      //fall through
 	  state = DOWN;
     default:
       //rumble
@@ -77,5 +78,5 @@ Tilter::Tilter(){
 }
 
 const int Tilter::DOWN_ENC = 0;
-const int Tilter::MID_ENC = -2000;//tune
+const int Tilter::MID_ENC = -1800;//tune
 const int Tilter::UP_ENC = -2200;//tune
