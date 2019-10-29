@@ -15,6 +15,8 @@
 #include "util/autontimer.hpp"
 #include "subsystems/tilter.hpp"
 
+bool isLeft = true;
+
 //starting orientations
 double facingForward = Util::toRadians(0);
 double facingLeft = Util::toRadians(90);//not sure
@@ -97,7 +99,6 @@ int AutonTimer::startTime = -1;
 						5.0,
 						drivetrain
 						);
-		bool isLeft = true;
 
 
 /**
