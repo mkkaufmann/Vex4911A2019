@@ -15,6 +15,8 @@
 #include "util/autontimer.hpp"
 #include "subsystems/tilter.hpp"
 
+
+//edit this
 bool isLeft = true;
 
 //starting orientations
