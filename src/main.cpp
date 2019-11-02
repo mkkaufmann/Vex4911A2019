@@ -157,9 +157,6 @@ void autonomous(){
 		stacker1.move(50);
 		stacker2.move(50);
 		pros::delay(2000);
-		stacker1.move(-50);
-		stacker2.move(-50);
-		pros::delay(2000);
 		stacker1.move(0);
 		stacker2.move(0);
 		drivetrain.moveDistance(1_ft);
