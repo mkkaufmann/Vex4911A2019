@@ -28,9 +28,12 @@ void Tilter::out(){
     case UP:
 		//macro
 		if(tilterMotor.get_position() > MID_ENC){
-				tilterMotor.move_absolute(UP_ENC, 127 * 0.8);
+				tilterMotor.move_absolute(UP_ENC, 127 * 1);
 		}else{
 				tilterMotor.move_absolute(UP_ENC, 127 * 0.3);
+		}
+		if(isAdjusting && tilterMotor.get_position() > UP_ENC - 200){
+				tilterMotor.move(adjustOutput);
 		}
       break;
     default:
@@ -70,6 +73,19 @@ Tilter::TilterState Tilter::getState(){
   return state;
 }
 
+void Tilter::adjustThrottle(double output){
+		if(output == 0){
+				isAdjusting = false;
+				return;
+		}
+		if(state == UP){
+				isAdjusting = true;
+				adjustOutput = output;
+		}else{
+				isAdjusting = false;
+		}
+}
+
 Tilter::Tilter(){
   state = DOWN;
   tilterMotor.tare_position();
@@ -78,5 +94,5 @@ Tilter::Tilter(){
 }
 
 const int Tilter::DOWN_ENC = 0;
-const int Tilter::UP_ENC = -2150;//tune
+const int Tilter::UP_ENC = -2225;//tune
 const int Tilter::MID_ENC = UP_ENC * 0.75;//tune

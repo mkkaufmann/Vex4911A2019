@@ -18,6 +18,7 @@
 
 //edit this
 bool isLeft = true;
+bool isLine = true;
 
 //starting orientations
 double facingForward = Util::toRadians(0);
@@ -113,12 +114,13 @@ void initialize() {
  UIHelper::initialize();
 		profileFollower.generatePath({
 						okapi::Point{0_ft, 0_ft, 0_deg},
-						okapi::Point{1.6_ft, (isLeft?0.2_ft:-0.2_ft), 0_deg}},
+						okapi::Point{(isLeft?1.7_ft:1.4_ft), (isLeft?0.2_ft:-1_ft), 0_deg}},
 						"B"
 						);
 		profileFollower.generatePath({
 						okapi::Point{0_ft, 0_ft, 0_deg},
-						okapi::Point{0.8_ft, 0_ft, 0_deg}},
+						okapi::Point{6.5_in, 0_ft, 0_deg}},
+
 						"A"
 						);
 }
@@ -147,6 +149,7 @@ void competition_initialize() {}
 void autonomous(){
 
 		using namespace okapi;
+		
 		profileFollower.setTarget("B", isLeft);
 		profileFollower.waitUntilSettled();
 	    profileFollower.removePath("B");
@@ -154,15 +157,39 @@ void autonomous(){
 		profileFollower.waitUntilSettled();
 	    profileFollower.removePath("A");
 
-		stacker1.move(50);
-		stacker2.move(50);
+		stacker1.move(127);
+		stacker2.move(127);
 		pros::delay(2000);
-		stacker1.move(0);
-		stacker2.move(0);
-		drivetrain.moveDistance(1_ft);
-		drivetrain.moveDistance(-1_ft);
-}
+		
+		//motors are messed up
+		//topLeft is top Left, + is forward 
+		//topRight is bottom right, + is forward 
+		//bottomLeft is top right, - is forward 
+		//bottomRight is bottom left, - is forward 
+		//
+		if(isLine){
+				stacker1.move(-127 * 0.6);
+				stacker2.move(-127 * 0.6);
+				topLeft.moveRelative(700, 127*0.2);
+				topRight.moveRelative(700, 127*0.2);
+				bottomLeft.moveRelative(-700, 127*0.2);
+				bottomRight.moveRelative(-700, 127*0.2);
+				pros::delay(5000);
+				topLeft.moveRelative(-420, 50);
+				topRight.moveRelative(-420, 50);
+				bottomLeft.moveRelative(420, 50);
+				bottomRight.moveRelative(420, 50);
+				pros::delay(2000);
 
+				drivetrain.turnAngle((isLeft?-180:180) * std::sqrt(2) * okapi::degree);
+				pros::delay(1200);
+				topLeft.moveRelative(50, 127*0.2);
+				topRight.moveRelative(50, 127*0.2);
+				bottomLeft.moveRelative(50, 127*0.2);
+				bottomRight.moveRelative(50, 127*0.2);
+				
+		}		
+}
 
  PositionTracker tracker = *PositionTracker::getInstance();
  Stacker stacker = *Stacker::getInstance();
@@ -203,6 +230,13 @@ void runSubsystems(){
   }
   if(right.update(master.get_digital(DIGITAL_L1))){
     tilter.shiftUp();
+  }
+  if(master.get_digital(DIGITAL_UP)){
+		tilter.adjustThrottle(127*0.5);
+  }else if(master.get_digital(DIGITAL_DOWN)){
+		tilter.adjustThrottle(-127 * 0.5);
+  }else{
+		tilter.adjustThrottle(0);
   }
   tilter.in();
   tilter.out();

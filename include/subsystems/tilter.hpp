@@ -26,6 +26,7 @@ public:
 
   std::function<void()> shiftDownAction;
 
+  void adjustThrottle(double output);
 
   enum TilterState {
     DOWN,
@@ -38,6 +39,8 @@ private:
   static const int DOWN_ENC;
   static const int MID_ENC;
   static const int UP_ENC;
+		bool isAdjusting;
+		int adjustOutput;
   pros::Motor tilterMotor = pros::Motor(Constants::TILTER_MOTOR_PORT);
 
   static Tilter* instance;
