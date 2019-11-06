@@ -126,13 +126,13 @@ void Drive::out(){
       break;
     case MANUAL:
       leftFrontMotor.move(-outputs[0]);
-      leftRearMotor.move(-outputs[1]);
-      rightFrontMotor.move(outputs[2]);
+      leftRearMotor.move(outputs[1]);
+      rightFrontMotor.move(-outputs[2]);
       rightRearMotor.move(outputs[3]);
       break;
     case PATH_FOLLOWING:
-      leftFrontMotor.move(-outputs[0]);
-      leftRearMotor.move(-outputs[1]);
+      leftFrontMotor.move(outputs[0]);
+      leftRearMotor.move(outputs[1]);
       rightFrontMotor.move(outputs[2]);
       rightRearMotor.move(outputs[3]);
       break;
@@ -209,20 +209,20 @@ void Drive::generateOutputs(int x, int y, int r, int outputs[], bool isManual){
   double r2Out = -getWheelOutput(translationInput, M_PI_2, isManual);
 
   //generate rotation outputs
-  double l1Rot = getWheelOutput(l1Turn, M_PI_2, isManual);
+  double l1Rot = -getWheelOutput(l1Turn, M_PI_2, isManual);
   double l2Rot = getWheelOutput(l2Turn, 0, isManual);
   double r1Rot = getWheelOutput(r1Turn, 0, isManual);
-  double r2Rot = getWheelOutput(r2Turn, M_PI_2, isManual);
+  double r2Rot = -getWheelOutput(r2Turn, M_PI_2, isManual);
 
   //put outputs into array form for easy iteration
   double outArr [] = {l1Out, l2Out, r1Out, r2Out};
   double rotArr [] = {l1Rot, l2Rot, r1Rot, r2Rot};
-  if(rotInput < 0){
+  /*if(rotInput < 0){
     for(int i = 0; i < sizeof(rotArr)/8; i++){
       //TODO figure out permanent fix
       rotArr[i] = rotArr[i] * -1;
     }
-  }
+  }*/
   //calculate largest outputs and divide each by the largest
   double largestOut = Util::largest(outArr, sizeof(outArr)/8);
   for(int i = 0; i < sizeof(outArr)/8; i++){

@@ -15,10 +15,15 @@
 #include "util/autontimer.hpp"
 #include "subsystems/tilter.hpp"
 
-
-//edit this
-bool isLeft = true;
-bool isLine = true;
+enum Auton{
+		ONE_CUBE,
+		RED_RIGHT_ONE_CUBE_AND_LINE,
+		RED_RIGHT_LINE_AND_PLACE,
+		BLUE_LEFT_ONE_CUBE_AND_LINE,
+		BLUE_LEFT_LINE_AND_PLACE
+};
+	
+Auton auton = RED_RIGHT_LINE_AND_PLACE;
 
 //starting orientations
 double facingForward = Util::toRadians(0);
@@ -29,10 +34,10 @@ double facingBackward = Util::toRadians(270);
 //initialize static values
 
 //ports
-int Constants::LEFT_FRONT_MOTOR_PORT = -1;
-int Constants::LEFT_REAR_MOTOR_PORT = -2;
-int Constants::RIGHT_FRONT_MOTOR_PORT = 3;
-int Constants::RIGHT_REAR_MOTOR_PORT = 4;
+int Constants::LEFT_FRONT_MOTOR_PORT = 4;
+int Constants::LEFT_REAR_MOTOR_PORT = 2;
+int Constants::RIGHT_FRONT_MOTOR_PORT = -3;
+int Constants::RIGHT_REAR_MOTOR_PORT = -1;
 int Constants::STACKER_TREAD_2_MOTOR_PORT = 5;
 int Constants::STACKER_TREAD_1_MOTOR_PORT = 6;
 int Constants::TILTER_MOTOR_PORT = 7;
@@ -79,14 +84,15 @@ int AutonTimer::startTime = -1;
 
 
 
+        Drive drive = *Drive::getInstance();
 
 
 
 		using namespace okapi; 
-		auto topLeft = okapi::Motor(4);
-		auto topRight = okapi::Motor(-1);
-		auto bottomRight = okapi::Motor(-2);
-		auto bottomLeft = okapi::Motor(3);
+		auto topLeft = drive.leftFrontMotor;
+		auto topRight = drive.rightFrontMotor;
+		auto bottomRight = drive.rightRearMotor;
+		auto bottomLeft = drive.leftRearMotor;
 		auto drivetrain = okapi::ChassisControllerFactory::create(
 						topLeft, 
 						topRight, 
@@ -97,7 +103,7 @@ int AutonTimer::startTime = -1;
 						);
 		
 		auto profileFollower =okapi::AsyncControllerFactory::motionProfile(
-						0.5,
+						0.4,
 						1.0,
 						5.0,
 						drivetrain
@@ -112,18 +118,84 @@ int AutonTimer::startTime = -1;
  */
 void initialize() {
  UIHelper::initialize();
-		profileFollower.generatePath({
-						okapi::Point{0_ft, 0_ft, 0_deg},
-						okapi::Point{(isLeft?1.7_ft:1.4_ft), (isLeft?0.2_ft:-1_ft), 0_deg}},
-						"B"
-						);
-		profileFollower.generatePath({
-						okapi::Point{0_ft, 0_ft, 0_deg},
-						okapi::Point{6.5_in, 0_ft, 0_deg}},
 
-						"A"
+		switch(auton){
+				case ONE_CUBE:		
+						profileFollower.generatePath({
+								okapi::Point{0_ft, 0_ft, 0_deg},
+								okapi::Point{18_in, 0_ft, 0_deg}},
+								"PushCube"
 						);
+						break;
+				case RED_RIGHT_ONE_CUBE_AND_LINE:	
+						profileFollower.generatePath({
+								okapi::Point{0_ft, 0_ft, 0_deg},
+								okapi::Point{18_in, 0_ft, 0_deg}},
+								"PushCube"
+						);	
+						profileFollower.generatePath({
+								okapi::Point{0_in, 0_ft, 0_deg},
+								okapi::Point{10_in, 0_in, 0_deg}},
+								"LineUp"
+						);
+						profileFollower.generatePath({
+								okapi::Point{0_in, 0_ft, 0_deg},
+								okapi::Point{30_in, 0_in, 0_deg}},
+								"DriveTowardsLine"
+						);
+						profileFollower.generatePath({
+								okapi::Point{0_in, 0_ft, 0_deg},
+								okapi::Point{20_in, 0_in, 0_deg}},
+								"DriveAwayFromLine"
+						);
+						break;
+				case RED_RIGHT_LINE_AND_PLACE:
+						
+						profileFollower.generatePath({
+								okapi::Point{0_in, 0_ft, 0_deg},
+								okapi::Point{34_in, 0_in, 0_deg}},
+								"DriveTowardsLine"
+						);
+						profileFollower.generatePath({
+								okapi::Point{0_in, 0_ft, 0_deg},
+								okapi::Point{22_in, 0_in, 0_deg}},
+								"DriveAwayFromLine"
+						);
+						profileFollower.generatePath({
+								okapi::Point{0_in, 0_ft, 0_deg},
+								okapi::Point{6_in, 0_in, 0_deg}},
+								"DriveIntoZone"
+						);
+						break;
+				case BLUE_LEFT_ONE_CUBE_AND_LINE:
+
+						profileFollower.generatePath({
+								okapi::Point{0_ft, 0_ft, 0_deg},
+								okapi::Point{18_in, 0_ft, 0_deg}},
+								"PushCube"
+						);	
+						profileFollower.generatePath({
+								okapi::Point{0_in, 0_ft, 0_deg},
+								okapi::Point{9_in, 0_in, 0_deg}},
+								"LineUp"
+						);
+						profileFollower.generatePath({
+								okapi::Point{0_in, 0_ft, 0_deg},
+								okapi::Point{30_in, 0_in, 0_deg}},
+								"DriveTowardsLine"
+						);
+						profileFollower.generatePath({
+								okapi::Point{0_in, 0_ft, 0_deg},
+								okapi::Point{22_in, 0_in, 0_deg}},
+								"DriveAwayFromLine"
+						);
+						break;
+				case BLUE_LEFT_LINE_AND_PLACE:
+
+						break;
+		}
 }
+
 
 /**
  * Runs while the robot is in the disabled state of Field Management System or
@@ -141,36 +213,101 @@ void disabled() {}
  * This task will exit when the robot is enabled and autonomous or opcontrol
  * starts.
  */
-void competition_initialize() {}
-
+void competition_initialize() {
+		
+}
+ Tilter tilter = *Tilter::getInstance();
 		auto stacker1 = okapi::Motor(6);
 		auto stacker2 = okapi::Motor(-5);
-        Drive drive = *Drive::getInstance();
 void autonomous(){
 
 		using namespace okapi;
-		
-		profileFollower.setTarget("B", isLeft);
-		profileFollower.waitUntilSettled();
-	    profileFollower.removePath("B");
-		profileFollower.setTarget("A", !isLeft);
-		profileFollower.waitUntilSettled();
-	    profileFollower.removePath("A");
-
 		stacker1.move(127);
 		stacker2.move(127);
-		pros::delay(2000);
 		
-		//motors are messed up
-		//topLeft is top Left, + is forward 
-		//topRight is bottom right, + is forward 
-		//bottomLeft is top right, - is forward 
-		//bottomRight is bottom left, - is forward 
-		//
-		if(isLine){
-				stacker1.move(-127 * 0.6);
-				stacker2.move(-127 * 0.6);
-				topLeft.moveRelative(700, 127*0.2);
+		switch(auton){
+				case ONE_CUBE:
+						profileFollower.setTarget("PushCube", true);
+						profileFollower.waitUntilSettled();
+						profileFollower.setTarget("PushCube", false);
+						profileFollower.waitUntilSettled();
+						profileFollower.removePath("PushCube");
+						break;
+				case RED_RIGHT_ONE_CUBE_AND_LINE:
+						profileFollower.setTarget("PushCube", true);
+						profileFollower.waitUntilSettled();
+						profileFollower.removePath("PushCube");
+						profileFollower.setTarget("LineUp", false);
+						profileFollower.waitUntilSettled();
+						profileFollower.removePath("LineUp");
+						stacker1.move(-127 * 0.8);
+						stacker2.move(-127 * 0.8);
+						drivetrain.turnAngle(std::sqrt(2) * (115_deg));
+						profileFollower.setTarget("DriveTowardsLine", false);
+						profileFollower.waitUntilSettled();
+						profileFollower.removePath("DriveTowardsLine");
+						profileFollower.setTarget("DriveAwayFromLine", true);
+						profileFollower.waitUntilSettled();
+						profileFollower.removePath("DriveAwayFromLine");
+						stacker1.move(-127 * 0.0);
+						stacker2.move(-127 * 0.0);
+						drivetrain.turnAngle(std::sqrt(2) * (170_deg));
+						break;
+				case RED_RIGHT_LINE_AND_PLACE:
+						stacker1.move(127);
+						stacker1.move(127);
+						pros::delay(1500);
+						stacker1.move(-127 * 0.8);
+						stacker2.move(-127 * 0.8);
+						profileFollower.setTarget("DriveTowardsLine", false);
+						profileFollower.waitUntilSettled();
+						profileFollower.removePath("DriveTowardsLine");
+						profileFollower.setTarget("DriveAwayFromLine", true);
+						profileFollower.waitUntilSettled();
+						profileFollower.removePath("DriveAwayFromLine");
+						drivetrain.turnAngle(std::sqrt(2) * (200_deg));
+						profileFollower.setTarget("DriveIntoZone", false);
+						profileFollower.waitUntilSettled();
+
+						profileFollower.removePath("DriveAwayFromLine");
+						tilter.in();
+						tilter.shiftUp();
+						//manually set
+
+						tilter.out();
+						break;
+				case BLUE_LEFT_ONE_CUBE_AND_LINE:
+
+						profileFollower.setTarget("PushCube", true);
+						profileFollower.waitUntilSettled();
+						profileFollower.removePath("PushCube");
+						profileFollower.setTarget("LineUp", false);
+						profileFollower.waitUntilSettled();
+						profileFollower.removePath("LineUp");
+						stacker1.move(-127 * 0.8);
+						stacker2.move(-127 * 0.8);
+						drivetrain.turnAngle(std::sqrt(2) * (-115_deg));
+						profileFollower.setTarget("DriveTowardsLine", false);
+						profileFollower.waitUntilSettled();
+						profileFollower.removePath("DriveTowardsLine");
+						profileFollower.setTarget("DriveAwayFromLine", true);
+						profileFollower.waitUntilSettled();
+						profileFollower.removePath("DriveAwayFromLine");
+						stacker1.move(-127 * 0.0);
+						stacker2.move(-127 * 0.0);
+						drivetrain.turnAngle(std::sqrt(2) * (-170_deg));
+						break;
+				case BLUE_LEFT_LINE_AND_PLACE:
+
+						break;
+		}
+
+		//if(isLine){
+
+				//stacker1.move(-127 * 0.6);
+				//stacker2.move(-127 * 0.6);
+				
+/*				topLeft.moveRelative(700, 127*0.2);
 				topRight.moveRelative(700, 127*0.2);
 				bottomLeft.moveRelative(-700, 127*0.2);
 				bottomRight.moveRelative(-700, 127*0.2);
@@ -187,13 +324,13 @@ void autonomous(){
 				topRight.moveRelative(50, 127*0.2);
 				bottomLeft.moveRelative(50, 127*0.2);
 				bottomRight.moveRelative(50, 127*0.2);
-				
-		}		
+*/				
+		//}		
 }
 
  PositionTracker tracker = *PositionTracker::getInstance();
  Stacker stacker = *Stacker::getInstance();
- Tilter tilter = *Tilter::getInstance();
+
  OI oi = *OI::getInstance();
 
  LatchedBoolean left = LatchedBoolean();
@@ -229,9 +366,6 @@ void runSubsystems(){
     tilter.shiftDown();
   }
   if(right.update(master.get_digital(DIGITAL_L1))){
-    tilter.shiftUp();
-  }
-  if(master.get_digital(DIGITAL_UP)){
 		tilter.adjustThrottle(127*0.5);
   }else if(master.get_digital(DIGITAL_DOWN)){
 		tilter.adjustThrottle(-127 * 0.5);
