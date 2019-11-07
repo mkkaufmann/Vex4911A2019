@@ -192,6 +192,21 @@ void initialize() {
 						break;
 				case BLUE_LEFT_LINE_AND_PLACE:
 
+						profileFollower.generatePath({
+								okapi::Point{0_in, 0_ft, 0_deg},
+								okapi::Point{34_in, 0_in, 0_deg}},
+								"DriveTowardsLine"
+						);
+						profileFollower.generatePath({
+								okapi::Point{0_in, 0_ft, 0_deg},
+								okapi::Point{22_in, 0_in, 0_deg}},
+								"DriveAwayFromLine"
+						);
+						profileFollower.generatePath({
+								okapi::Point{0_in, 0_ft, 0_deg},
+								okapi::Point{6_in, 0_in, 0_deg}},
+								"DriveIntoZone"
+						);
 						break;
 		}
 }
@@ -219,6 +234,9 @@ void competition_initialize() {
  Tilter tilter = *Tilter::getInstance();
 		auto stacker1 = okapi::Motor(6);
 		auto stacker2 = okapi::Motor(-5);
+const int UP_ENC = -2225;//tune
+
+const int MID_ENC = UP_ENC * 0.75;//tune
 void autonomous(){
 
 		using namespace okapi;
@@ -255,7 +273,7 @@ void autonomous(){
 						break;
 				case RED_RIGHT_LINE_AND_PLACE:
 						stacker1.move(127);
-						stacker1.move(127);
+						stacker2.move(127);
 						pros::delay(1500);
 						stacker1.move(-127 * 0.8);
 						stacker2.move(-127 * 0.8);
@@ -268,13 +286,18 @@ void autonomous(){
 						drivetrain.turnAngle(std::sqrt(2) * (200_deg));
 						profileFollower.setTarget("DriveIntoZone", false);
 						profileFollower.waitUntilSettled();
+					
+						tilter.tilterMotor.move_absolute(MID_ENC, 127 * 1);
+						pros::delay(2000);
+						tilter.tilterMotor.move_absolute(UP_ENC, 127 * 0.3);
+						pros::delay(500);
 
-						profileFollower.removePath("DriveAwayFromLine");
-						tilter.in();
-						tilter.shiftUp();
-						//manually set
+						stacker1.move(127 * 0.4);
+						stacker2.move(127 * 0.4);
+						
+						profileFollower.setTarget("DriveIntoZone", true);
+						profileFollower.waitUntilSettled();
 
-						tilter.out();
 						break;
 				case BLUE_LEFT_ONE_CUBE_AND_LINE:
 
@@ -299,6 +322,31 @@ void autonomous(){
 						break;
 				case BLUE_LEFT_LINE_AND_PLACE:
 
+						stacker1.move(127);
+						stacker2.move(127);
+						pros::delay(1500);
+						stacker1.move(-127 * 0.8);
+						stacker2.move(-127 * 0.8);
+						profileFollower.setTarget("DriveTowardsLine", false);
+						profileFollower.waitUntilSettled();
+						profileFollower.removePath("DriveTowardsLine");
+						profileFollower.setTarget("DriveAwayFromLine", true);
+						profileFollower.waitUntilSettled();
+						profileFollower.removePath("DriveAwayFromLine");
+						drivetrain.turnAngle(-std::sqrt(2) * (200_deg));
+						profileFollower.setTarget("DriveIntoZone", false);
+						profileFollower.waitUntilSettled();
+					
+						tilter.tilterMotor.move_absolute(MID_ENC, 127 * 1);
+						pros::delay(2000);
+						tilter.tilterMotor.move_absolute(UP_ENC, 127 * 0.3);
+						pros::delay(500);
+
+						stacker1.move(127 * 0.4);
+						stacker2.move(127 * 0.4);
+						
+						profileFollower.setTarget("DriveIntoZone", true);
+						profileFollower.waitUntilSettled();
 						break;
 		}
 

@@ -34,6 +34,7 @@ public:
     UP,
   };
 
+  pros::Motor tilterMotor = pros::Motor(Constants::TILTER_MOTOR_PORT);
   TilterState getState();
 private:
   static const int DOWN_ENC;
@@ -41,7 +42,6 @@ private:
   static const int UP_ENC;
 		bool isAdjusting;
 		int adjustOutput;
-  pros::Motor tilterMotor = pros::Motor(Constants::TILTER_MOTOR_PORT);
 
   static Tilter* instance;
 
