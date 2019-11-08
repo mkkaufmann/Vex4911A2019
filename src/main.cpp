@@ -23,7 +23,7 @@ enum Auton{
 		BLUE_LEFT_LINE_AND_PLACE
 };
 	
-Auton auton = RED_RIGHT_LINE_AND_PLACE;
+Auton auton = ONE_CUBE;
 
 //starting orientations
 double facingForward = Util::toRadians(0);
@@ -123,7 +123,7 @@ void initialize() {
 				case ONE_CUBE:		
 						profileFollower.generatePath({
 								okapi::Point{0_ft, 0_ft, 0_deg},
-								okapi::Point{18_in, 0_ft, 0_deg}},
+								okapi::Point{20_in, -2_in, 0_deg}},
 								"PushCube"
 						);
 						break;
@@ -194,12 +194,12 @@ void initialize() {
 
 						profileFollower.generatePath({
 								okapi::Point{0_in, 0_ft, 0_deg},
-								okapi::Point{34_in, 0_in, 0_deg}},
+								okapi::Point{34_in, -4_in, 0_deg}},
 								"DriveTowardsLine"
 						);
 						profileFollower.generatePath({
 								okapi::Point{0_in, 0_ft, 0_deg},
-								okapi::Point{22_in, 0_in, 0_deg}},
+								okapi::Point{24_in, -1_in, 0_deg}},
 								"DriveAwayFromLine"
 						);
 						profileFollower.generatePath({
@@ -250,8 +250,12 @@ void autonomous(){
 						profileFollower.setTarget("PushCube", false);
 						profileFollower.waitUntilSettled();
 						profileFollower.removePath("PushCube");
+						stacker1.move(127 * 0.8);
+						stacker2.move(127 * 0.8);
 						break;
 				case RED_RIGHT_ONE_CUBE_AND_LINE:
+						stacker1.move(127 * 0.8);
+						stacker2.move(127 * 0.8);
 						profileFollower.setTarget("PushCube", true);
 						profileFollower.waitUntilSettled();
 						profileFollower.removePath("PushCube");
@@ -287,9 +291,10 @@ void autonomous(){
 						profileFollower.setTarget("DriveIntoZone", false);
 						profileFollower.waitUntilSettled();
 					
-						tilter.tilterMotor.move_absolute(MID_ENC, 127 * 1);
+						tilter.setMiddle();
 						pros::delay(2000);
-						tilter.tilterMotor.move_absolute(UP_ENC, 127 * 0.3);
+
+						tilter.setUp();
 						pros::delay(500);
 
 						stacker1.move(127 * 0.4);
@@ -297,10 +302,12 @@ void autonomous(){
 						
 						profileFollower.setTarget("DriveIntoZone", true);
 						profileFollower.waitUntilSettled();
-
+						tilter.setDown();
 						break;
 				case BLUE_LEFT_ONE_CUBE_AND_LINE:
 
+						stacker1.move(127 * 0.8);
+						stacker2.move(127 * 0.8);
 						profileFollower.setTarget("PushCube", true);
 						profileFollower.waitUntilSettled();
 						profileFollower.removePath("PushCube");
@@ -333,20 +340,25 @@ void autonomous(){
 						profileFollower.setTarget("DriveAwayFromLine", true);
 						profileFollower.waitUntilSettled();
 						profileFollower.removePath("DriveAwayFromLine");
-						drivetrain.turnAngle(-std::sqrt(2) * (200_deg));
+						drivetrain.turnAngle(-std::sqrt(2) * (180_deg));
 						profileFollower.setTarget("DriveIntoZone", false);
 						profileFollower.waitUntilSettled();
-					
-						tilter.tilterMotor.move_absolute(MID_ENC, 127 * 1);
-						pros::delay(2000);
-						tilter.tilterMotor.move_absolute(UP_ENC, 127 * 0.3);
+						stacker1.move(127 * 0.5);
+						stacker2.move(127 * 0.5);
 						pros::delay(500);
+						stacker1.move(127 * 0);
+						stacker2.move(127 * 0);
+						tilter.setMiddle();
+						pros::delay(1500);
+						tilter.setUp();
+						pros::delay(1000);
 
-						stacker1.move(127 * 0.4);
-						stacker2.move(127 * 0.4);
-						
+						stacker1.move(127 * 0.6);
+						stacker2.move(127 * 0.6);
+						pros::delay(400);	
 						profileFollower.setTarget("DriveIntoZone", true);
 						profileFollower.waitUntilSettled();
+						tilter.setDown();
 						break;
 		}
 
@@ -413,15 +425,15 @@ void runSubsystems(){
   if(left.update(master.get_digital(DIGITAL_L2))){
     tilter.shiftDown();
   }
+  tilter.in();
+  tilter.out();
   if(right.update(master.get_digital(DIGITAL_L1))){
-		tilter.adjustThrottle(127*0.5);
+		  tilter.shiftUp();
   }else if(master.get_digital(DIGITAL_DOWN)){
 		tilter.adjustThrottle(-127 * 0.5);
   }else{
 		tilter.adjustThrottle(0);
   }
-  tilter.in();
-  tilter.out();
   if(master.get_digital(DIGITAL_X)){
 tracker.resetRotation();
   }

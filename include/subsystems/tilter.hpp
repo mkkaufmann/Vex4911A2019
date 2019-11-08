@@ -23,6 +23,11 @@ public:
   std::function<void()> shiftUpAction;
 
   void shiftDown();
+  
+  void setMiddle();
+
+  void setUp();
+  void setDown();
 
   std::function<void()> shiftDownAction;
 
@@ -34,7 +39,6 @@ public:
     UP,
   };
 
-  pros::Motor tilterMotor = pros::Motor(Constants::TILTER_MOTOR_PORT);
   TilterState getState();
 private:
   static const int DOWN_ENC;
@@ -43,6 +47,7 @@ private:
 		bool isAdjusting;
 		int adjustOutput;
 
+  pros::Motor tilterMotor = pros::Motor(Constants::TILTER_MOTOR_PORT);
   static Tilter* instance;
 
   TilterState state;

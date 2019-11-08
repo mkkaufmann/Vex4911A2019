@@ -32,7 +32,7 @@ void Tilter::out(){
 		}else{
 				tilterMotor.move_absolute(UP_ENC, 127 * 0.3);
 		}
-		if(isAdjusting && tilterMotor.get_position() > UP_ENC - 200){
+		if(isAdjusting && tilterMotor.get_position() > UP_ENC - 350){
 				tilterMotor.move(adjustOutput);
 		}
       break;
@@ -67,6 +67,19 @@ void Tilter::shiftDown(){
       //rumble
       break;
   }
+}
+
+void Tilter::setMiddle(){
+		tilterMotor.move_absolute(MID_ENC, 127);
+		state = UP;
+}
+void Tilter::setUp(){
+		tilterMotor.move_absolute(UP_ENC - 100, 127 * 0.5);
+		state = UP;
+}
+void Tilter::setDown(){
+		tilterMotor.move_absolute(DOWN_ENC, 127);
+		state = DOWN;
 }
 
 Tilter::TilterState Tilter::getState(){
