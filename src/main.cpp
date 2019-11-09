@@ -1,3 +1,4 @@
+#include <cstdio>
 #include "main.h"
 #include "constants.hpp"
 #include "subsystems/oi.hpp"
@@ -16,13 +17,15 @@
 #include "subsystems/tilter.hpp"
 #include "ui/wrapper/object.hpp"
 #include "ui/wrapper/button.hpp"
-
+#include "ui/wrapper/label.hpp"
 enum Auton{
 		ONE_CUBE,
 		RED_RIGHT_ONE_CUBE_AND_LINE,
 		RED_RIGHT_LINE_AND_PLACE,
 		BLUE_LEFT_ONE_CUBE_AND_LINE,
-		BLUE_LEFT_LINE_AND_PLACE
+		BLUE_LEFT_LINE_AND_PLACE,
+		RED_GIRL_POWER,
+		BLUE_GIRL_POWER
 };
 	
 Auton auton = ONE_CUBE;
@@ -112,19 +115,9 @@ int AutonTimer::startTime = -1;
 						);
 
 
-/**
- * Runs initialization code. This occurs as soon as the program is started.
- *
- * All other competition modes are blocked by initialize; it is recommended
- * to keep execution time for this mode under a few seconds.
- */
-void initialize() {
 		const int screenWidth = 480;
 		const int screenHeight = 240;
   static lv_style_t container_style;
-  lv_style_copy(&container_style, &lv_style_plain);
-  container_style.body.main_color = LV_COLOR_RED;
-  container_style.body.grad_color = LV_COLOR_RED;
 
   Object container = Object::create()
 		  .setPosition(0, 0)
@@ -133,22 +126,48 @@ void initialize() {
   
 
   static lv_style_t field_style;
-  lv_style_copy(&field_style, &lv_style_plain);
-  field_style.body.main_color = LV_COLOR_WHITE;
-  field_style.body.grad_color = LV_COLOR_WHITE;
 
   Object field = Object::create(container)
 		  .setPosition(0, 0)
 		  .setSize(screenHeight, screenHeight)
 		  .setStyle(&field_style);
 
+
   static lv_style_t tile_style;
+
+
+
+  Object mainScreen = Object::create(container).setPosition(screenHeight, 0)
+		  .setSize(screenWidth-screenHeight, screenHeight);
+  
+  Label x = Label::create(mainScreen).setY(0);
+  Label y = Label::create(mainScreen).setY(40);
+  Label t = Label::create(mainScreen).setY(80);
+
+//Object sidebar = Object::create(container).setPosition(screenWidth - 80, 0).setSize(80, screenHeight);
+
+//  for(int i = 0; i < 4; i++){
+//		  Button::create(sidebar).setPosition(0, i * 60).setSize(80, 60);
+//  }
+
+/**
+ * Runs initialization code. This occurs as soon as the program is started.
+ *
+ * All other competition modes are blocked by initialize; it is recommended
+ * to keep execution time for this mode under a few seconds.
+ */
+void initialize() {
+  lv_style_copy(&container_style, &lv_style_plain);
+  container_style.body.main_color = LV_COLOR_RED;
+  container_style.body.grad_color = LV_COLOR_RED;
+  lv_style_copy(&field_style, &lv_style_plain);
+  field_style.body.main_color = LV_COLOR_WHITE;
+  field_style.body.grad_color = LV_COLOR_WHITE;
   lv_style_copy(&tile_style, &lv_style_plain);
   tile_style.body.main_color = LV_COLOR_GRAY;
   tile_style.body.grad_color = LV_COLOR_GRAY;
   tile_style.body.border.color = LV_COLOR_WHITE;
   tile_style.body.border.width = 2;
-
   for(int i = 0; i < 6; i++){
 		  for(int j = 0; j < 6; j++){
 				  Object::create(field)
@@ -156,16 +175,6 @@ void initialize() {
 						  .setSize(40, 40)
 						  .setStyle(&tile_style);
 		  }
-  }
-
-
-  Object mainScreen = Object::create(container).setPosition(screenHeight, 0)
-		  .setSize(screenWidth-screenHeight-80, screenHeight);
-
-  Object sidebar = Object::create(container).setPosition(screenWidth - 80, 0).setSize(80, screenHeight);
-
-  for(int i = 0; i < 4; i++){
-		  Button::create(sidebar).setPosition(0, i * 60).setSize(80, 60);
   }
 		switch(auton){
 				case ONE_CUBE:		
@@ -487,14 +496,23 @@ tracker.resetRotation();
 }
 
 void updateScreen(){
-  UIHelper::updateDisplay(
+		char xbuffer [50];
+		char ybuffer [50];
+		char tbuffer [50];
+		std::sprintf(xbuffer, "X: %f", tracker.getGlobalPosition().getX());
+		std::sprintf(ybuffer, "Y: %f", tracker.getGlobalPosition().getY());
+		std::sprintf(tbuffer, "Theta: %f", tracker.getTheta());
+		x.setText(xbuffer);
+		y.setText(ybuffer);
+		t.setText(tbuffer);
+		/*  UIHelper::updateDisplay(
     tracker.getLEncValue(),
     tracker.getREncValue(),
     tracker.getBEncValue(),
     tracker.getGlobalPosition().getX(),
     tracker.getGlobalPosition().getY(),
     tracker.getTheta()
-  );
+  );*/
 }
 
 void opcontrol() {
