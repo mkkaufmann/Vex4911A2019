@@ -121,16 +121,16 @@ int AutonTimer::startTime = -1;
 
   Object container = Object::create()
 		  .setPosition(0, 0)
-		  .setSize(screenWidth,screenHeight)
-		  .setStyle(&container_style);
+		  .setSize(screenWidth,screenHeight);
+//		  .setStyle(&container_style);
   
 
   static lv_style_t field_style;
 
-  Object field = Object::create(container)
-		  .setPosition(0, 0)
-		  .setSize(screenHeight, screenHeight)
-		  .setStyle(&field_style);
+//  Object field = Object::create(container)
+//		  .setPosition(0, 0)
+//		  .setSize(screenHeight, screenHeight);
+//		  .setStyle(&field_style);
 
 
   static lv_style_t tile_style;
@@ -140,9 +140,10 @@ int AutonTimer::startTime = -1;
   Object mainScreen = Object::create(container).setPosition(screenHeight, 0)
 		  .setSize(screenWidth-screenHeight, screenHeight);
   
-  Label x = Label::create(mainScreen).setY(0);
-  Label y = Label::create(mainScreen).setY(40);
-  Label t = Label::create(mainScreen).setY(80);
+  Label x = Label::create(container).setPosition(0, 0);
+  Label y = Label::create(container).setY(40).setPosition(0, 40);
+  Label t = Label::create(container).setY(80).setPosition(0, 80);
+  Label mainContent = Label::create(mainScreen).setText(" This UI was made using\n LVGLBuilder, a\n collaboration between\n teams 4911A, 7842F and 914M.\n The library aims to ease\n the creation of UIs for\n programming beginners\n and veterans alike. The\n library is currently in\n early development.\0"); 
 
 //Object sidebar = Object::create(container).setPosition(screenWidth - 80, 0).setSize(80, screenHeight);
 
@@ -168,14 +169,15 @@ void initialize() {
   tile_style.body.grad_color = LV_COLOR_GRAY;
   tile_style.body.border.color = LV_COLOR_WHITE;
   tile_style.body.border.width = 2;
-  for(int i = 0; i < 6; i++){
-		  for(int j = 0; j < 6; j++){
-				  Object::create(field)
-						  .setPosition(i * 40, j * 40)
-						  .setSize(40, 40)
-						  .setStyle(&tile_style);
-		  }
-  }
+  container.setStyle(&container_style);
+//  for(int i = 0; i < 6; i++){
+//		  for(int j = 0; j < 6; j++){
+//				  Object::create(field)
+//						  .setPosition(i * 40, j * 40)
+//						  .setSize(40, 40)
+//						  .setStyle(&tile_style);
+//		  }
+//  }
 		switch(auton){
 				case ONE_CUBE:		
 						profileFollower.generatePath({
@@ -264,6 +266,8 @@ void initialize() {
 								okapi::Point{6_in, 0_in, 0_deg}},
 								"DriveIntoZone"
 						);
+						break;
+				default:
 						break;
 		}
 }
