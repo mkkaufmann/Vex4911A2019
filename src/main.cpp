@@ -5,10 +5,6 @@
 #include "subsystems/tilter.hpp"
 using namespace lib7842;
 
-
-
-
-
   Controller controller(ControllerId::master);
 
   auto model = std::make_shared<ThreeEncoderXDriveModel>(
@@ -27,7 +23,7 @@ using namespace lib7842;
   auto odom =
     std::make_shared<CustomOdometry>(model, ChassisScales({2.75_in, 12.9473263_in, 0.00_in}, 360));
 
-  Screen scr(lv_scr_act(), LV_COLOR_ORANGE);
+  Screen scr(lv_scr_act(), LV_COLOR_RED);
 
   auto odomController = std::make_shared<OdomXController>(
     model, odom,
@@ -45,12 +41,29 @@ using namespace lib7842;
       0.015, 0.0002, 0.0002, 0, TimeUtilFactory::withSettledUtilParams(10, 10, 100_ms)),
     2_in);
 
-/**
- * Runs initialization code. This occurs as soon as the program is started.
- *
- * All other competition modes are blocked by initialize; it is recommended
- * to keep execution time for this mode under a few seconds.
- */
+   Tilter tilter = *Tilter::getInstance();
+   auto stackerMotors = MotorGroup({6, -5});
+
+   void rollerOuttake(){
+		stackerMotors.moveVoltage(127);
+   }
+   void rollerIntake(){
+		stackerMotors.moveVoltage(-127);
+   }
+   void rollerStop(){
+		stackerMotors.moveVoltage(0);
+   }
+   void deployTray(){
+		rollerOuttake();
+		pros::delay(3000);
+		rollerStop();
+   }
+   void placeStack(){
+		tilter.setMiddle();
+		pros::delay(2000);
+		tilter.setUp();
+   }
+
 void initialize() {
   pros::delay(200);
   odom->startTask("Odometry");
@@ -58,22 +71,8 @@ void initialize() {
   scr.startTask("Screen");
 }
 
-/**
- * Runs while the robot is in the disabled state of Field Management System or
- * the VEX Competition Switch, following either autonomous or opcontrol. When
- * the robot is enabled, this task will exit.
- */
 void disabled() {}
 
-/**
- * Runs after initialize(), and before autonomous when connected to the Field
- * Management System or the VEX Competition Switch. This is intended for
- * competition-specific initialization routines, such as an autonomous selector
- * on the LCD.
- *
- * This task will exit when the robot is enabled and autonomous or opcontrol
- * starts.
- */
 void competition_initialize() {}
 
 
@@ -156,21 +155,27 @@ void autonomous() {
 								5 * tileLength - cubeWidth/2,//x 
 								botLength/2, 
 								0_deg));	
-
+						deployTray();
 						odomController->strafeToPoint(
 						redLineFront - Vector(0_in, botLength/2 + 1_in), OdomController::makeAngleCalculator(redLineBack), 1,
 						OdomController::defaultDriveAngleSettler);
-						//start intaking
 						
+						//start intaking
+						rollerOuttake();
+
 						odomController->strafeToPoint(
 						redLineBack, OdomController::makeAngleCalculator(redLineBack), 1,
 						OdomController::defaultDriveAngleSettler);
+
 						//stop intaking
+						rollerIntake();
 
 						odomController->strafeToPoint(
 						redSmallZoneCorner + Vector(-3_in, 3_in), OdomController::makeAngleCalculator(rightCorner), 1,
 						OdomController::defaultDriveAngleSettler);
+						
 						//place stack
+						placeStack();
 
 						break;
 				}
@@ -191,26 +196,10 @@ void autonomous() {
         OdomController::defaultDriveAngleSettler);
 }
 
-/**
- * Runs the operator control code. This function will be started in its own task
- * with the default priority and stack size whenever the robot is enabled via
- * the Field Management System or the VEX Competition Switch in the operator
- * control mode.
- *
- * If no competition control is connected, this function will run immediately
- * following initialize().
- *
- * If the robot is disabled or communications is lost, the
- * operator control task will be stopped. Re-enabling the robot will restart the
- * task, not resume it from where it left off.
- */
 Stacker stacker = *Stacker::getInstance();
-Tilter tilter = *Tilter::getInstance();
 LatchedBoolean left = LatchedBoolean();
 LatchedBoolean right = LatchedBoolean();
 
-auto stacker1 = okapi::Motor(6);
-auto stacker2 = okapi::Motor(-5);
 
 void opcontrol() {
   while (true) {
@@ -245,8 +234,7 @@ void opcontrol() {
 				tilter.adjustThrottle(0);
 		}
 
-		stacker1.moveVoltage(stacker.getOutput());
-		stacker2.moveVoltage(stacker.getOutput());
+		stackerMotors.moveVoltage(stacker.getOutput());
 
     pros::delay(10);
   }
