@@ -169,3 +169,23 @@ PositionTracker::PositionTracker(){
   rEnc.reset();
   bEnc.reset();
 };
+
+PositionTracker* PositionTracker::instance = PositionTracker::getInstance();
+
+
+//starting orientations
+double facingForward = Util::toRadians(0);
+double facingLeft = Util::toRadians(90);
+double facingRight = Util::toRadians(180);
+double facingBackward = Util::toRadians(270);
+
+
+//initialize dometry values
+double PositionTracker::pLeftEnc = 0;
+double PositionTracker::pRightEnc = 0;
+double PositionTracker::pBackEnc = 0;
+double PositionTracker::pTheta = facingForward;//change this to starting orientation
+double PositionTracker::leftEncAtLastReset = 0;
+double PositionTracker::rightEncAtLastReset = 0;
+double PositionTracker::thetaAtLastReset = PositionTracker::pTheta;
+Point PositionTracker::globalPosition = Point(0,0);

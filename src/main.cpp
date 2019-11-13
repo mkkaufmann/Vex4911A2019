@@ -1,155 +1,49 @@
-#include <cstdio>
 #include "main.h"
-#include "constants.hpp"
-#include "subsystems/oi.hpp"
-#include "subsystems/positiontracker.hpp"
-#include "subsystems/drive.hpp"
+
+#include "lib7842/api.hpp"
 #include "subsystems/stacker.hpp"
-#include "motionprofiles/pathfollower.hpp"
-#include "util/point.hpp"
-#include "util/latchedboolean.hpp"
-#include "util/util.hpp"
-#include "util/actions.hpp"
-#include "pros/apix.h"
-#include "ui/ui.hpp"
-#include "ui/uihelper.hpp"
-#include "util/autontimer.hpp"
 #include "subsystems/tilter.hpp"
-#include "ui/wrapper/object.hpp"
-#include "ui/wrapper/button.hpp"
-#include "ui/wrapper/label.hpp"
-enum Auton{
-		ONE_CUBE,
-		RED_RIGHT_ONE_CUBE_AND_LINE,
-		RED_RIGHT_LINE_AND_PLACE,
-		BLUE_LEFT_ONE_CUBE_AND_LINE,
-		BLUE_LEFT_LINE_AND_PLACE,
-		RED_GIRL_POWER,
-		BLUE_GIRL_POWER
-};
-	
-Auton auton = ONE_CUBE;
-
-//starting orientations
-double facingForward = Util::toRadians(0);
-double facingLeft = Util::toRadians(90);//not sure
-double facingRight = Util::toRadians(180);
-double facingBackward = Util::toRadians(270);
-
-//initialize static values
-
-//ports
-int Constants::LEFT_FRONT_MOTOR_PORT = 4;
-int Constants::LEFT_REAR_MOTOR_PORT = 2;
-int Constants::RIGHT_FRONT_MOTOR_PORT = -3;
-int Constants::RIGHT_REAR_MOTOR_PORT = -1;
-int Constants::STACKER_TREAD_2_MOTOR_PORT = 5;
-int Constants::STACKER_TREAD_1_MOTOR_PORT = 6;
-int Constants::TILTER_MOTOR_PORT = 7;
-
-int Constants::LEFT_TRACKING_ENCODER_TOP = 1;
-int Constants::LEFT_TRACKING_ENCODER_BOTTOM = 2;
-int Constants::RIGHT_TRACKING_ENCODER_TOP = 3;
-int Constants::RIGHT_TRACKING_ENCODER_BOTTOM = 4;
-int Constants::REAR_TRACKING_ENCODER_TOP = 5;
-int Constants::REAR_TRACKING_ENCODER_BOTTOM = 6;
-
-//measured constants for odometry
-double Constants::LEFT_WHEEL_TO_TRACKING_CENTER = 6.5;
-double Constants::RIGHT_WHEEL_TO_TRACKING_CENTER = 7.25;
-double Constants::REAR_WHEEL_TO_TRACKING_CENTER = 7;
-int Constants::ENCODER_TICKS_PER_INCH = 360/(2.75 * M_PI);
-
-//initialize singletons
-OI* OI::instance = OI::getInstance();
-Drive* Drive::instance = Drive::getInstance();
-Tilter* Tilter::instance = Tilter::getInstance();
-Stacker* Stacker::instance = Stacker::getInstance();
-PositionTracker* PositionTracker::instance = PositionTracker::getInstance();
-
-//initialize dometry values
-double PositionTracker::pLeftEnc = 0;
-double PositionTracker::pRightEnc = 0;
-double PositionTracker::pBackEnc = 0;
-double PositionTracker::pTheta = facingForward;//change this to starting orientation
-double PositionTracker::leftEncAtLastReset = 0;
-double PositionTracker::rightEncAtLastReset = 0;
-double PositionTracker::thetaAtLastReset = PositionTracker::pTheta;
-Point PositionTracker::globalPosition = Point(0,0);
-
-//set initial drive setting
-bool Drive::fieldCentric = false;
-//used for changing the above setting during a match
-LatchedBoolean Drive::fieldCentricToggle = LatchedBoolean();
-
-//number of loops for PID to count as settled
-double PathFollower::iterationsForSettle = 5;//100ms
-
-int AutonTimer::startTime = -1;
+using namespace lib7842;
 
 
 
-        Drive drive = *Drive::getInstance();
 
 
+  Controller controller(ControllerId::master);
 
-		using namespace okapi; 
-		auto topLeft = drive.leftFrontMotor;
-		auto topRight = drive.rightFrontMotor;
-		auto bottomRight = drive.rightRearMotor;
-		auto bottomLeft = drive.leftRearMotor;
-		auto drivetrain = okapi::ChassisControllerFactory::create(
-						topLeft, 
-						topRight, 
-						bottomRight, 
-						bottomLeft, 
-						okapi::AbstractMotor::gearset::green, 
-						{4 * okapi::inch, 13 * okapi::inch}
-						);
-		
-		auto profileFollower =okapi::AsyncControllerFactory::motionProfile(
-						0.4,
-						1.0,
-						5.0,
-						drivetrain
-						);
+  auto model = std::make_shared<ThreeEncoderXDriveModel>(
+    // motors
+    std::make_shared<Motor>(4), //topLeft
+    std::make_shared<Motor>(-3), //topRight
+    std::make_shared<Motor>(-1), //bottomRight
+    std::make_shared<Motor>(2), //bottomLeft
+    // sensors
+    std::make_shared<ADIEncoder>(1, 2), // left
+    std::make_shared<ADIEncoder>(3, 4), // right
+    std::make_shared<ADIEncoder>(5, 6), // middle
+    // limits
+    200, 12000);//maxVel, maxVoltage
 
+  auto odom =
+    std::make_shared<CustomOdometry>(model, ChassisScales({2.75_in, 12.9473263_in, 0.00_in}, 360));
 
-		const int screenWidth = 480;
-		const int screenHeight = 240;
-  static lv_style_t container_style;
+  Screen scr(lv_scr_act(), LV_COLOR_ORANGE);
 
-  Object container = Object::create()
-		  .setPosition(0, 0)
-		  .setSize(screenWidth,screenHeight);
-//		  .setStyle(&container_style);
-  
-
-  static lv_style_t field_style;
-
-//  Object field = Object::create(container)
-//		  .setPosition(0, 0)
-//		  .setSize(screenHeight, screenHeight);
-//		  .setStyle(&field_style);
-
-
-  static lv_style_t tile_style;
-
-
-
-  Object mainScreen = Object::create(container).setPosition(screenHeight, 0)
-		  .setSize(screenWidth-screenHeight, screenHeight);
-  
-  Label x = Label::create(container).setPosition(0, 0);
-  Label y = Label::create(container).setY(40).setPosition(0, 40);
-  Label t = Label::create(container).setY(80).setPosition(0, 80);
-  Label mainContent = Label::create(mainScreen).setText(" This UI was made using\n LVGLBuilder, a\n collaboration between\n teams 4911A, 7842F and 914M.\n The library aims to ease\n the creation of UIs for\n programming beginners\n and veterans alike. The\n library is currently in\n early development.\0"); 
-
-//Object sidebar = Object::create(container).setPosition(screenWidth - 80, 0).setSize(80, screenHeight);
-
-//  for(int i = 0; i < 4; i++){
-//		  Button::create(sidebar).setPosition(0, i * 60).setSize(80, 60);
-//  }
+  auto odomController = std::make_shared<OdomXController>(
+    model, odom,
+    //Distance PID - To mm
+    std::make_unique<IterativePosPIDController>(
+      0.015, 0.0002, 0.0002, 0, TimeUtilFactory::withSettledUtilParams(10, 10, 100_ms)),
+    //Turn PID - To Degree
+    std::make_unique<IterativePosPIDController>(
+      0.03, 0.00, 0.0003, 0, TimeUtilFactory::withSettledUtilParams(2, 2, 100_ms)),
+    //Angle PID - To Degree
+    std::make_unique<IterativePosPIDController>(
+      0.02, 0, 0, 0, TimeUtilFactory::withSettledUtilParams(4, 2, 100_ms)),
+    //Strafe PID - To mm
+    std::make_unique<IterativePosPIDController>(
+      0.015, 0.0002, 0.0002, 0, TimeUtilFactory::withSettledUtilParams(10, 10, 100_ms)),
+    2_in);
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -158,120 +52,11 @@ int AutonTimer::startTime = -1;
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
-  lv_style_copy(&container_style, &lv_style_plain);
-  container_style.body.main_color = LV_COLOR_RED;
-  container_style.body.grad_color = LV_COLOR_RED;
-  lv_style_copy(&field_style, &lv_style_plain);
-  field_style.body.main_color = LV_COLOR_WHITE;
-  field_style.body.grad_color = LV_COLOR_WHITE;
-  lv_style_copy(&tile_style, &lv_style_plain);
-  tile_style.body.main_color = LV_COLOR_GRAY;
-  tile_style.body.grad_color = LV_COLOR_GRAY;
-  tile_style.body.border.color = LV_COLOR_WHITE;
-  tile_style.body.border.width = 2;
-  container.setStyle(&container_style);
-//  for(int i = 0; i < 6; i++){
-//		  for(int j = 0; j < 6; j++){
-//				  Object::create(field)
-//						  .setPosition(i * 40, j * 40)
-//						  .setSize(40, 40)
-//						  .setStyle(&tile_style);
-//		  }
-//  }
-		switch(auton){
-				case ONE_CUBE:		
-						profileFollower.generatePath({
-								okapi::Point{0_ft, 0_ft, 0_deg},
-								okapi::Point{20_in, -2_in, 0_deg}},
-								"PushCube"
-						);
-						break;
-				case RED_RIGHT_ONE_CUBE_AND_LINE:	
-						profileFollower.generatePath({
-								okapi::Point{0_ft, 0_ft, 0_deg},
-								okapi::Point{18_in, 0_ft, 0_deg}},
-								"PushCube"
-						);	
-						profileFollower.generatePath({
-								okapi::Point{0_in, 0_ft, 0_deg},
-								okapi::Point{10_in, 0_in, 0_deg}},
-								"LineUp"
-						);
-						profileFollower.generatePath({
-								okapi::Point{0_in, 0_ft, 0_deg},
-								okapi::Point{30_in, 0_in, 0_deg}},
-								"DriveTowardsLine"
-						);
-						profileFollower.generatePath({
-								okapi::Point{0_in, 0_ft, 0_deg},
-								okapi::Point{20_in, 0_in, 0_deg}},
-								"DriveAwayFromLine"
-						);
-						break;
-				case RED_RIGHT_LINE_AND_PLACE:
-						
-						profileFollower.generatePath({
-								okapi::Point{0_in, 0_ft, 0_deg},
-								okapi::Point{34_in, 0_in, 0_deg}},
-								"DriveTowardsLine"
-						);
-						profileFollower.generatePath({
-								okapi::Point{0_in, 0_ft, 0_deg},
-								okapi::Point{22_in, 0_in, 0_deg}},
-								"DriveAwayFromLine"
-						);
-						profileFollower.generatePath({
-								okapi::Point{0_in, 0_ft, 0_deg},
-								okapi::Point{6_in, 0_in, 0_deg}},
-								"DriveIntoZone"
-						);
-						break;
-				case BLUE_LEFT_ONE_CUBE_AND_LINE:
-
-						profileFollower.generatePath({
-								okapi::Point{0_ft, 0_ft, 0_deg},
-								okapi::Point{18_in, 0_ft, 0_deg}},
-								"PushCube"
-						);	
-						profileFollower.generatePath({
-								okapi::Point{0_in, 0_ft, 0_deg},
-								okapi::Point{9_in, 0_in, 0_deg}},
-								"LineUp"
-						);
-						profileFollower.generatePath({
-								okapi::Point{0_in, 0_ft, 0_deg},
-								okapi::Point{30_in, 0_in, 0_deg}},
-								"DriveTowardsLine"
-						);
-						profileFollower.generatePath({
-								okapi::Point{0_in, 0_ft, 0_deg},
-								okapi::Point{22_in, 0_in, 0_deg}},
-								"DriveAwayFromLine"
-						);
-						break;
-				case BLUE_LEFT_LINE_AND_PLACE:
-
-						profileFollower.generatePath({
-								okapi::Point{0_in, 0_ft, 0_deg},
-								okapi::Point{34_in, -4_in, 0_deg}},
-								"DriveTowardsLine"
-						);
-						profileFollower.generatePath({
-								okapi::Point{0_in, 0_ft, 0_deg},
-								okapi::Point{24_in, -1_in, 0_deg}},
-								"DriveAwayFromLine"
-						);
-						profileFollower.generatePath({
-								okapi::Point{0_in, 0_ft, 0_deg},
-								okapi::Point{6_in, 0_in, 0_deg}},
-								"DriveIntoZone"
-						);
-						break;
-				default:
-						break;
-		}
+  pros::delay(200);
+  odom->startTask("Odometry");
+  scr.makePage<OdomDebug>().attachOdom(odom);
+  scr.startTask("Screen");
 }
-
 
 /**
  * Runs while the robot is in the disabled state of Field Management System or
@@ -289,240 +74,180 @@ void disabled() {}
  * This task will exit when the robot is enabled and autonomous or opcontrol
  * starts.
  */
-void competition_initialize() {
-		
-}
- Tilter tilter = *Tilter::getInstance();
-		auto stacker1 = okapi::Motor(6);
-		auto stacker2 = okapi::Motor(-5);
-const int UP_ENC = -2225;//tune
+void competition_initialize() {}
 
-const int MID_ENC = UP_ENC * 0.75;//tune
-void autonomous(){
 
-		using namespace okapi;
-		stacker1.move(127);
-		stacker2.move(127);
-		
-		switch(auton){
-				case ONE_CUBE:
-						profileFollower.setTarget("PushCube", true);
-						profileFollower.waitUntilSettled();
-						profileFollower.setTarget("PushCube", false);
-						profileFollower.waitUntilSettled();
-						profileFollower.removePath("PushCube");
-						stacker1.move(127 * 0.8);
-						stacker2.move(127 * 0.8);
+enum Auton{
+		BLUE_SMALL_ZONE_ONE_CUBE,
+		BLUE_BIG_ZONE_ONE_CUBE,
+		RED_SMALL_ZONE_ONE_CUBE,
+		RED_BIG_ZONE_ONE_CUBE,
+		BLUE_SMALL_ZONE_5STACK,
+		RED_SMALL_ZONE_5STACK,
+		BLUE_BIG_ZONE_3STACK,
+		RED_BIG_ZONE_3STACK,
+		RED_BIG_ZONE_PUSH,
+		BLUE_BIG_ZONE_PUSH
+};
+
+Auton currentAuton = RED_SMALL_ZONE_5STACK;
+
+const QLength botWidth = 18_in;
+const QLength botLength = 18_in;
+const QLength tileLength = 2_ft;
+const QLength cubeWidth = 5.5_in;
+const QLength fieldWidth = 6 * tileLength;
+const QLength towerBaseWidth = 7.8_in;
+const QLength zoneWidth = 10_in;
+const QLength bigZoneLength = 15.5_in;
+const QLength barrierWidth = 2_in;
+const Vector redInnerProtectedCube = {tileLength - cubeWidth/2, tileLength + cubeWidth/2};
+const Vector redOuterProtectedCube = {2 * tileLength - cubeWidth/2, tileLength + cubeWidth/2};
+const Vector red4Stack = {2 * tileLength - cubeWidth/2, 2 * tileLength + cubeWidth/2};
+const Vector red3StackBack = {3 * tileLength - cubeWidth/2, 2 * tileLength + cubeWidth/2};
+const Vector red2StackBack = {4 * tileLength - cubeWidth/2, 2 * tileLength + cubeWidth/2};
+const Vector redLineBack = {5 * tileLength - cubeWidth/2, 2 * tileLength + cubeWidth/2};
+const Vector red3StackFront = {3 * tileLength - cubeWidth/2, 2 * tileLength - cubeWidth/2};
+const Vector red2StackFront = {4 * tileLength - cubeWidth/2, 2 * tileLength - 1.5 * cubeWidth/2};
+const Vector redLineFront = {5 * tileLength - cubeWidth/2, 2 * tileLength  - 2.5 * cubeWidth/2};
+const Vector redSmallZoneCorner = {fieldWidth - zoneWidth - barrierWidth, zoneWidth + barrierWidth};
+const Vector leftCorner = {0_in, 0_in};
+const Vector rightCorner = {fieldWidth, 0_in};
+
+void autonomous() {
+		switch(currentAuton){
+				case BLUE_SMALL_ZONE_ONE_CUBE:{
+						odom->setState(State(
+								tileLength + botWidth/2, //x
+								botLength/2,//y
+								0_deg));//theta	
 						break;
-				case RED_RIGHT_ONE_CUBE_AND_LINE:
-						stacker1.move(127 * 0.8);
-						stacker2.move(127 * 0.8);
-						profileFollower.setTarget("PushCube", true);
-						profileFollower.waitUntilSettled();
-						profileFollower.removePath("PushCube");
-						profileFollower.setTarget("LineUp", false);
-						profileFollower.waitUntilSettled();
-						profileFollower.removePath("LineUp");
-						stacker1.move(-127 * 0.8);
-						stacker2.move(-127 * 0.8);
-						drivetrain.turnAngle(std::sqrt(2) * (115_deg));
-						profileFollower.setTarget("DriveTowardsLine", false);
-						profileFollower.waitUntilSettled();
-						profileFollower.removePath("DriveTowardsLine");
-						profileFollower.setTarget("DriveAwayFromLine", true);
-						profileFollower.waitUntilSettled();
-						profileFollower.removePath("DriveAwayFromLine");
-						stacker1.move(-127 * 0.0);
-						stacker2.move(-127 * 0.0);
-						drivetrain.turnAngle(std::sqrt(2) * (170_deg));
+				}
+				case BLUE_BIG_ZONE_ONE_CUBE:{
+						odom->setState(State(
+								6 * tileLength - botWidth/2, 
+								botLength/2, 
+								0_deg));	
 						break;
-				case RED_RIGHT_LINE_AND_PLACE:
-						stacker1.move(127);
-						stacker2.move(127);
-						pros::delay(1500);
-						stacker1.move(-127 * 0.8);
-						stacker2.move(-127 * 0.8);
-						profileFollower.setTarget("DriveTowardsLine", false);
-						profileFollower.waitUntilSettled();
-						profileFollower.removePath("DriveTowardsLine");
-						profileFollower.setTarget("DriveAwayFromLine", true);
-						profileFollower.waitUntilSettled();
-						profileFollower.removePath("DriveAwayFromLine");
-						drivetrain.turnAngle(std::sqrt(2) * (200_deg));
-						profileFollower.setTarget("DriveIntoZone", false);
-						profileFollower.waitUntilSettled();
-					
-						tilter.setMiddle();
-						pros::delay(2000);
+				}
+				case RED_SMALL_ZONE_ONE_CUBE:{
+						odom->setState(State(
+								5 * tileLength - botWidth/2, 
+								botLength/2, 
+								0_deg));	
+						break;
+				}
+				case RED_BIG_ZONE_ONE_CUBE:{
+						odom->setState(State(
+								tileLength + botWidth/2, 
+								botLength/2, 
+								0_deg));	
+						break;
+				}
+				case BLUE_SMALL_ZONE_5STACK:{
+						odom->setState(State(
+								tileLength + cubeWidth/2, 
+								botLength/2, 
+								0_deg));	
+						break;
+				}
+				case RED_SMALL_ZONE_5STACK:{
+						odom->setState(State(
+								5 * tileLength - cubeWidth/2,//x 
+								botLength/2, 
+								0_deg));	
 
-						tilter.setUp();
-						pros::delay(500);
-
-						stacker1.move(127 * 0.4);
-						stacker2.move(127 * 0.4);
+						odomController->strafeToPoint(
+						redLineFront - Vector(0_in, botLength/2 + 1_in), OdomController::makeAngleCalculator(redLineBack), 1,
+						OdomController::defaultDriveAngleSettler);
+						//start intaking
 						
-						profileFollower.setTarget("DriveIntoZone", true);
-						profileFollower.waitUntilSettled();
-						tilter.setDown();
+						odomController->strafeToPoint(
+						redLineBack, OdomController::makeAngleCalculator(redLineBack), 1,
+						OdomController::defaultDriveAngleSettler);
+						//stop intaking
+
+						odomController->strafeToPoint(
+						redSmallZoneCorner + Vector(-3_in, 3_in), OdomController::makeAngleCalculator(rightCorner), 1,
+						OdomController::defaultDriveAngleSettler);
+						//place stack
+
 						break;
-				case BLUE_LEFT_ONE_CUBE_AND_LINE:
-
-						stacker1.move(127 * 0.8);
-						stacker2.move(127 * 0.8);
-						profileFollower.setTarget("PushCube", true);
-						profileFollower.waitUntilSettled();
-						profileFollower.removePath("PushCube");
-						profileFollower.setTarget("LineUp", false);
-						profileFollower.waitUntilSettled();
-						profileFollower.removePath("LineUp");
-						stacker1.move(-127 * 0.8);
-						stacker2.move(-127 * 0.8);
-						drivetrain.turnAngle(std::sqrt(2) * (-115_deg));
-						profileFollower.setTarget("DriveTowardsLine", false);
-						profileFollower.waitUntilSettled();
-						profileFollower.removePath("DriveTowardsLine");
-						profileFollower.setTarget("DriveAwayFromLine", true);
-						profileFollower.waitUntilSettled();
-						profileFollower.removePath("DriveAwayFromLine");
-						stacker1.move(-127 * 0.0);
-						stacker2.move(-127 * 0.0);
-						drivetrain.turnAngle(std::sqrt(2) * (-170_deg));
+				}
+				case BLUE_BIG_ZONE_3STACK:{
+						odom->setState(State(4 * tileLength + cubeWidth/2, botLength/2, 0_deg));	
 						break;
-				case BLUE_LEFT_LINE_AND_PLACE:
-
-						stacker1.move(127);
-						stacker2.move(127);
-						pros::delay(1500);
-						stacker1.move(-127 * 0.8);
-						stacker2.move(-127 * 0.8);
-						profileFollower.setTarget("DriveTowardsLine", false);
-						profileFollower.waitUntilSettled();
-						profileFollower.removePath("DriveTowardsLine");
-						profileFollower.setTarget("DriveAwayFromLine", true);
-						profileFollower.waitUntilSettled();
-						profileFollower.removePath("DriveAwayFromLine");
-						drivetrain.turnAngle(-std::sqrt(2) * (180_deg));
-						profileFollower.setTarget("DriveIntoZone", false);
-						profileFollower.waitUntilSettled();
-						stacker1.move(127 * 0.5);
-						stacker2.move(127 * 0.5);
-						pros::delay(500);
-						stacker1.move(127 * 0);
-						stacker2.move(127 * 0);
-						tilter.setMiddle();
-						pros::delay(1500);
-						tilter.setUp();
-						pros::delay(1000);
-
-						stacker1.move(127 * 0.6);
-						stacker2.move(127 * 0.6);
-						pros::delay(400);	
-						profileFollower.setTarget("DriveIntoZone", true);
-						profileFollower.waitUntilSettled();
-						tilter.setDown();
+				}
+				case RED_BIG_ZONE_3STACK:{
+						odom->setState(State(2 * tileLength - cubeWidth/2, botLength/2, 0_deg));	
+						break;
+				}
+				default:
 						break;
 		}
 
-		//if(isLine){
-
-				//stacker1.move(-127 * 0.6);
-				//stacker2.move(-127 * 0.6);
-				
-/*				topLeft.moveRelative(700, 127*0.2);
-				topRight.moveRelative(700, 127*0.2);
-				bottomLeft.moveRelative(-700, 127*0.2);
-				bottomRight.moveRelative(-700, 127*0.2);
-				pros::delay(5000);
-				topLeft.moveRelative(-420, 50);
-				topRight.moveRelative(-420, 50);
-				bottomLeft.moveRelative(420, 50);
-				bottomRight.moveRelative(420, 50);
-				pros::delay(2000);
-				drivetrain.turnAngle((isLeft?-180:180) * std::sqrt(2) * okapi::degree);
-				pros::delay(1200);
-				topLeft.moveRelative(50, 127*0.2);
-				topRight.moveRelative(50, 127*0.2);
-				bottomLeft.moveRelative(50, 127*0.2);
-				bottomRight.moveRelative(50, 127*0.2);
-*/				
-		//}		
+      odomController->strafeToPoint(
+        {0_ft, 0_ft}, OdomController::makeAngleCalculator({0_ft, 3_ft}), 1,
+        OdomController::defaultDriveAngleSettler);
 }
 
- PositionTracker tracker = *PositionTracker::getInstance();
- Stacker stacker = *Stacker::getInstance();
+/**
+ * Runs the operator control code. This function will be started in its own task
+ * with the default priority and stack size whenever the robot is enabled via
+ * the Field Management System or the VEX Competition Switch in the operator
+ * control mode.
+ *
+ * If no competition control is connected, this function will run immediately
+ * following initialize().
+ *
+ * If the robot is disabled or communications is lost, the
+ * operator control task will be stopped. Re-enabling the robot will restart the
+ * task, not resume it from where it left off.
+ */
+Stacker stacker = *Stacker::getInstance();
+Tilter tilter = *Tilter::getInstance();
+LatchedBoolean left = LatchedBoolean();
+LatchedBoolean right = LatchedBoolean();
 
- OI oi = *OI::getInstance();
-
- LatchedBoolean left = LatchedBoolean();
- LatchedBoolean right = LatchedBoolean();
- pros::Controller master = pros::Controller(pros::E_CONTROLLER_MASTER);
- pros::Controller partner = pros::Controller(pros::E_CONTROLLER_PARTNER);
-
-void runSubsystems(){
-  //update drive output
-  drive.driveManually(-master.get_analog(ANALOG_RIGHT_X), master.get_analog(ANALOG_RIGHT_Y), master.get_analog(ANALOG_LEFT_X));
-  drive.updateFieldCentric(master.get_digital(DIGITAL_B));
-  //run every subsystem
-  stacker.in();
-//  stacker.stateChangeRequest(master.get_digital(DIGITAL_L1), master.get_digital(DIGITAL_L2));
-  if(master.get_digital(DIGITAL_LEFT)){
-				  stacker.slowOuttake();
-  }else if(master.get_digital(DIGITAL_R1)){
-		  stacker.outtake();
-  }else if(master.get_digital(DIGITAL_R2)){
-		  stacker.intake();
-  }else{
-		stacker.stop();
-  }
-
-  stacker.out();
-  stacker1.move(stacker.getOutput());
-  stacker2.move(stacker.getOutput());
-  drive.in();
-  drive.out();
-  tracker.in();
-  tracker.out();
-  if(left.update(master.get_digital(DIGITAL_L2))){
-    tilter.shiftDown();
-  }
-  tilter.in();
-  tilter.out();
-  if(right.update(master.get_digital(DIGITAL_L1))){
-		  tilter.shiftUp();
-  }else if(master.get_digital(DIGITAL_DOWN)){
-		tilter.adjustThrottle(-127 * 0.5);
-  }else{
-		tilter.adjustThrottle(0);
-  }
-  if(master.get_digital(DIGITAL_X)){
-tracker.resetRotation();
-  }
-}
-
-void updateScreen(){
-		char xbuffer [50];
-		char ybuffer [50];
-		char tbuffer [50];
-		std::sprintf(xbuffer, "X: %f", tracker.getGlobalPosition().getX());
-		std::sprintf(ybuffer, "Y: %f", tracker.getGlobalPosition().getY());
-		std::sprintf(tbuffer, "Theta: %f", tracker.getTheta());
-		x.setText(xbuffer);
-		y.setText(ybuffer);
-		t.setText(tbuffer);
-		/*  UIHelper::updateDisplay(
-    tracker.getLEncValue(),
-    tracker.getREncValue(),
-    tracker.getBEncValue(),
-    tracker.getGlobalPosition().getX(),
-    tracker.getGlobalPosition().getY(),
-    tracker.getTheta()
-  );*/
-}
+auto stacker1 = okapi::Motor(6);
+auto stacker2 = okapi::Motor(-5);
 
 void opcontrol() {
-	while (true) {
-    runSubsystems();
-    updateScreen();
-		pros::delay(20);
-	}
+  while (true) {
+    model->xArcade(
+      controller.getAnalog(ControllerAnalog::rightX), controller.getAnalog(ControllerAnalog::rightY),
+      controller.getAnalog(ControllerAnalog::leftX));
+
+		if(controller.getDigital(ControllerDigital::left)){
+				stacker.slowOuttake();
+		}else if(controller.getDigital(ControllerDigital::R1)){
+				stacker.outtake();
+		}else if(controller.getDigital(ControllerDigital::R2)){
+				stacker.intake();
+		}else{
+				stacker.stop();
+		}
+
+		stacker.in();
+		stacker.out();
+		
+		tilter.in();
+		tilter.out();
+
+		if(left.update(controller.getDigital(ControllerDigital::L2))){
+				tilter.shiftDown();
+		}
+		if(right.update(controller.getDigital(ControllerDigital::L1))){
+				tilter.shiftUp();
+		}else if(controller.getDigital(ControllerDigital::down)){
+				tilter.adjustThrottle(-127 * 0.3);
+		}else{
+				tilter.adjustThrottle(0);
+		}
+
+		stacker1.moveVoltage(stacker.getOutput());
+		stacker2.moveVoltage(stacker.getOutput());
+
+    pros::delay(10);
+  }
 }

@@ -119,22 +119,22 @@ std::function<void()> Drive::inAction(){
 void Drive::out(){
   switch(state){
     case NEUTRAL:
-      leftFrontMotor.move(0);
-      leftRearMotor.move(0);
-      rightFrontMotor.move(0);
-      rightRearMotor.move(0);
+      leftFrontMotor.moveVoltage(0);
+      leftRearMotor.moveVoltage(0);
+      rightFrontMotor.moveVoltage(0);
+      rightRearMotor.moveVoltage(0);
       break;
     case MANUAL:
-      leftFrontMotor.move(-outputs[0]);
-      leftRearMotor.move(outputs[1]);
-      rightFrontMotor.move(-outputs[2]);
-      rightRearMotor.move(outputs[3]);
+      leftFrontMotor.moveVoltage(-outputs[0]);
+      leftRearMotor.moveVoltage(outputs[1]);
+      rightFrontMotor.moveVoltage(-outputs[2]);
+      rightRearMotor.moveVoltage(outputs[3]);
       break;
     case PATH_FOLLOWING:
-      leftFrontMotor.move(outputs[0]);
-      leftRearMotor.move(outputs[1]);
-      rightFrontMotor.move(outputs[2]);
-      rightRearMotor.move(outputs[3]);
+      leftFrontMotor.moveVoltage(outputs[0]);
+      leftRearMotor.moveVoltage(outputs[1]);
+      rightFrontMotor.moveVoltage(outputs[2]);
+      rightRearMotor.moveVoltage(outputs[3]);
       break;
   }
 };
@@ -165,7 +165,7 @@ double Drive::getWheelOutput(PolarPoint stick, double angleOffset, bool isManual
   */
   double radians = std::fmod((stick.getAngle() + angleOffset + M_PI_2 + 2 * M_PI - (isManual ? M_PI_4: 0)), (2 * M_PI));
   if(fieldCentric){
-    radians -= /*std::fmod(*/PositionTracker::getTheta()/*, M_2_PI)*/;
+    radians += /*std::fmod(*/PositionTracker::getTheta()/*, M_2_PI)*/;
   }
   //multiply by curved radius if it's manual
   return (!isManual ? stick.getRadius() : Util::convertToPercent(Util::curveJoystick(false, Util::convertToVoltage(stick.getRadius()), 15))) * std::sin(radians);
@@ -255,3 +255,9 @@ void Drive::generateOutputs(int x, int y, int r, int outputs[], bool isManual){
     pros::lcd::clear_line(1);
   }
 };
+
+Drive* Drive::instance = Drive::getInstance();
+//set initial drive setting
+bool Drive::fieldCentric = false;
+//used for changing the above setting during a match
+LatchedBoolean Drive::fieldCentricToggle = LatchedBoolean();

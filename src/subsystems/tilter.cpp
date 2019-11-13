@@ -32,7 +32,7 @@ void Tilter::out(){
 		}else{
 				tilterMotor.move_absolute(UP_ENC, 127 * 0.3);
 		}
-		if(isAdjusting && tilterMotor.get_position() > UP_ENC - 350){
+		if(isAdjusting && tilterMotor.get_position() > UP_ENC - 500){
 				tilterMotor.move(adjustOutput);
 		}
       break;
@@ -107,5 +107,7 @@ Tilter::Tilter(){
 }
 
 const int Tilter::DOWN_ENC = 0;
-const int Tilter::UP_ENC = -2225;//tune
+const int Tilter::UP_ENC = -1900;//tune
 const int Tilter::MID_ENC = UP_ENC * 0.75;//tune
+
+Tilter* Tilter::instance = Tilter::getInstance();

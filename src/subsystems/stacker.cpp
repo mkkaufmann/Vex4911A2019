@@ -117,3 +117,5 @@ Stacker::Stacker(){
   outtakeAction = [this]()->void{outtake();};
   state = NEUTRAL; 
 };
+
+Stacker* Stacker::instance = Stacker::getInstance();
