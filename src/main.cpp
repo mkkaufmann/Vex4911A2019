@@ -64,11 +64,124 @@ using namespace lib7842;
 		tilter.setUp();
    }
 
+//tune these
+const QLength botWidth = 18_in;
+const QLength botLength = 18_in;
+
+const QLength cubeWidth = 5.5_in;
+const QLength fieldWidth = 6 * tile;
+const QLength towerBaseWidth = 7.8_in;
+const QLength zoneWidth = 10_in;
+const QLength bigZoneLength = 15.5_in;
+const QLength barrierWidth = 2_in;
+//field positions
+//constants
+Vector leftCorner = {0_in, 0_in};
+Vector rightCorner = {fieldWidth, 0_in};
+Vector closeTower = {3 * tile, tile};
+Vector bottomCloseTowerCube = closeTower - Vector(0_in, towerBaseWidth + cubeWidth/2);
+Vector leftCloseTowerCube = closeTower - Vector(towerBaseWidth + cubeWidth/2, 0_in);
+Vector rightCloseTowerCube = closeTower + Vector(towerBaseWidth + cubeWidth/2, 0_in);
+Vector leftTower = {1.5 * tile, 3 * tile};
+Vector bottomLeftTowerCube = leftTower - Vector(0_in, towerBaseWidth + cubeWidth/2);
+Vector leftLeftTowerCube = leftTower - Vector(towerBaseWidth + cubeWidth/2, 0_in);
+Vector rightLeftTowerCube = leftTower + Vector(towerBaseWidth + cubeWidth/2, 0_in);
+Vector middleTower = {3 * tile, 3 * tile};
+Vector bottomMiddleTowerCube = middleTower - Vector(0_in, towerBaseWidth + cubeWidth/2);
+Vector leftMiddleTowerCube = middleTower - Vector(towerBaseWidth + cubeWidth/2, 0_in);
+Vector rightMiddleTowerCube = middleTower + Vector(towerBaseWidth + cubeWidth/2, 0_in);
+Vector rightTower = {4.5 * tile, 3 * tile};
+Vector bottomRightTowerCube = rightTower - Vector(0_in, towerBaseWidth + cubeWidth/2);
+Vector leftRightTowerCube = rightTower - Vector(towerBaseWidth + cubeWidth/2, 0_in);
+Vector rightRightTowerCube = rightTower + Vector(towerBaseWidth + cubeWidth/2, 0_in);
+
+//opposite side of field
+
+//Vector topLeftTowerCube = leftTower + Vector(0_in, towerBaseWidth + cubeWidth/2);
+//Vector topMiddleTowerCube = middleTower + Vector(0_in, towerBaseWidth + cubeWidth/2);
+//Vector topRightTowerCube = rightTower + Vector(0_in, towerBaseWidth + cubeWidth/2);
+
+//vary by alliance color
+Vector innerProtectedCube;
+Vector outerProtectedCube;
+Vector stack4;
+Vector stack3Back;
+Vector stack2Back;
+Vector lineBack;
+Vector stack3Front;
+Vector stack2Front;
+Vector lineFront;
+Vector smallBarrierCorner;
+Vector bigBarrierCorner;
+Vector smallCorner;
+Vector bigCorner;
+Vector allianceTower;
+Vector autonLineSingleCube;
+Vector autonLineBlockMiddle;
+Vector autonLineBlockInnerCorner;
+
+
+enum Auton{
+		SMALL_ZONE_ONE_CUBE,
+		BIG_ZONE_ONE_CUBE,
+		SMALL_ZONE_5STACK,
+		BIG_ZONE_3STACK,
+		BIG_ZONE_PUSH,
+};
+
+enum Color{
+		RED,
+		BLUE
+};
+
+Color alliance = RED;
+Auton currentAuton = SMALL_ZONE_5STACK;
+
 void initialize() {
   pros::delay(200);
   odom->startTask("Odometry");
   scr.makePage<OdomDebug>().attachOdom(odom);
   scr.startTask("Screen");
+
+  switch(alliance){
+		  case RED:{
+				innerProtectedCube = {tile - cubeWidth/2, tile + cubeWidth/2};
+				outerProtectedCube = {2 * tile - cubeWidth/2, tile + cubeWidth/2};
+				stack4 = {2 * tile - cubeWidth/2, 2 * tile + cubeWidth/2};
+				stack3Back = {3 * tile - cubeWidth/2, 2 * tile + cubeWidth/2};
+				stack2Back = {4 * tile - cubeWidth/2, 2 * tile + cubeWidth/2};
+				lineBack = {5 * tile - cubeWidth/2, 2 * tile + cubeWidth/2};
+				smallBarrierCorner = {fieldWidth - zoneWidth - barrierWidth, zoneWidth + barrierWidth};
+				bigBarrierCorner = {zoneWidth + barrierWidth, bigZoneLength + barrierWidth};
+				allianceTower = {fieldWidth, 1.5 * tile};
+				autonLineSingleCube = {cubeWidth/2, 3 * tile};
+				autonLineBlockMiddle = {fieldWidth - cubeWidth, 3 * tile};
+				autonLineBlockInnerCorner = {fieldWidth - 1.5 * cubeWidth, 3 * tile - cubeWidth};
+				smallCorner = rightCorner;
+				bigCorner = leftCorner;
+				break;
+		  }
+		  case BLUE:{
+				innerProtectedCube = {5 * tile + cubeWidth/2, tile + cubeWidth/2};
+				outerProtectedCube = {4 * tile + cubeWidth/2, tile + cubeWidth/2};
+				stack4 = {4 * tile + cubeWidth/2, 2 * tile + cubeWidth/2};
+				stack3Back = {3 * tile + cubeWidth/2, 2 * tile + cubeWidth/2};
+				stack2Back = {2 * tile + cubeWidth/2, 2 * tile + cubeWidth/2};
+				lineBack = {tile + cubeWidth/2, 2 * tile + cubeWidth/2};
+				smallBarrierCorner = {zoneWidth + barrierWidth, zoneWidth + barrierWidth};
+				bigBarrierCorner = {fieldWidth - zoneWidth - barrierWidth, bigZoneLength + barrierWidth};
+				allianceTower = {0_in, 1.5 * tile};
+				autonLineSingleCube = {fieldWidth - cubeWidth/2, 3 * tile};
+				autonLineBlockMiddle = {cubeWidth, 3 * tile};
+				autonLineBlockInnerCorner = {1.5 * cubeWidth, 3 * tile - cubeWidth};
+				smallCorner = leftCorner;
+				bigCorner = rightCorner;
+				break;
+		  }
+		  stack3Front = stack3Back - Vector(0_in, cubeWidth); 
+		  stack2Front = stack2Back - Vector(0_in, 2 * cubeWidth);
+		  lineFront = lineBack - Vector(0_in, 3 * cubeWidth); 
+  }
 }
 
 void disabled() {}
@@ -76,124 +189,119 @@ void disabled() {}
 void competition_initialize() {}
 
 
-enum Auton{
-		BLUE_SMALL_ZONE_ONE_CUBE,
-		BLUE_BIG_ZONE_ONE_CUBE,
-		RED_SMALL_ZONE_ONE_CUBE,
-		RED_BIG_ZONE_ONE_CUBE,
-		BLUE_SMALL_ZONE_5STACK,
-		RED_SMALL_ZONE_5STACK,
-		BLUE_BIG_ZONE_3STACK,
-		RED_BIG_ZONE_3STACK,
-		RED_BIG_ZONE_PUSH,
-		BLUE_BIG_ZONE_PUSH
+
+void start(QLength x){
+		odom->setState(State(
+		x, //x
+		botLength/2,//y
+		0_deg));//theta	
 };
 
-Auton currentAuton = RED_SMALL_ZONE_5STACK;
-
-const QLength botWidth = 18_in;
-const QLength botLength = 18_in;
-const QLength tileLength = 2_ft;
-const QLength cubeWidth = 5.5_in;
-const QLength fieldWidth = 6 * tileLength;
-const QLength towerBaseWidth = 7.8_in;
-const QLength zoneWidth = 10_in;
-const QLength bigZoneLength = 15.5_in;
-const QLength barrierWidth = 2_in;
-const Vector redInnerProtectedCube = {tileLength - cubeWidth/2, tileLength + cubeWidth/2};
-const Vector redOuterProtectedCube = {2 * tileLength - cubeWidth/2, tileLength + cubeWidth/2};
-const Vector red4Stack = {2 * tileLength - cubeWidth/2, 2 * tileLength + cubeWidth/2};
-const Vector red3StackBack = {3 * tileLength - cubeWidth/2, 2 * tileLength + cubeWidth/2};
-const Vector red2StackBack = {4 * tileLength - cubeWidth/2, 2 * tileLength + cubeWidth/2};
-const Vector redLineBack = {5 * tileLength - cubeWidth/2, 2 * tileLength + cubeWidth/2};
-const Vector red3StackFront = {3 * tileLength - cubeWidth/2, 2 * tileLength - cubeWidth/2};
-const Vector red2StackFront = {4 * tileLength - cubeWidth/2, 2 * tileLength - 1.5 * cubeWidth/2};
-const Vector redLineFront = {5 * tileLength - cubeWidth/2, 2 * tileLength  - 2.5 * cubeWidth/2};
-const Vector redSmallZoneCorner = {fieldWidth - zoneWidth - barrierWidth, zoneWidth + barrierWidth};
-const Vector leftCorner = {0_in, 0_in};
-const Vector rightCorner = {fieldWidth, 0_in};
+QLength negativeIfRed(QLength val){
+		if(alliance == RED){
+				return -val;
+		}
+		return val;
+}
 
 void autonomous() {
 		switch(currentAuton){
-				case BLUE_SMALL_ZONE_ONE_CUBE:{
-						odom->setState(State(
-								tileLength + botWidth/2, //x
-								botLength/2,//y
-								0_deg));//theta	
-						break;
-				}
-				case BLUE_BIG_ZONE_ONE_CUBE:{
-						odom->setState(State(
-								6 * tileLength - botWidth/2, 
-								botLength/2, 
-								0_deg));	
-						break;
-				}
-				case RED_SMALL_ZONE_ONE_CUBE:{
-						odom->setState(State(
-								5 * tileLength - botWidth/2, 
-								botLength/2, 
-								0_deg));	
-						break;
-				}
-				case RED_BIG_ZONE_ONE_CUBE:{
-						odom->setState(State(
-								tileLength + botWidth/2, 
-								botLength/2, 
-								0_deg));	
-						break;
-				}
-				case BLUE_SMALL_ZONE_5STACK:{
-						odom->setState(State(
-								tileLength + cubeWidth/2, 
-								botLength/2, 
-								0_deg));	
-						break;
-				}
-				case RED_SMALL_ZONE_5STACK:{
-						odom->setState(State(
-								5 * tileLength - cubeWidth/2,//x 
-								botLength/2, 
-								0_deg));	
-						deployTray();
-						odomController->strafeToPoint(
-						redLineFront - Vector(0_in, botLength/2 + 1_in), OdomController::makeAngleCalculator(redLineBack), 1,
-						OdomController::defaultDriveAngleSettler);
+				case SMALL_ZONE_ONE_CUBE:{
+						start(smallBarrierCorner.x + negativeIfRed(cubeWidth + 1_in));
 						
-						//start intaking
 						rollerOuttake();
 
+						//drive cube into zone
 						odomController->strafeToPoint(
-						redLineBack, OdomController::makeAngleCalculator(redLineBack), 1,
+						smallCorner + Vector(negativeIfRed(zoneWidth + botWidth/2), botLength/2), OdomController::makeAngleCalculator(smallCorner), 1,
+						OdomController::defaultDriveAngleSettler);
+
+						//drive to front of line
+						odomController->strafeToPoint(
+						lineFront - Vector(0_in, botLength/2 + 1_in), 
+						OdomController::makeAngleCalculator(lineFront), 1,
+						OdomController::defaultDriveAngleSettler);
+
+						//start intaking
+						rollerIntake();
+
+						//drive to back of line
+						odomController->strafeToPoint(
+						lineBack, OdomController::makeAngleCalculator(lineBack), 1,
+						OdomController::defaultDriveAngleSettler);
+						
+						//stop intaking
+						rollerStop();
+
+						//drive towards zone
+						//may need to adjust angle
+						odomController->strafeToPoint(
+						smallBarrierCorner + Vector(negativeIfRed(6_in), 6_in), OdomController::makeAngleCalculator(smallCorner), 1,
+						OdomController::defaultDriveAngleSettler);
+						
+						//place stack
+						//placeStack();
+						break;
+				}
+				case BIG_ZONE_ONE_CUBE:{
+						start(bigBarrierCorner.x + negativeIfRed(cubeWidth + 1_in));
+						break;
+				}
+				case SMALL_ZONE_5STACK:{
+						//set starting position
+						start(lineFront.x);
+
+						//deploy tray
+						rollerOuttake();
+
+						//drive to front of line (make loose settle, it's going straight)
+						odomController->strafeToPoint(
+						lineFront - Vector(0_in, botLength/2 + 1_in), 
+						OdomController::makeAngleCalculator(lineFront), 1,
+						OdomController::makeSettler(6_in, 5_deg));
+						
+						//wait for tray to deploy
+						pros::delay(500);
+
+						//start intaking
+						rollerIntake();
+
+						//drive to back of line
+						odomController->strafeToPoint(
+						lineBack, OdomController::makeAngleCalculator(lineBack), 1,
 						OdomController::defaultDriveAngleSettler);
 
 						//stop intaking
-						rollerIntake();
+						rollerStop();
 
+						//drive towards zone
+						//may need to adjust angle
 						odomController->strafeToPoint(
-						redSmallZoneCorner + Vector(-3_in, 3_in), OdomController::makeAngleCalculator(rightCorner), 1,
+						smallBarrierCorner + Vector(negativeIfRed(3_in), 3_in), OdomController::makeAngleCalculator(smallCorner), 1,
 						OdomController::defaultDriveAngleSettler);
 						
 						//place stack
 						placeStack();
 
+						//drive towards next line
+						odomController->strafeToPoint(
+						stack2Front - Vector(0_in, botLength/2 + 1_in), 
+						OdomController::makeAngleCalculator(stack2Front), 1,
+						OdomController::makeSettler(6_in, 5_deg));
+
 						break;
 				}
-				case BLUE_BIG_ZONE_3STACK:{
-						odom->setState(State(4 * tileLength + cubeWidth/2, botLength/2, 0_deg));	
+				case BIG_ZONE_3STACK:{
+						start(outerProtectedCube.x);
 						break;
 				}
-				case RED_BIG_ZONE_3STACK:{
-						odom->setState(State(2 * tileLength - cubeWidth/2, botLength/2, 0_deg));	
+				case BIG_ZONE_PUSH:{
+						start(bigBarrierCorner.x + negativeIfRed(cubeWidth + 1_in));
 						break;
 				}
 				default:
 						break;
 		}
-
-      odomController->strafeToPoint(
-        {0_ft, 0_ft}, OdomController::makeAngleCalculator({0_ft, 3_ft}), 1,
-        OdomController::defaultDriveAngleSettler);
 }
 
 Stacker stacker = *Stacker::getInstance();
