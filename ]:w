@@ -4,7 +4,6 @@
 #include "subsystems/stacker.hpp"
 #include "subsystems/tilter.hpp"
 using namespace lib7842;
-using namespace okapi;
 
   Controller controller(ControllerId::master);
 
@@ -30,33 +29,29 @@ using namespace okapi;
     model, odom,
     //Distance PID - To mm
     std::make_unique<IterativePosPIDController>(
-      0.01, 0.000, 0.00005, 0, TimeUtilFactory::withSettledUtilParams(10, 10, 100_ms)),
+      0.015, 0.0002, 0.0002, 0, TimeUtilFactory::withSettledUtilParams(10, 10, 100_ms)),
     //Turn PID - To Degree
     std::make_unique<IterativePosPIDController>(
-      0.03, 0.00, 0.000, 0, TimeUtilFactory::withSettledUtilParams(2, 2, 100_ms)),
+      0.03, 0.00, 0.0003, 0, TimeUtilFactory::withSettledUtilParams(2, 2, 100_ms)),
     //Angle PID - To Degree
     std::make_unique<IterativePosPIDController>(
       0.02, 0, 0, 0, TimeUtilFactory::withSettledUtilParams(4, 2, 100_ms)),
     //Strafe PID - To mm
     std::make_unique<IterativePosPIDController>(
-      0.010, 0.000, 0.000, 0, TimeUtilFactory::withSettledUtilParams(10, 10, 100_ms)),
+      0.015, 0.0002, 0.0002, 0, TimeUtilFactory::withSettledUtilParams(10, 10, 100_ms)),
     2_in);
 
    Tilter tilter = *Tilter::getInstance();
-   auto stackerMotor1 = std::make_shared<Motor>(6);
-   auto stackerMotor2 = std::make_shared<Motor>(-5);
+   auto stackerMotors = MotorGroup({6, -5});
 
    void rollerOuttake(){
-		stackerMotor1->moveVoltage(127);
-		stackerMotor2->moveVoltage(127);
+		stackerMotors.moveVoltage(127);
    }
    void rollerIntake(){
-		stackerMotor1->moveVoltage(-127);
-		stackerMotor2->moveVoltage(-127);
+		stackerMotors.moveVoltage(-127);
    }
    void rollerStop(){
-		stackerMotor1->moveVoltage(0);
-		stackerMotor2->moveVoltage(0);
+		stackerMotors.moveVoltage(0);
    }
    void deployTray(){
 		rollerOuttake();
@@ -213,11 +208,11 @@ QLength negativeIfRed(QLength val){
 void autonomous() {
 		switch(currentAuton){
 				case TEST:{
-						deployTray();
+						start(smallBarrierCorner.x + negativeIfRed(cubeWidth + 1_in + botWidth/2));
 						odomController->strafeToPoint(
-										{0_in, 30_in},
-						OdomController::makeAngleCalculator(0_deg), 1,
-						OdomController::makeSettler(1_in, 5_deg));
+						smallCorner + Vector(negativeIfRed(1_in + zoneWidth + botWidth/2), botLength/2),
+						OdomController::makeAngleCalculator(0_deg), 0,
+						OdomController::defaultDriveSettler);
 						break;
 				}
 				case SMALL_ZONE_ONE_CUBE:{
@@ -272,7 +267,7 @@ void autonomous() {
 						//drive to front of line (make loose settle, it's going straight)
 						odomController->strafeToPoint(
 						lineFront - Vector(0_in, botLength/2 + 1_in), 
-						OdomController::makeAngleCalculator(0_deg), 1,
+						OdomController::makeAngleCalculator(lineFront), 1,
 						OdomController::makeSettler(6_in, 5_deg));
 						
 						//wait for tray to deploy
@@ -357,8 +352,7 @@ void opcontrol() {
 				tilter.adjustThrottle(0);
 		}
 
-		stackerMotor1->moveVoltage(stacker.getOutput());
-		stackerMotor2->moveVoltage(stacker.getOutput());
+		stackerMotors.moveVoltage(stacker.getOutput());
 
     pros::delay(10);
   }
