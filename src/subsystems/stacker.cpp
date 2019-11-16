@@ -11,19 +11,19 @@ Stacker* Stacker::getInstance(){
 
 void Stacker::intake(){
   state = IN;
-  output = -127;
+  output = -12000;
 };
 
 
 void Stacker::outtake(){
   state = OUT;
-  output = 127;
+  output = 12000;
 };
 
 
 void Stacker::slowOuttake(){
   state = OUT;
-  output = 127 * 0.5;
+  output = 12000 * 0.3;
 };
 
 void Stacker::manual(int out){

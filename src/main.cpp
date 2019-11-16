@@ -47,12 +47,12 @@ using namespace okapi;
    auto stackerMotor2 = std::make_shared<Motor>(-5);
 
    void rollerOuttake(){
-		stackerMotor1->moveVoltage(127);
-		stackerMotor2->moveVoltage(127);
+		stackerMotor1->moveVoltage(12000);
+		stackerMotor2->moveVoltage(12000);
    }
    void rollerIntake(){
-		stackerMotor1->moveVoltage(-127);
-		stackerMotor2->moveVoltage(-127);
+		stackerMotor1->moveVoltage(-12000);
+		stackerMotor2->moveVoltage(-12000);
    }
    void rollerStop(){
 		stackerMotor1->moveVoltage(0);
@@ -352,7 +352,7 @@ void opcontrol() {
 		if(right.update(controller.getDigital(ControllerDigital::L1))){
 				tilter.shiftUp();
 		}else if(controller.getDigital(ControllerDigital::down)){
-				tilter.adjustThrottle(-127 * 0.3);
+				tilter.adjustThrottle(-127 * 0.2);
 		}else{
 				tilter.adjustThrottle(0);
 		}
