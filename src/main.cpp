@@ -29,17 +29,18 @@ using namespace okapi;
   auto odomController = std::make_shared<OdomXController>(
     model, odom,
     //Distance PID - To mm
+	//P - 0.0032 -> 0.0128 started to oscillate
     std::make_unique<IterativePosPIDController>(
-      0.01, 0.000, 0.00005, 0, TimeUtilFactory::withSettledUtilParams(10, 10, 100_ms)),
+      0.008, 0.000, 0.0009, 0, TimeUtilFactory::withSettledUtilParams(10, 10, 100_ms)),
     //Turn PID - To Degree
     std::make_unique<IterativePosPIDController>(
-      0.03, 0.00, 0.000, 0, TimeUtilFactory::withSettledUtilParams(2, 2, 100_ms)),
+      0.03, 0.00, 0.0003, 0, TimeUtilFactory::withSettledUtilParams(2, 2, 100_ms)),
     //Angle PID - To Degree
     std::make_unique<IterativePosPIDController>(
-      0.02, 0, 0, 0, TimeUtilFactory::withSettledUtilParams(4, 2, 100_ms)),
+      0.02, 0, 0.0, 0, TimeUtilFactory::withSettledUtilParams(4, 2, 100_ms)),
     //Strafe PID - To mm
     std::make_unique<IterativePosPIDController>(
-      0.010, 0.000, 0.000, 0, TimeUtilFactory::withSettledUtilParams(10, 10, 100_ms)),
+      0.5, 0.000, 0.1, 0, TimeUtilFactory::withSettledUtilParams(10, 10, 100_ms)),
     2_in);
 
    Tilter tilter = *Tilter::getInstance();
@@ -60,13 +61,14 @@ using namespace okapi;
    }
    void deployTray(){
 		rollerOuttake();
-		pros::delay(3000);
+		pros::delay(1500);
 		rollerStop();
    }
    void placeStack(){
 		tilter.setMiddle();
 		pros::delay(2000);
 		tilter.setUp();
+		pros::delay(2000);
    }
 
 //tune these
@@ -140,8 +142,8 @@ enum Color{
 		BLUE
 };
 
-Color alliance = BLUE;
-Auton currentAuton = TEST;
+Color alliance = RED;
+Auton currentAuton = SMALL_ZONE_5STACK;
 
 void initialize() {
   pros::delay(200);
@@ -213,97 +215,151 @@ QLength negativeIfRed(QLength val){
 void autonomous() {
 		switch(currentAuton){
 				case TEST:{
-						deployTray();
+						//deployTray();
 						odomController->strafeToPoint(
-										{0_in, 30_in},
-						OdomController::makeAngleCalculator(0_deg), 1,
-						OdomController::makeSettler(1_in, 5_deg));
+										{0_in, 48_in},
+						OdomController::makeAngleCalculator(90_deg), 1,
+						OdomController::makeSettler(0.5_in, 0.5_deg));
+
 						break;
 				}
 				case SMALL_ZONE_ONE_CUBE:{
-						start(smallBarrierCorner.x + negativeIfRed(cubeWidth + 1_in + botWidth/2));
-						
-						rollerOuttake();
+						switch(alliance){
+								case RED:{
+										odomController->strafeToPoint(
+										{cubeWidth + barrierWidth + 1_in, 0_in},
+										OdomController::makeAngleCalculator(0_deg), 1,
+										OdomController::defaultDriveAngleSettler);
 
-						//drive cube into zone
-						odomController->strafeToPoint(
-						smallCorner + Vector(negativeIfRed(zoneWidth + botWidth/2), botLength/2),
-						OdomController::makeAngleCalculator(0_deg), 0,
-						OdomController::defaultDriveSettler);
+										odomController->strafeToPoint(
+										{0_in, 0_in},
+										OdomController::makeAngleCalculator(0_deg), 1,
+										OdomController::defaultDriveAngleSettler);
+										break;
+								}
+								case BLUE:{
+										odomController->strafeToPoint(
+										{-(cubeWidth + barrierWidth + 1_in), 0_in},
+										OdomController::makeAngleCalculator(0_deg), 1,
+										OdomController::defaultDriveAngleSettler);
 
-						//drive to front of line
-						odomController->strafeToPoint(
-						lineFront - Vector(0_in, botLength/2 + 1_in), 
-						OdomController::makeAngleCalculator(lineFront), 1,
-						OdomController::defaultDriveAngleSettler);
-
-						//start intaking
-						rollerIntake();
-
-						//drive to back of line
-						odomController->strafeToPoint(
-						lineBack, OdomController::makeAngleCalculator(lineBack), 1,
-						OdomController::defaultDriveAngleSettler);
-						
-						//stop intaking
-						rollerStop();
-
-						//drive towards zone
-						//may need to adjust angle
-						odomController->strafeToPoint(
-						smallBarrierCorner + Vector(negativeIfRed(6_in), 6_in), OdomController::makeAngleCalculator(smallCorner), 1,
-						OdomController::defaultDriveAngleSettler);
-						
-						//place stack
-						//placeStack();
+										odomController->strafeToPoint(
+										{0_in, 0_in},
+										OdomController::makeAngleCalculator(0_deg), 1,
+										OdomController::defaultDriveAngleSettler);
+										break;
+								}
+						}
+//						deployTray();
 						break;
 				}
 				case BIG_ZONE_ONE_CUBE:{
-						start(bigBarrierCorner.x + negativeIfRed(cubeWidth + 1_in));
+						switch(alliance){
+								case BLUE:{
+										odomController->strafeToPoint(
+										{cubeWidth + barrierWidth + 1_in, 0_in},
+										OdomController::makeAngleCalculator(0_deg), 1,
+										OdomController::defaultDriveAngleSettler);
+
+										odomController->strafeToPoint(
+										{0_in, 0_in},
+										OdomController::makeAngleCalculator(0_deg), 1,
+										OdomController::defaultDriveAngleSettler);
+										break;
+								}
+								case RED:{
+										odomController->strafeToPoint(
+										{-(cubeWidth + barrierWidth + 1_in), 0_in},
+										OdomController::makeAngleCalculator(0_deg), 1,
+										OdomController::defaultDriveAngleSettler);
+
+										odomController->strafeToPoint(
+										{0_in, 0_in},
+										OdomController::makeAngleCalculator(0_deg), 1,
+										OdomController::defaultDriveAngleSettler);
+										break;
+								}
+						}
+//						deployTray();
 						break;
 				}
 				case SMALL_ZONE_5STACK:{
-						//set starting position
-						start(lineFront.x);
 
-						//deploy tray
-						rollerOuttake();
+						deployTray();
 
-						//drive to front of line (make loose settle, it's going straight)
-						odomController->strafeToPoint(
-						lineFront - Vector(0_in, botLength/2 + 1_in), 
-						OdomController::makeAngleCalculator(0_deg), 1,
-						OdomController::makeSettler(6_in, 5_deg));
-						
-						//wait for tray to deploy
-						pros::delay(500);
-
-						//start intaking
 						rollerIntake();
-
-						//drive to back of line
-						odomController->strafeToPoint(
-						lineBack, OdomController::makeAngleCalculator(lineBack), 1,
-						OdomController::defaultDriveAngleSettler);
-
-						//stop intaking
-						rollerStop();
-
-						//drive towards zone
-						//may need to adjust angle
-						odomController->strafeToPoint(
-						smallBarrierCorner + Vector(negativeIfRed(3_in), 3_in), OdomController::makeAngleCalculator(smallCorner), 1,
-						OdomController::defaultDriveAngleSettler);
 						
-						//place stack
-						placeStack();
+						model->setMaxVoltage(6000);
 
-						//drive towards next line
 						odomController->strafeToPoint(
-						stack2Front - Vector(0_in, botLength/2 + 1_in), 
-						OdomController::makeAngleCalculator(stack2Front), 1,
-						OdomController::makeSettler(6_in, 5_deg));
+						{0_in, 1.5_tl},
+						OdomController::makeAngleCalculator(0_deg), 1,
+						OdomController::makeSettler(2_in, 5_deg));
 
+						model->setMaxVoltage(12000);
+
+						switch(alliance){
+								case BLUE:{
+										odomController->strafeToPoint(
+										{0_in, 1_tl - 6_in},
+										OdomController::makeAngleCalculator(-135_deg), 1,
+										OdomController::makeSettler(3_in, 10_deg));
+
+										rollerStop();
+
+										odomController->strafeToPoint(
+										{-3_in, 1_tl - 9_in},
+										OdomController::makeAngleCalculator(-135_deg), 1,
+										OdomController::makeSettler(2_in, 5_deg));
+										break;
+								}
+								case RED:{
+										odomController->strafeToPoint(
+										{0_in, 1_tl - 6_in},
+										OdomController::makeAngleCalculator(135_deg), 1,
+										OdomController::makeSettler(3_in, 10_deg));
+
+										rollerStop();
+
+										odomController->strafeToPoint(
+										{4_in, 1_tl/2},
+										OdomController::makeAngleCalculator(135_deg), 1,
+										OdomController::makeSettler(2_in, 5_deg));
+										break;
+								}
+						}
+						placeStack();
+							
+						switch(alliance){
+								case BLUE:{
+										odomController->strafeToPoint(
+										{6_in, 1_tl + 5_in},
+										OdomController::makeAngleCalculator(-135_deg), 1,
+										OdomController::makeSettler(3_in, 10_deg));
+
+										tilter.setDown();
+
+										odomController->strafeToPoint(
+										{1_tl, 0.5_tl},
+										OdomController::makeAngleCalculator(0_deg), 1,
+										OdomController::defaultDriveAngleSettler);
+										break;
+								}
+								case RED:{
+										odomController->strafeToPoint(
+										{-6_in, 1_tl + 5_in},
+										OdomController::makeAngleCalculator(135_deg), 1,
+										OdomController::makeSettler(3_in, 10_deg));
+
+										tilter.setDown();
+
+										odomController->strafeToPoint(
+										{-1_tl, 0.5_tl},
+										OdomController::makeAngleCalculator(0_deg), 1,
+										OdomController::makeSettler(3_in, 10_deg));
+										break;
+								}
+						}
 						break;
 				}
 				case BIG_ZONE_3STACK:{
@@ -352,7 +408,7 @@ void opcontrol() {
 		if(right.update(controller.getDigital(ControllerDigital::L1))){
 				tilter.shiftUp();
 		}else if(controller.getDigital(ControllerDigital::down)){
-				tilter.adjustThrottle(-127 * 0.2);
+				tilter.adjustThrottle(-127 * 0.3);
 		}else{
 				tilter.adjustThrottle(0);
 		}
