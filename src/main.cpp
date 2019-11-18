@@ -3,6 +3,7 @@
 #include "lib7842/api.hpp"
 #include "subsystems/stacker.hpp"
 #include "subsystems/tilter.hpp"
+#include "util/util.hpp"
 using namespace lib7842;
 using namespace okapi;
 
@@ -68,7 +69,7 @@ using namespace okapi;
 		tilter.setMiddle();
 		pros::delay(2000);
 		tilter.setUp();
-		pros::delay(2000);
+		pros::delay(1000);
    }
 
 //tune these
@@ -285,7 +286,19 @@ void autonomous() {
 				}
 				case SMALL_ZONE_5STACK:{
 
-						deployTray();
+						odomController->strafeToPoint(
+						{0_in, 10_in},
+						OdomController::makeAngleCalculator(0_deg), 1,
+						OdomController::makeSettler(2_in, 5_deg));
+
+						odomController->strafeToPoint(
+						{0_in, 0_in},
+						OdomController::makeAngleCalculator(0_deg), 1,
+						OdomController::makeSettler(2_in, 5_deg));
+
+						rollerOuttake();
+
+						pros::delay(1500);
 
 						rollerIntake();
 						
@@ -328,14 +341,21 @@ void autonomous() {
 										break;
 								}
 						}
+
+						rollerOuttake();
+						pros::delay(200);
+						rollerStop();
+						
 						placeStack();
 							
 						switch(alliance){
 								case BLUE:{
+										model->setMaxVoltage(4000);
 										odomController->strafeToPoint(
 										{6_in, 1_tl + 5_in},
 										OdomController::makeAngleCalculator(-135_deg), 1,
 										OdomController::makeSettler(3_in, 10_deg));
+										model->setMaxVoltage(12000);
 
 										tilter.setDown();
 
@@ -346,10 +366,11 @@ void autonomous() {
 										break;
 								}
 								case RED:{
-										odomController->strafeToPoint(
+										model->setMaxVoltage(4000); odomController->strafeToPoint(
 										{-6_in, 1_tl + 5_in},
 										OdomController::makeAngleCalculator(135_deg), 1,
 										OdomController::makeSettler(3_in, 10_deg));
+										model->setMaxVoltage(12000);
 
 										tilter.setDown();
 
@@ -382,9 +403,13 @@ LatchedBoolean right = LatchedBoolean();
 
 void opcontrol() {
   while (true) {
+		  double turn = Util::map(Util::curveJoystick(
+						  false, 
+						  Util::map(controller.getAnalog(ControllerAnalog::leftX), -1, 1, -127, 127), 
+						  10), -127, 127, -1, 1); 
     model->xArcade(
       controller.getAnalog(ControllerAnalog::rightX), controller.getAnalog(ControllerAnalog::rightY),
-      controller.getAnalog(ControllerAnalog::leftX));
+      turn);
 
 		if(controller.getDigital(ControllerDigital::left)){
 				stacker.slowOuttake();
