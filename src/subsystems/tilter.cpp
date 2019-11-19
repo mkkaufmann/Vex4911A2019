@@ -107,7 +107,7 @@ Tilter::Tilter(){
 }
 
 const int Tilter::DOWN_ENC = 0;
-const int Tilter::UP_ENC = -3040;//tune
+const int Tilter::UP_ENC = -5300;//tune
 const int Tilter::MID_ENC = UP_ENC * 0.95;//tune
 
 Tilter* Tilter::instance = Tilter::getInstance();

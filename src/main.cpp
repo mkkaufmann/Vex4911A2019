@@ -67,7 +67,7 @@ using namespace okapi;
    }
    void placeStack(){
 		tilter.setMiddle();
-		pros::delay(2000);
+		pros::delay(3000);
 		tilter.setUp();
 		pros::delay(1000);
    }
@@ -135,6 +135,7 @@ enum Auton{
 		SMALL_ZONE_5STACK,
 		BIG_ZONE_3STACK,
 		BIG_ZONE_PUSH,
+		BIG_ZONE_KNOCKER,
 		TEST
 };
 
@@ -291,18 +292,18 @@ void autonomous() {
 						OdomController::makeAngleCalculator(0_deg), 1,
 						OdomController::makeSettler(2_in, 5_deg));
 
+						rollerOuttake();
+
 						odomController->strafeToPoint(
 						{0_in, 0_in},
 						OdomController::makeAngleCalculator(0_deg), 1,
 						OdomController::makeSettler(2_in, 5_deg));
 
-						rollerOuttake();
-
-						pros::delay(1500);
+						pros::delay(1000);
 
 						rollerIntake();
 						
-						model->setMaxVoltage(6000);
+						model->setMaxVoltage(4000);
 
 						odomController->strafeToPoint(
 						{0_in, 1.5_tl},
@@ -321,7 +322,7 @@ void autonomous() {
 										rollerStop();
 
 										odomController->strafeToPoint(
-										{-3_in, 1_tl - 9_in},
+										{-4_in, 1_tl/2},
 										OdomController::makeAngleCalculator(-135_deg), 1,
 										OdomController::makeSettler(2_in, 5_deg));
 										break;
@@ -343,14 +344,17 @@ void autonomous() {
 						}
 
 						rollerOuttake();
-						pros::delay(200);
+						pros::delay(100);
 						rollerStop();
 						
 						placeStack();
 							
+						rollerOuttake();
+						pros::delay(50);
+						rollerStop();
+						model->setMaxVoltage(4000);
 						switch(alliance){
 								case BLUE:{
-										model->setMaxVoltage(4000);
 										odomController->strafeToPoint(
 										{6_in, 1_tl + 5_in},
 										OdomController::makeAngleCalculator(-135_deg), 1,
@@ -366,7 +370,7 @@ void autonomous() {
 										break;
 								}
 								case RED:{
-										model->setMaxVoltage(4000); odomController->strafeToPoint(
+										odomController->strafeToPoint(
 										{-6_in, 1_tl + 5_in},
 										OdomController::makeAngleCalculator(135_deg), 1,
 										OdomController::makeSettler(3_in, 10_deg));
@@ -388,7 +392,58 @@ void autonomous() {
 						break;
 				}
 				case BIG_ZONE_PUSH:{
-						start(bigBarrierCorner.x + negativeIfRed(cubeWidth + 1_in));
+						switch(alliance){
+								case BLUE:{
+										odomController->strafeToPoint(
+										{cubeWidth + barrierWidth + 11_in, 0_in},
+										OdomController::makeAngleCalculator(0_deg), 1,
+										OdomController::makeSettler(4_in, 5_deg));
+
+										break;
+								}
+								case RED:{
+										odomController->strafeToPoint(
+										{-(cubeWidth + barrierWidth + 11_in), 0_in},
+										OdomController::makeAngleCalculator(0_deg), 1,
+										OdomController::makeSettler(4_in, 5_deg));
+
+										break;
+								}
+						}
+						odomController->strafeToPoint(
+						{0_in, 0_in},
+						OdomController::makeAngleCalculator(0_deg), 1,
+						OdomController::makeSettler(4_in, 5_deg));
+
+						odomController->strafeToPoint(
+						{0_in, 1.4_tl},
+						OdomController::makeAngleCalculator(0_deg), 1,
+						OdomController::makeSettler(4_in, 5_deg));
+
+						model->setMaxVoltage(8000);
+						switch(alliance){
+								case BLUE:{
+										odomController->strafeToPoint(
+										{cubeWidth + barrierWidth + 9_in, bigZoneLength + barrierWidth - 9_in },
+										OdomController::makeAngleCalculator(55_deg), 1,
+										OdomController::makeSettler(4_in, 5_deg));
+
+										break;
+								}
+								case RED:{
+										odomController->strafeToPoint(
+										{-(cubeWidth + barrierWidth + 9_in), bigZoneLength + barrierWidth - 9_in},
+										OdomController::makeAngleCalculator(-55_deg), 1,
+										OdomController::makeSettler(4_in, 5_deg));
+
+										break;
+								}
+						}
+						model->setMaxVoltage(12000);
+						odomController->strafeToPoint( {0_in, 0_in},
+						OdomController::makeAngleCalculator(0_deg), 1,
+						OdomController::makeSettler(4_in, 5_deg));
+						//deployTray();
 						break;
 				}
 				default:
@@ -433,7 +488,7 @@ void opcontrol() {
 		if(right.update(controller.getDigital(ControllerDigital::L1))){
 				tilter.shiftUp();
 		}else if(controller.getDigital(ControllerDigital::down)){
-				tilter.adjustThrottle(-127 * 0.3);
+				tilter.adjustThrottle(-127 * 1);
 		}else{
 				tilter.adjustThrottle(0);
 		}
