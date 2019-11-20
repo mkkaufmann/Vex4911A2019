@@ -23,16 +23,16 @@ std::function<void()> Tilter::inAction(){
 void Tilter::out(){
   switch(state){
     case DOWN:
-      tilterMotor.move_absolute(DOWN_ENC, 127);
+      tilterMotor.move_absolute(DOWN_ENC + offset, 127);
       break;
     case UP:
 		//macro
 		if(tilterMotor.get_position() > MID_ENC){
-				tilterMotor.move_absolute(UP_ENC, 127 * 1);
+				tilterMotor.move_absolute(UP_ENC + offset, 127 * 1);
 		}else{
-				tilterMotor.move_absolute(UP_ENC, 127 * 0.6);
+				tilterMotor.move_absolute(UP_ENC + offset, 127 * 0.6);
 		}
-		if(isAdjusting && tilterMotor.get_position() > UP_ENC - 500){
+		if(isAdjusting && tilterMotor.get_position() > UP_ENC + offset - 500){
 				tilterMotor.move(adjustOutput);
 		}
       break;
@@ -70,15 +70,15 @@ void Tilter::shiftDown(){
 }
 
 void Tilter::setMiddle(){
-		tilterMotor.move_absolute(UP_ENC, 127 * 1);
+		tilterMotor.move_absolute(UP_ENC + offset, 127 * 1);
 		state = UP;
 }
 void Tilter::setUp(){
-		tilterMotor.move_absolute(UP_ENC, 127 * 0.6);
+		tilterMotor.move_absolute(UP_ENC + offset, 127 * 0.6);
 		state = UP;
 }
 void Tilter::setDown(){
-		tilterMotor.move_absolute(DOWN_ENC, 127);
+		tilterMotor.move_absolute(DOWN_ENC + offset, 127);
 		state = DOWN;
 }
 
@@ -99,15 +99,24 @@ void Tilter::adjustThrottle(double output){
 		}
 }
 
+void Tilter::offsetForward(){
+		offset += OFFSET_INC;
+}
+
+void Tilter::offsetBackward(){
+		offset -= OFFSET_INC;
+}
+
 Tilter::Tilter(){
   state = DOWN;
   tilterMotor.tare_position();
+  offset = 0;
   shiftUpAction = [this]()->void{shiftUp();};
   shiftDownAction = [this]()->void{shiftDown();};
 }
 
 const int Tilter::DOWN_ENC = 0;
-const int Tilter::UP_ENC = -5300;//tune
-const int Tilter::MID_ENC = UP_ENC * 0.95;//tune
-
+const int Tilter::UP_ENC = -4200;//tune
+const int Tilter::MID_ENC = UP_ENC * 0.8;//tune
+const int Tilter::OFFSET_INC = -50;//tune
 Tilter* Tilter::instance = Tilter::getInstance();

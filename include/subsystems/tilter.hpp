@@ -33,6 +33,9 @@ public:
 
   void adjustThrottle(double output);
 
+  void offsetForward();
+  void offsetBackward();
+
   enum TilterState {
     DOWN,
     MID,
@@ -44,8 +47,10 @@ private:
   static const int DOWN_ENC;
   static const int MID_ENC;
   static const int UP_ENC;
-		bool isAdjusting;
-		int adjustOutput;
+  static const int OFFSET_INC;
+  int offset;
+  bool isAdjusting;
+  int adjustOutput;
 
   pros::Motor tilterMotor = pros::Motor(Constants::TILTER_MOTOR_PORT);
   static Tilter* instance;

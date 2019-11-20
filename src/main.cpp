@@ -67,9 +67,9 @@ using namespace okapi;
    }
    void placeStack(){
 		tilter.setMiddle();
-		pros::delay(3000);
+		pros::delay(2000);
 		tilter.setUp();
-		pros::delay(1000);
+		pros::delay(1300);
    }
 
 //tune these
@@ -215,6 +215,7 @@ QLength negativeIfRed(QLength val){
 }
 
 void autonomous() {
+		tilter.setDown();
 		switch(currentAuton){
 				case TEST:{
 						//deployTray();
@@ -229,60 +230,60 @@ void autonomous() {
 						switch(alliance){
 								case RED:{
 										odomController->strafeToPoint(
-										{cubeWidth + barrierWidth + 1_in, 0_in},
+										{cubeWidth + barrierWidth + 7_in, 0_in},
 										OdomController::makeAngleCalculator(0_deg), 1,
-										OdomController::defaultDriveAngleSettler);
+										OdomController::makeSettler(4_in, 5_deg));
 
 										odomController->strafeToPoint(
 										{0_in, 0_in},
 										OdomController::makeAngleCalculator(0_deg), 1,
-										OdomController::defaultDriveAngleSettler);
+										OdomController::makeSettler(4_in, 5_deg));
 										break;
 								}
 								case BLUE:{
 										odomController->strafeToPoint(
-										{-(cubeWidth + barrierWidth + 1_in), 0_in},
+										{-(cubeWidth + barrierWidth + 5_in), 0_in},
 										OdomController::makeAngleCalculator(0_deg), 1,
-										OdomController::defaultDriveAngleSettler);
+										OdomController::makeSettler(4_in, 5_deg));
 
 										odomController->strafeToPoint(
 										{0_in, 0_in},
 										OdomController::makeAngleCalculator(0_deg), 1,
-										OdomController::defaultDriveAngleSettler);
+										OdomController::makeSettler(4_in, 5_deg));
 										break;
 								}
 						}
-//						deployTray();
+						deployTray();
 						break;
 				}
 				case BIG_ZONE_ONE_CUBE:{
 						switch(alliance){
 								case BLUE:{
 										odomController->strafeToPoint(
-										{cubeWidth + barrierWidth + 1_in, 0_in},
+										{cubeWidth + barrierWidth + 7_in, 0_in},
 										OdomController::makeAngleCalculator(0_deg), 1,
-										OdomController::defaultDriveAngleSettler);
+										OdomController::makeSettler(4_in, 5_deg));
 
 										odomController->strafeToPoint(
 										{0_in, 0_in},
 										OdomController::makeAngleCalculator(0_deg), 1,
-										OdomController::defaultDriveAngleSettler);
+										OdomController::makeSettler(4_in, 5_deg));
 										break;
 								}
 								case RED:{
 										odomController->strafeToPoint(
-										{-(cubeWidth + barrierWidth + 1_in), 0_in},
+										{-(cubeWidth + barrierWidth + 7_in), 0_in},
 										OdomController::makeAngleCalculator(0_deg), 1,
-										OdomController::defaultDriveAngleSettler);
+										OdomController::makeSettler(4_in, 5_deg));
 
 										odomController->strafeToPoint(
 										{0_in, 0_in},
 										OdomController::makeAngleCalculator(0_deg), 1,
-										OdomController::defaultDriveAngleSettler);
+										OdomController::makeSettler(4_in, 5_deg));
 										break;
 								}
 						}
-//						deployTray();
+						deployTray();
 						break;
 				}
 				case SMALL_ZONE_5STACK:{
@@ -308,7 +309,7 @@ void autonomous() {
 						odomController->strafeToPoint(
 						{0_in, 1.5_tl},
 						OdomController::makeAngleCalculator(0_deg), 1,
-						OdomController::makeSettler(2_in, 5_deg));
+						OdomController::makeSettler(4_in, 5_deg));
 
 						model->setMaxVoltage(12000);
 
@@ -316,7 +317,7 @@ void autonomous() {
 								case BLUE:{
 										odomController->strafeToPoint(
 										{0_in, 1_tl - 6_in},
-										OdomController::makeAngleCalculator(-135_deg), 1,
+										OdomController::makeAngleCalculator(-135_deg), 3,
 										OdomController::makeSettler(3_in, 10_deg));
 
 										rollerStop();
@@ -324,28 +325,28 @@ void autonomous() {
 										odomController->strafeToPoint(
 										{-4_in, 1_tl/2},
 										OdomController::makeAngleCalculator(-135_deg), 1,
-										OdomController::makeSettler(2_in, 5_deg));
+										OdomController::makeSettler(3_in, 5_deg));
 										break;
 								}
 								case RED:{
 										odomController->strafeToPoint(
 										{0_in, 1_tl - 6_in},
-										OdomController::makeAngleCalculator(135_deg), 1,
+										OdomController::makeAngleCalculator(135_deg), 3,
 										OdomController::makeSettler(3_in, 10_deg));
 
 										rollerStop();
 
 										odomController->strafeToPoint(
-										{4_in, 1_tl/2},
+										{6_in, 1_tl/2 + 1_in},
 										OdomController::makeAngleCalculator(135_deg), 1,
-										OdomController::makeSettler(2_in, 5_deg));
+										OdomController::makeSettler(3_in, 5_deg));
 										break;
 								}
 						}
 
-						rollerOuttake();
-						pros::delay(100);
-						rollerStop();
+//						rollerOuttake();
+//						pros::delay(100);
+//						rollerStop();
 						
 						placeStack();
 							
@@ -366,7 +367,7 @@ void autonomous() {
 										odomController->strafeToPoint(
 										{1_tl, 0.5_tl},
 										OdomController::makeAngleCalculator(0_deg), 1,
-										OdomController::defaultDriveAngleSettler);
+										OdomController::makeSettler(4_in, 5_deg));
 										break;
 								}
 								case RED:{
@@ -381,7 +382,7 @@ void autonomous() {
 										odomController->strafeToPoint(
 										{-1_tl, 0.5_tl},
 										OdomController::makeAngleCalculator(0_deg), 1,
-										OdomController::makeSettler(3_in, 10_deg));
+										OdomController::makeSettler(4_in, 5_deg));
 										break;
 								}
 						}
@@ -454,16 +455,27 @@ void autonomous() {
 Stacker stacker = *Stacker::getInstance();
 LatchedBoolean left = LatchedBoolean();
 LatchedBoolean right = LatchedBoolean();
-
+LatchedBoolean offsetPressForward = LatchedBoolean();
+LatchedBoolean offsetPressBackward = LatchedBoolean();
 
 void opcontrol() {
+		model->setMaxVoltage(12000);
   while (true) {
 		  double turn = Util::map(Util::curveJoystick(
 						  false, 
 						  Util::map(controller.getAnalog(ControllerAnalog::leftX), -1, 1, -127, 127), 
+						  15), -127, 127, -1, 1); 
+		  double xPower = Util::map(Util::curveJoystick(
+						  false, 
+						  Util::map(controller.getAnalog(ControllerAnalog::rightX), -1, 1, -127, 127), 
+						  10), -127, 127, -1, 1); 
+		  double yPower = Util::map(Util::curveJoystick(
+						  false, 
+						  Util::map(controller.getAnalog(ControllerAnalog::rightY), -1, 1, -127, 127), 
 						  10), -127, 127, -1, 1); 
     model->xArcade(
-      controller.getAnalog(ControllerAnalog::rightX), controller.getAnalog(ControllerAnalog::rightY),
+      xPower,
+      yPower,
       turn);
 
 		if(controller.getDigital(ControllerDigital::left)){
@@ -488,9 +500,16 @@ void opcontrol() {
 		if(right.update(controller.getDigital(ControllerDigital::L1))){
 				tilter.shiftUp();
 		}else if(controller.getDigital(ControllerDigital::down)){
-				tilter.adjustThrottle(-127 * 1);
+				tilter.adjustThrottle(-127 * 0.5);
 		}else{
 				tilter.adjustThrottle(0);
+		}
+
+		if(offsetPressForward.update(controller.getDigital(ControllerDigital::B))){
+				tilter.offsetForward();
+		}
+		if(offsetPressBackward.update(controller.getDigital(ControllerDigital::X))){
+				tilter.offsetBackward();
 		}
 
 		stackerMotor1->moveVoltage(stacker.getOutput());
