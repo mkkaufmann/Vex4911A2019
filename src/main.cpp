@@ -133,6 +133,7 @@ enum Auton{
 		SMALL_ZONE_ONE_CUBE,
 		BIG_ZONE_ONE_CUBE,
 		SMALL_ZONE_5STACK,
+		SMALL_ZONE_6STACK,
 		BIG_ZONE_3STACK,
 		BIG_ZONE_PUSH,
 		BIG_ZONE_KNOCKER,
@@ -349,8 +350,125 @@ void autonomous() {
 //						rollerStop();
 						placeStack();
 							
-				    stackerMotor1->setBrakeMode(AbstractMotor::brakeMode::coast);					
-				    stackerMotor2->setBrakeMode(AbstractMotor::brakeMode::coast);					
+//						rollerOuttake();
+//						pros::delay(50);
+//						rollerStop();
+						model->setMaxVoltage(4000);
+						switch(alliance){
+								case BLUE:{
+										odomController->strafeToPoint(
+										{6_in, 1_tl + 5_in},
+										OdomController::makeAngleCalculator(-135_deg), 1,
+										OdomController::makeSettler(3_in, 10_deg));
+										model->setMaxVoltage(12000);
+
+										tilter.setDown();
+
+										odomController->strafeToPoint(
+										{1_tl, 0.5_tl},
+										OdomController::makeAngleCalculator(0_deg), 1,
+										OdomController::makeSettler(4_in, 5_deg));
+										break;
+								}
+								case RED:{
+										odomController->strafeToPoint(
+										{-6_in, 1_tl + 5_in},
+										OdomController::makeAngleCalculator(135_deg), 1,
+										OdomController::makeSettler(3_in, 10_deg));
+										model->setMaxVoltage(12000);
+
+										tilter.setDown();
+
+										odomController->strafeToPoint(
+										{-1_tl, 0.5_tl},
+										OdomController::makeAngleCalculator(0_deg), 1,
+										OdomController::makeSettler(4_in, 5_deg));
+										break;
+								}
+						}
+						break;
+				}
+				case SMALL_ZONE_6STACK:{
+						rollerOuttake();
+				    switch(alliance){
+								case BLUE:{
+												odomController->strafeToPoint(
+												{-3_in, 3_in},
+												OdomController::makeAngleCalculator(0_deg), 1,
+												OdomController::makeSettler(2_in, 5_deg));
+												break;
+								}
+								case RED:{
+												odomController->strafeToPoint(
+												{3_in, 3_in},
+												OdomController::makeAngleCalculator(0_deg), 1,
+												OdomController::makeSettler(2_in, 5_deg));
+												break;
+								}
+				    }
+						pros::delay(1000);
+
+						rollerIntake();
+						
+						model->setMaxVoltage(4000);
+
+						odomController->strafeToPoint(
+						{0_in, 1.5_tl},
+						OdomController::makeAngleCalculator(0_deg), 1,
+						OdomController::makeSettler(4_in, 5_deg));
+
+						model->setMaxVoltage(8000);
+
+						switch(alliance){
+								case BLUE:{
+										odomController->strafeToPoint(
+										{3_in, 2.1_tl},
+										OdomController::makeAngleCalculator(0_deg), 1,
+										OdomController::makeSettler(4_in, 5_deg));
+
+										model->setMaxVoltage(12000);
+
+										odomController->strafeToPoint(
+										{3_in, 1_tl - 6_in},
+										OdomController::makeAngleCalculator(-135_deg), 2,
+										OdomController::makeSettler(3_in, 10_deg));
+
+										rollerStop();
+
+										odomController->strafeToPoint(
+										{-4_in, 1_tl/2},
+										OdomController::makeAngleCalculator(-135_deg), 1,
+										OdomController::makeSettler(3_in, 5_deg));
+										break;
+								}
+								case RED:{
+										odomController->strafeToPoint(
+										{-3_in, 2.1_tl},
+										OdomController::makeAngleCalculator(0_deg), 1,
+										OdomController::makeSettler(4_in, 5_deg));
+										
+										model->setMaxVoltage(12000);
+
+										odomController->strafeToPoint(
+										{-3_in, 1_tl - 6_in},
+										OdomController::makeAngleCalculator(135_deg), 2,
+										OdomController::makeSettler(3_in, 10_deg));
+
+										rollerStop();
+
+										odomController->strafeToPoint(
+										{6_in, 1_tl/2 + 1_in},
+										OdomController::makeAngleCalculator(135_deg), 1,
+										OdomController::makeSettler(3_in, 5_deg));
+										break;
+								}
+						}
+
+//						rollerOuttake();
+//						pros::delay(100);
+//						rollerStop();
+						placeStack();
+							
 //						rollerOuttake();
 //						pros::delay(50);
 //						rollerStop();
@@ -460,8 +578,6 @@ LatchedBoolean offsetPressForward = LatchedBoolean();
 LatchedBoolean offsetPressBackward = LatchedBoolean();
 
 void opcontrol() {
-		stackerMotor1->setBrakeMode(AbstractMotor::brakeMode::brake);					
-		stackerMotor2->setBrakeMode(AbstractMotor::brakeMode::brake);					
 		model->setMaxVoltage(12000);
   while (true) {
 		  double turn = Util::map(Util::curveJoystick(
