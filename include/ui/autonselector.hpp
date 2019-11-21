@@ -30,17 +30,12 @@ public:
 
 
 protected:
-  std::shared_ptr<Auton> odom {nullptr};
+  std::shared_ptr<Auton> auton {nullptr};
 
 private:
-  void initializeField();
-  void initializeText();
-  void initializeButton();
+  void initializeAuton();
+  void initializeColor();
 
-  void updateOdom();
-  static lv_style_t buttonMatrixStyle;
-  static lv_style_t buttonMatrixRelStyle;
- 
   // field
   double fieldDim = 0; // width and height of field container
   lv_style_t fStyle;
@@ -68,8 +63,8 @@ private:
   lv_style_t resetRel;
   lv_style_t resetPr;
 
-  static lv_res_t tileAction(lv_obj_t*); // action when tile is pressed
-  static lv_res_t resetAction(lv_obj_t*); // action when reset button is pressed
+  static lv_res_t autonAction(lv_obj_t*, const char *); // action when auton is pressed
+  static lv_res_t colorAction(lv_obj_t*, const char *); // action when color button is pressed
 
   bool hasWarnedRender = false;
 };

@@ -347,12 +347,13 @@ void autonomous() {
 //						rollerOuttake();
 //						pros::delay(100);
 //						rollerStop();
-						
 						placeStack();
 							
-						rollerOuttake();
-						pros::delay(50);
-						rollerStop();
+				    stackerMotor1->setBrakeMode(AbstractMotor::brakeMode::coast);					
+				    stackerMotor2->setBrakeMode(AbstractMotor::brakeMode::coast);					
+//						rollerOuttake();
+//						pros::delay(50);
+//						rollerStop();
 						model->setMaxVoltage(4000);
 						switch(alliance){
 								case BLUE:{
@@ -459,6 +460,8 @@ LatchedBoolean offsetPressForward = LatchedBoolean();
 LatchedBoolean offsetPressBackward = LatchedBoolean();
 
 void opcontrol() {
+		stackerMotor1->setBrakeMode(AbstractMotor::brakeMode::brake);					
+		stackerMotor2->setBrakeMode(AbstractMotor::brakeMode::brake);					
 		model->setMaxVoltage(12000);
   while (true) {
 		  double turn = Util::map(Util::curveJoystick(
