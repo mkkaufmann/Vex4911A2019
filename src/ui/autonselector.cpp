@@ -2,149 +2,123 @@
 
 namespace lib7842 {
 
+AutonSelector::Color AutonSelector::color = AutonSelector::Color::BLUE;
+AutonSelector::Auton AutonSelector::auton = AutonSelector::Auton::SMALL_ZONE_5STACK;
+const char* AutonSelector::colormap[3] = {"Red", "Blue", ""};
+const char* AutonSelector::autonmap[12] = {"ONE", "TWO", "THREE", "FOUR", "FIVE",  "SIX",
+                                    "\n",  "one", "five",  "six",  "seven", ""};
 void AutonSelector::initialize() {
   initializeAuton();
   initializeColor();
 }
 
 void AutonSelector::render() {
-    if (!hasWarnedRender) {
-      hasWarnedRender = true;
-      LOG_WARN_S("AutonSelector::render: auton not attached");
-    }
+}
+
+AutonSelector::Auton AutonSelector::getAuton(){
+				return auton;
+}
+
+AutonSelector::Color AutonSelector::getColor(){
+				return color;
 }
 
 std::string AutonSelector::getName() {
   return "AutonSelector";
 }
 
-AutonSelector& AutonSelector::attachAuton(const std::shared_ptr<Auton>& iauton) {
-  auton = iauton;
-  return *this;
-}
-
 void AutonSelector::initializeAuton() {
-
-  /**
-  * Field
-  */
-  lv_obj_t* field = lv_obj_create(container, NULL);
-  fieldDim = std::min(lv_obj_get_width(container), lv_obj_get_height(container));
-  lv_obj_set_size(field, fieldDim, fieldDim);
-  lv_obj_align(field, NULL, LV_ALIGN_IN_RIGHT_MID, 0, 0);
-
-  /**
-   * Field Style
-   */
-  lv_style_copy(&fStyle, &cStyle);
-  fStyle.body.main_color = LV_COLOR_WHITE;
-  fStyle.body.grad_color = LV_COLOR_WHITE;
-  lv_obj_set_style(field, &fStyle);
-
-  /**
-   * Tile Styles
-   */
-  lv_style_copy(&gry, &lv_style_plain);
-  gry.body.main_color = LV_COLOR_HEX(0x828F8F);
-  gry.body.grad_color = LV_COLOR_HEX(0x828F8F);
-  gry.body.border.width = 1;
-  gry.body.radius = 0;
-  gry.body.border.color = LV_COLOR_WHITE;
-
-  lv_style_copy(&red, &gry);
-  red.body.main_color = LV_COLOR_HEX(0xD42630);
-  red.body.grad_color = LV_COLOR_HEX(0xD42630);
-  lv_style_copy(&blu, &gry);
-  blu.body.main_color = LV_COLOR_HEX(0x0077C9);
-  blu.body.grad_color = LV_COLOR_HEX(0x0077C9);
-
-  /**
-   * Tile Layout
-   */
-  lv_style_t* tileData[6][6] = {{&gry, &red, &gry, &gry, &blu, &gry}, //
-                                {&red, &gry, &gry, &gry, &gry, &blu}, //
-                                {&gry, &gry, &gry, &gry, &gry, &gry}, //
-                                {&gry, &gry, &gry, &gry, &gry, &gry}, //
-                                {&gry, &gry, &gry, &gry, &gry, &gry}, //
-                                {&gry, &gry, &gry, &gry, &gry, &gry}};
-
-  double tileDim = fieldDim / 6; // tile dimention
-
-  /**
-   * Create tile matrix, register callbacks, assign each tile an ID
-   */
-  for (size_t y = 0; y < 6; y++) {
-    for (size_t x = 0; x < 6; x++) {
-      lv_obj_t* tileObj = lv_btn_create(field, NULL);
-      lv_obj_set_pos(tileObj, x * tileDim, y * tileDim);
-      lv_obj_set_size(tileObj, tileDim, tileDim);
-      lv_obj_set_free_num(tileObj, y * 6 + x);
-      lv_obj_set_free_ptr(tileObj, this);
-      lv_btn_set_toggle(tileObj, false);
-      lv_btn_set_style(tileObj, LV_BTN_STYLE_PR, tileData[y][x]);
-      lv_btn_set_style(tileObj, LV_BTN_STYLE_REL, tileData[y][x]);
-    }
-  }
-
-  /**
-   * Robot point using lvgl led
-   */
-  led = lv_led_create(field, NULL);
-  lv_led_on(led);
-  lv_obj_set_size(led, fieldDim / 15.0, fieldDim / 15.0);
-
-  lv_style_copy(&ledStyle, &lv_style_plain);
-  ledStyle.body.radius = LV_RADIUS_CIRCLE;
-  ledStyle.body.main_color = themeColor;
-  ledStyle.body.grad_color = themeColor;
-  ledStyle.body.border.color = LV_COLOR_WHITE;
-  ledStyle.body.border.width = 2;
-  ledStyle.body.border.opa = LV_OPA_100;
-  lv_obj_set_style(led, &ledStyle);
-
-  /**
-   * Robot line
-   */
-  line = lv_line_create(field, NULL);
-  lv_line_set_points(line, linePoints.data(), linePoints.size());
-  lv_obj_set_pos(line, 0, 0);
-
-  lineLength = fieldDim / 6;
-
-  lv_style_copy(&lineStyle, &lv_style_plain);
-  lineStyle.line.width = 3;
-  lineStyle.line.opa = LV_OPA_100;
-  lineStyle.line.color = themeColor;
-  lv_obj_set_style(line, &lineStyle);
+				autonSelector = ButtonMatrix::create(container);
+				lv_style_copy(&autonReleased, &lv_style_pretty);
+				autonReleased.body.main_color = LV_COLOR_WHITE;
+  autonReleased.body.grad_color = LV_COLOR_WHITE;
+	lv_style_copy(&autonBackground, &autonReleased);
+  autonReleased.body.main_color = LV_COLOR_MAKE(168, 168, 168);
+  autonSelector.setMap(autonmap)
+    .setAction(autonAction)
+    .setToggle(true, 7)
+    .setStyle(LV_BTNM_STYLE_BG, &autonBackground)
+    .setStyle(LV_BTNM_STYLE_BTN_PR, &autonReleased)
+    .setStyle(LV_BTNM_STYLE_BTN_TGL_PR, &colorPressed)
+    .setStyle(LV_BTNM_STYLE_BTN_TGL_REL, &colorPressed)
+    .setStyle(LV_BTNM_STYLE_BTN_REL, &autonReleased)
+    .setStyle(LV_BTNM_STYLE_BTN_INA, &autonReleased)
+		.setPosition(0, LV_VER_RES /3)
+		.setSize(LV_HOR_RES, LV_VER_RES*2/3);
 }
 
 void AutonSelector::initializeColor() {
-  statusLabel = lv_label_create(container, NULL);
+  colorSelector = ButtonMatrix::create(container);
+  lv_style_copy(&colorReleased, &autonReleased);
+  lv_style_copy(&colorPressed, &colorReleased);
+  colorPressed.body.main_color = LV_COLOR_MAKE(0, 131, 179);
+  colorPressed.body.grad_color = LV_COLOR_MAKE(0, 131, 179);
 
-  lv_style_copy(&textStyle, &lv_style_plain);
-  textStyle.text.color = LV_COLOR_WHITE;
-  textStyle.text.opa = LV_OPA_100;
-  lv_obj_set_style(statusLabel, &textStyle);
-
-  lv_label_set_text(statusLabel, "No Odom Provided");
-
-  lv_obj_align(
-    statusLabel, container, LV_ALIGN_CENTER,
-    -lv_obj_get_width(container) / 2.0 + (lv_obj_get_width(container) - fieldDim) / 2.0, 0);
+  colorSelector.setMap(colormap)
+    .setAction(colorAction)
+    .setToggle(true, 1)
+    .setStyle(LV_BTNM_STYLE_BG, &autonBackground)
+    .setStyle(LV_BTNM_STYLE_BTN_PR, &colorReleased)
+    .setStyle(LV_BTNM_STYLE_BTN_TGL_PR, &colorPressed)
+    .setStyle(LV_BTNM_STYLE_BTN_TGL_REL, &colorPressed)
+    .setStyle(LV_BTNM_STYLE_BTN_REL, &colorReleased)
+    .setStyle(LV_BTNM_STYLE_BTN_INA, &colorReleased)
+		.setSize(LV_HOR_RES, LV_VER_RES/3);
 }
 
-/**
- * Sets odom state when tile is pressed
- * Decodes tile ID to find position
+/*
+ * autonomous selector
  */
 lv_res_t AutonSelector::autonAction(lv_obj_t* btnm, const char * txt) {
+    lv_style_t* style = lv_btnm_get_style(btnm, LV_BTNM_STYLE_BTN_TGL_REL);	
+		style->body.main_color = LV_COLOR_RED;
+     if (strcmp(txt, "Red") == 0) {
+       color = AutonSelector::Color::RED;
+       style->body.main_color = LV_COLOR_MAKE(232, 89, 95);
+       style->body.grad_color = LV_COLOR_MAKE(232, 89, 95);
+     } else if (strcmp(txt, "Blue") == 0) {
+       color = AutonSelector::Color::BLUE;
+       style->body.main_color = LV_COLOR_MAKE(0, 131, 179);
+       style->body.grad_color = LV_COLOR_MAKE(0, 131, 179);
+     }
   return LV_RES_OK;
 }
 
 /**
- * Reset Sensors and Position
+ * color selector
  */
 lv_res_t AutonSelector::colorAction(lv_obj_t* btnm, const char * txt) {
+     if (strcmp(txt, "ONE") == 0) {
+       auton = AutonSelector::Auton::BIG_ZONE_ONE_CUBE;
+     } 
+		 else if (strcmp(txt, "TWO") == 0) {
+       auton = AutonSelector::Auton::BIG_ZONE_PUSH;
+     }
+		 else if (strcmp(txt, "THREE") == 0) {
+       auton = AutonSelector::Auton::BIG_ZONE_3STACK;
+     }
+		 else if (strcmp(txt, "FOUR") == 0) {
+       auton = AutonSelector::Auton::BIG_ZONE_3STACK;
+     }
+		 else if (strcmp(txt, "FIVE") == 0) {
+       auton = AutonSelector::Auton::BIG_ZONE_3STACK;
+     }
+		 else if (strcmp(txt, "SIX") == 0) {
+       auton = AutonSelector::Auton::BIG_ZONE_3STACK;
+     }
+		 else if (strcmp(txt, "one") == 0) {
+       auton = AutonSelector::Auton::SMALL_ZONE_ONE_CUBE;
+     }
+		 else if (strcmp(txt, "five") == 0) {
+       auton = AutonSelector::Auton::SMALL_ZONE_5STACK;
+     }
+		 else if (strcmp(txt, "six") == 0) {
+       auton = AutonSelector::Auton::SMALL_ZONE_6STACK;
+     }
+		 else if (strcmp(txt, "seven") == 0) {
+       auton = AutonSelector::Auton::SMALL_ZONE_7STACK;
+     }
+
   return LV_RES_OK;
 }
 

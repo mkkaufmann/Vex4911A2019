@@ -4,45 +4,61 @@
 #include "subsystems/stacker.hpp"
 #include "subsystems/tilter.hpp"
 #include "util/util.hpp"
+#include "ui/autonselector.hpp"
 using namespace lib7842;
 using namespace okapi;
 
-  Controller controller(ControllerId::master);
+Controller controller(ControllerId::master);
+auto model = std::make_shared<ThreeEncoderXDriveModel>(
+	// motors
+	std::make_shared<Motor>(4), //topLeft
+    	std::make_shared<Motor>(-3), //topRight
+    	std::make_shared<Motor>(-1), //bottomRight
+    	std::make_shared<Motor>(2), //bottomLeft
+    	// sensors
+    	std::make_shared<ADIEncoder>(2, 1, false), // left
+    	std::make_shared<ADIEncoder>(3, 4), // right
+    	std::make_shared<ADIEncoder>(5, 6), // middle
+    	// limits
+    	200,
+	12000
+);//maxVel, maxVoltage
 
-  auto model = std::make_shared<ThreeEncoderXDriveModel>(
-    // motors
-    std::make_shared<Motor>(4), //topLeft
-    std::make_shared<Motor>(-3), //topRight
-    std::make_shared<Motor>(-1), //bottomRight
-    std::make_shared<Motor>(2), //bottomLeft
-    // sensors
-    std::make_shared<ADIEncoder>(2, 1, false), // left
-    std::make_shared<ADIEncoder>(3, 4), // right
-    std::make_shared<ADIEncoder>(5, 6), // middle
-    // limits
-    200, 12000);//maxVel, maxVoltage
+auto odom = std::make_shared<CustomOdometry>(
+	model,
+	ChassisScales({
+		2.75_in,
+		14_in,
+		0.00_in
+	}, 360)
+);
 
-  auto odom =
-    std::make_shared<CustomOdometry>(model, ChassisScales({2.75_in, 14_in, 0.00_in}, 360));
+Screen scr(lv_scr_act(), LV_COLOR_RED);
 
-  Screen scr(lv_scr_act(), LV_COLOR_RED);
-
-  auto odomController = std::make_shared<OdomXController>(
-    model, odom,
-    //Distance PID - To mm
-	//P - 0.0032 -> 0.0128 started to oscillate
-    std::make_unique<IterativePosPIDController>(
-      0.008, 0.000, 0.0009, 0, TimeUtilFactory::withSettledUtilParams(10, 10, 100_ms)),
-    //Turn PID - To Degree
-    std::make_unique<IterativePosPIDController>(
-      0.03, 0.00, 0.0003, 0, TimeUtilFactory::withSettledUtilParams(2, 2, 100_ms)),
-    //Angle PID - To Degree
-    std::make_unique<IterativePosPIDController>(
-      0.02, 0, 0.0, 0, TimeUtilFactory::withSettledUtilParams(4, 2, 100_ms)),
-    //Strafe PID - To mm
-    std::make_unique<IterativePosPIDController>(
-      0.5, 0.000, 0.1, 0, TimeUtilFactory::withSettledUtilParams(10, 10, 100_ms)),
-    2_in);
+auto odomController = std::make_shared<OdomXController>(
+	model, odom,
+    	//Distance PID - To mm
+    	std::make_unique<IterativePosPIDController>(
+		0.008, 0.000, 0.0009, 0, 
+		TimeUtilFactory::withSettledUtilParams(10, 10, 100_ms)
+	),
+    	//Turn PID - To Degree
+    	std::make_unique<IterativePosPIDController>(
+      		0.03, 0.00, 0.0003, 0,
+		TimeUtilFactory::withSettledUtilParams(2, 2, 100_ms)
+	),
+    	//Angle PID - To Degree
+    	std::make_unique<IterativePosPIDController>(
+		0.02, 0, 0.0, 0,
+		TimeUtilFactory::withSettledUtilParams(4, 2, 100_ms)
+	),
+    	//Strafe PID - To mm
+    	std::make_unique<IterativePosPIDController>(
+      		0.5, 0.000, 0.1, 0,
+		TimeUtilFactory::withSettledUtilParams(10, 10, 100_ms)
+	),
+    	2_in
+);
 
    Tilter tilter = *Tilter::getInstance();
    auto stackerMotor1 = std::make_shared<Motor>(6);
@@ -51,6 +67,10 @@ using namespace okapi;
    void rollerOuttake(){
 		stackerMotor1->moveVoltage(12000);
 		stackerMotor2->moveVoltage(12000);
+   }
+   void rollerOuttake(double t){
+		stackerMotor1->moveVoltage(12000 * t);
+		stackerMotor2->moveVoltage(12000 * t);
    }
    void rollerIntake(){
 		stackerMotor1->moveVoltage(-12000);
@@ -69,7 +89,7 @@ using namespace okapi;
 		tilter.setMiddle();
 		pros::delay(2000);
 		tilter.setUp();
-		pros::delay(1300);
+		pros::delay(1600);
    }
 
 //tune these
@@ -129,34 +149,20 @@ Vector autonLineBlockMiddle;
 Vector autonLineBlockInnerCorner;
 
 
-enum Auton{
-		SMALL_ZONE_ONE_CUBE,
-		BIG_ZONE_ONE_CUBE,
-		SMALL_ZONE_5STACK,
-		SMALL_ZONE_6STACK,
-		SMALL_ZONE_7STACK,
-		BIG_ZONE_3STACK,
-		BIG_ZONE_PUSH,
-		BIG_ZONE_KNOCKER,
-		TEST
-};
 
-enum Color{
-		RED,
-		BLUE
-};
 
-Color alliance = RED;
-Auton currentAuton = SMALL_ZONE_5STACK;
+AutonSelector::Color alliance = AutonSelector::Color::BLUE;
+AutonSelector::Auton currentAuton = AutonSelector::Auton::SMALL_ZONE_6STACK;
 
 void initialize() {
   pros::delay(200);
   odom->startTask("Odometry");
   scr.makePage<OdomDebug>().attachOdom(odom);
+	scr.makePage<AutonSelector>();
   scr.startTask("Screen");
 
   switch(alliance){
-		  case RED:{
+					case AutonSelector::Color::RED:{
 				innerProtectedCube = {tile - cubeWidth/2, tile + cubeWidth/2};
 				outerProtectedCube = {2 * tile - cubeWidth/2, tile + cubeWidth/2};
 				stack4 = {2 * tile - cubeWidth/2, 2 * tile + cubeWidth/2};
@@ -173,7 +179,7 @@ void initialize() {
 				bigCorner = leftCorner;
 				break;
 		  }
-		  case BLUE:{
+		  case AutonSelector::Color::BLUE:{
 				innerProtectedCube = {5 * tile + cubeWidth/2, tile + cubeWidth/2};
 				outerProtectedCube = {4 * tile + cubeWidth/2, tile + cubeWidth/2};
 				stack4 = {4 * tile + cubeWidth/2, 2 * tile + cubeWidth/2};
@@ -210,505 +216,486 @@ void start(QLength x){
 };
 
 QLength negativeIfRed(QLength val){
-		if(alliance == RED){
+		if(alliance == AutonSelector::Color::RED){
 				return -val;
 		}
 		return val;
 }
 
 void autonomous() {
-		tilter.setDown();
-		switch(currentAuton){
-				case TEST:{
-						//deployTray();
-						odomController->strafeToPoint(
-										{0_in, 48_in},
-						OdomController::makeAngleCalculator(90_deg), 1,
-						OdomController::makeSettler(0.5_in, 0.5_deg));
-
-						break;
-				}
-				case SMALL_ZONE_ONE_CUBE:{
-						switch(alliance){
-								case RED:{
-										odomController->strafeToPoint(
-										{cubeWidth + barrierWidth + 7_in, 0_in},
-										OdomController::makeAngleCalculator(0_deg), 1,
-										OdomController::makeSettler(4_in, 5_deg));
-
-										odomController->strafeToPoint(
-										{0_in, 0_in},
-										OdomController::makeAngleCalculator(0_deg), 1,
-										OdomController::makeSettler(4_in, 5_deg));
-										break;
-								}
-								case BLUE:{
-										odomController->strafeToPoint(
-										{-(cubeWidth + barrierWidth + 5_in), 0_in},
-										OdomController::makeAngleCalculator(0_deg), 1,
-										OdomController::makeSettler(4_in, 5_deg));
-
-										odomController->strafeToPoint(
-										{0_in, 0_in},
-										OdomController::makeAngleCalculator(0_deg), 1,
-										OdomController::makeSettler(4_in, 5_deg));
-										break;
-								}
-						}
-						deployTray();
-						break;
-				}
-				case BIG_ZONE_ONE_CUBE:{
-						switch(alliance){
-								case BLUE:{
-										odomController->strafeToPoint(
-										{cubeWidth + barrierWidth + 7_in, 0_in},
-										OdomController::makeAngleCalculator(0_deg), 1,
-										OdomController::makeSettler(4_in, 5_deg));
-
-										odomController->strafeToPoint(
-										{0_in, 0_in},
-										OdomController::makeAngleCalculator(0_deg), 1,
-										OdomController::makeSettler(4_in, 5_deg));
-										break;
-								}
-								case RED:{
-										odomController->strafeToPoint(
-										{-(cubeWidth + barrierWidth + 7_in), 0_in},
-										OdomController::makeAngleCalculator(0_deg), 1,
-										OdomController::makeSettler(4_in, 5_deg));
-
-										odomController->strafeToPoint(
-										{0_in, 0_in},
-										OdomController::makeAngleCalculator(0_deg), 1,
-										OdomController::makeSettler(4_in, 5_deg));
-										break;
-								}
-						}
-						deployTray();
-						break;
-				}
-				case SMALL_ZONE_5STACK:{
-
-						odomController->strafeToPoint(
-						{0_in, 10_in},
-						OdomController::makeAngleCalculator(0_deg), 1,
-						OdomController::makeSettler(2_in, 5_deg));
-
-						rollerOuttake();
-
-						odomController->strafeToPoint(
-						{0_in, 0_in},
-						OdomController::makeAngleCalculator(0_deg), 1,
-						OdomController::makeSettler(2_in, 5_deg));
-
-						pros::delay(1000);
-
-						rollerIntake();
-						
-						model->setMaxVoltage(4000);
-
-						odomController->strafeToPoint(
-						{0_in, 1.5_tl},
-						OdomController::makeAngleCalculator(0_deg), 1,
-						OdomController::makeSettler(4_in, 5_deg));
-
-						model->setMaxVoltage(12000);
-
-						switch(alliance){
-								case BLUE:{
-										odomController->strafeToPoint(
-										{0_in, 1_tl - 6_in},
-										OdomController::makeAngleCalculator(-135_deg), 3,
-										OdomController::makeSettler(3_in, 10_deg));
-
-										rollerStop();
-
-										odomController->strafeToPoint(
-										{-4_in, 1_tl/2},
-										OdomController::makeAngleCalculator(-135_deg), 1,
-										OdomController::makeSettler(3_in, 5_deg));
-										break;
-								}
-								case RED:{
-										odomController->strafeToPoint(
-										{0_in, 1_tl - 6_in},
-										OdomController::makeAngleCalculator(135_deg), 3,
-										OdomController::makeSettler(3_in, 10_deg));
-
-										rollerStop();
-
-										odomController->strafeToPoint(
-										{6_in, 1_tl/2 + 1_in},
-										OdomController::makeAngleCalculator(135_deg), 1,
-										OdomController::makeSettler(3_in, 5_deg));
-										break;
-								}
-						}
-
-//						rollerOuttake();
-//						pros::delay(100);
-//						rollerStop();
-						placeStack();
-							
-//						rollerOuttake();
-//						pros::delay(50);
-//						rollerStop();
-						model->setMaxVoltage(4000);
-						switch(alliance){
-								case BLUE:{
-										odomController->strafeToPoint(
-										{6_in, 1_tl + 5_in},
-										OdomController::makeAngleCalculator(-135_deg), 1,
-										OdomController::makeSettler(3_in, 10_deg));
-										model->setMaxVoltage(12000);
-
-										tilter.setDown();
-
-										odomController->strafeToPoint(
-										{1_tl, 0.5_tl},
-										OdomController::makeAngleCalculator(0_deg), 1,
-										OdomController::makeSettler(4_in, 5_deg));
-										break;
-								}
-								case RED:{
-										odomController->strafeToPoint(
-										{-6_in, 1_tl + 5_in},
-										OdomController::makeAngleCalculator(135_deg), 1,
-										OdomController::makeSettler(3_in, 10_deg));
-										model->setMaxVoltage(12000);
-
-										tilter.setDown();
-
-										odomController->strafeToPoint(
-										{-1_tl, 0.5_tl},
-										OdomController::makeAngleCalculator(0_deg), 1,
-										OdomController::makeSettler(4_in, 5_deg));
-										break;
-								}
-						}
-						break;
-				}
-				case SMALL_ZONE_6STACK:{
-						rollerOuttake();
-				    switch(alliance){
-								case BLUE:{
-												odomController->strafeToPoint(
-												{-3_in, 3_in},
-												OdomController::makeAngleCalculator(0_deg), 1,
-												OdomController::makeSettler(2_in, 5_deg));
-												break;
-								}
-								case RED:{
-												odomController->strafeToPoint(
-												{3_in, 3_in},
-												OdomController::makeAngleCalculator(0_deg), 1,
-												OdomController::makeSettler(2_in, 5_deg));
-												break;
-								}
-				    }
-						pros::delay(1000);
-
-						rollerIntake();
-						
-						model->setMaxVoltage(4000);
-
-						odomController->strafeToPoint(
-						{0_in, 1.5_tl},
-						OdomController::makeAngleCalculator(0_deg), 1,
-						OdomController::makeSettler(4_in, 5_deg));
-
-						model->setMaxVoltage(8000);
-
-						switch(alliance){
-								case BLUE:{
-										odomController->strafeToPoint(
-										{3_in, 2.1_tl},
-										OdomController::makeAngleCalculator(0_deg), 1,
-										OdomController::makeSettler(4_in, 5_deg));
-
-										model->setMaxVoltage(12000);
-
-										odomController->strafeToPoint(
-										{3_in, 1_tl - 6_in},
-										OdomController::makeAngleCalculator(-135_deg), 2,
-										OdomController::makeSettler(3_in, 10_deg));
-
-										rollerStop();
-
-										odomController->strafeToPoint(
-										{-4_in, 1_tl/2},
-										OdomController::makeAngleCalculator(-135_deg), 1,
-										OdomController::makeSettler(3_in, 5_deg));
-										break;
-								}
-								case RED:{
-										odomController->strafeToPoint(
-										{-3_in, 2.1_tl},
-										OdomController::makeAngleCalculator(0_deg), 1,
-										OdomController::makeSettler(4_in, 5_deg));
-										
-										model->setMaxVoltage(12000);
-
-										odomController->strafeToPoint(
-										{-3_in, 1_tl - 6_in},
-										OdomController::makeAngleCalculator(135_deg), 2,
-										OdomController::makeSettler(3_in, 10_deg));
-
-										rollerStop();
-
-										odomController->strafeToPoint(
-										{6_in, 1_tl/2 + 1_in},
-										OdomController::makeAngleCalculator(135_deg), 1,
-										OdomController::makeSettler(3_in, 5_deg));
-										break;
-								}
-						}
-
-//						rollerOuttake();
-//						pros::delay(100);
-//						rollerStop();
-						placeStack();
-							
-//						rollerOuttake();
-//						pros::delay(50);
-//						rollerStop();
-						model->setMaxVoltage(4000);
-						switch(alliance){
-								case BLUE:{
-										odomController->strafeToPoint(
-										{6_in, 1_tl + 5_in},
-										OdomController::makeAngleCalculator(-135_deg), 1,
-										OdomController::makeSettler(3_in, 10_deg));
-										model->setMaxVoltage(12000);
-
-										tilter.setDown();
-
-										odomController->strafeToPoint(
-										{1_tl, 0.5_tl},
-										OdomController::makeAngleCalculator(0_deg), 1,
-										OdomController::makeSettler(4_in, 5_deg));
-										break;
-								}
-								case RED:{
-										odomController->strafeToPoint(
-										{-6_in, 1_tl + 5_in},
-										OdomController::makeAngleCalculator(135_deg), 1,
-										OdomController::makeSettler(3_in, 10_deg));
-										model->setMaxVoltage(12000);
-
-										tilter.setDown();
-
-										odomController->strafeToPoint(
-										{-1_tl, 0.5_tl},
-										OdomController::makeAngleCalculator(0_deg), 1,
-										OdomController::makeSettler(4_in, 5_deg));
-										break;
-								}
-						}
-						break;
-				}
-				case SMALL_ZONE_7STACK:{
-						rollerOuttake();
-				    switch(alliance){
-								case BLUE:{
-												odomController->strafeToPoint(
-												{-3_in, 3_in},
-												OdomController::makeAngleCalculator(0_deg), 1,
-												OdomController::makeSettler(2_in, 5_deg));
-												break;
-								}
-								case RED:{
-												odomController->strafeToPoint(
-												{3_in, 3_in},
-												OdomController::makeAngleCalculator(0_deg), 1,
-												OdomController::makeSettler(2_in, 5_deg));
-												break;
-								}
-				    }
-						pros::delay(1000);
-
-						rollerIntake();
-						
-						model->setMaxVoltage(6000);
-
-						odomController->strafeToPoint(
-						{0_in, 1.5_tl},
-						OdomController::makeAngleCalculator(0_deg), 1,
-						OdomController::makeSettler(6_in, 5_deg));
-
-						model->setMaxVoltage(8000);
-
-						switch(alliance){
-								case BLUE:{
-										odomController->strafeToPoint(
-										{-2_in, 2.1_tl},
-										OdomController::makeAngleCalculator(30_deg), 1,
-										OdomController::makeSettler(4_in, 5_deg));
-
-										odomController->strafeToPoint(
-										{3_in, 1.7_tl},
-										OdomController::makeAngleCalculator(-45_deg), 1,
-										OdomController::makeSettler(4_in, 5_deg));
-
-										odomController->strafeToPoint(
-										{8_in, 1.9_tl},
-										OdomController::makeAngleCalculator(-45_deg), 1,
-										OdomController::makeSettler(4_in, 5_deg));
-
-										model->setMaxVoltage(12000);
-
-										odomController->strafeToPoint(
-										{3_in, 1_tl - 6_in},
-										OdomController::makeAngleCalculator(-135_deg), 2,
-										OdomController::makeSettler(3_in, 10_deg));
-
-										rollerStop();
-
-										odomController->strafeToPoint(
-										{-4_in, 1_tl/2},
-										OdomController::makeAngleCalculator(-135_deg), 1,
-										OdomController::makeSettler(3_in, 5_deg));
-										break;
-								}
-								case RED:{
-										odomController->strafeToPoint(
-										{2_in, 2.1_tl},
-										OdomController::makeAngleCalculator(-30_deg), 1,
-										OdomController::makeSettler(4_in, 5_deg));
-
-										odomController->strafeToPoint(
-										{-3_in, 1.7_tl},
-										OdomController::makeAngleCalculator(-45_deg), 1,
-										OdomController::makeSettler(4_in, 5_deg));
-
-										odomController->strafeToPoint(
-										{-8_in, 1.9_tl},
-										OdomController::makeAngleCalculator(-45_deg), 1,
-										OdomController::makeSettler(4_in, 5_deg));
-										
-										model->setMaxVoltage(12000);
-
-										odomController->strafeToPoint(
-										{-3_in, 1_tl - 6_in},
-										OdomController::makeAngleCalculator(135_deg), 2,
-										OdomController::makeSettler(3_in, 10_deg));
-
-										rollerStop();
-
-										odomController->strafeToPoint(
-										{6_in, 1_tl/2 + 1_in},
-										OdomController::makeAngleCalculator(135_deg), 1,
-										OdomController::makeSettler(3_in, 5_deg));
-										break;
-								}
-						}
-
-//						rollerOuttake();
-//						pros::delay(100);
-//						rollerStop();
-						placeStack();
-							
-//						rollerOuttake();
-//						pros::delay(50);
-//						rollerStop();
-						model->setMaxVoltage(4000);
-						switch(alliance){
-								case BLUE:{
-										odomController->strafeToPoint(
-										{6_in, 1_tl + 5_in},
-										OdomController::makeAngleCalculator(-135_deg), 1,
-										OdomController::makeSettler(3_in, 10_deg));
-										model->setMaxVoltage(12000);
-
-										tilter.setDown();
-
-										odomController->strafeToPoint(
-										{1_tl, 0.5_tl},
-										OdomController::makeAngleCalculator(0_deg), 1,
-										OdomController::makeSettler(4_in, 5_deg));
-										break;
-								}
-								case RED:{
-										odomController->strafeToPoint(
-										{-6_in, 1_tl + 5_in},
-										OdomController::makeAngleCalculator(135_deg), 1,
-										OdomController::makeSettler(3_in, 10_deg));
-										model->setMaxVoltage(12000);
-
-										tilter.setDown();
-
-										odomController->strafeToPoint(
-										{-1_tl, 0.5_tl},
-										OdomController::makeAngleCalculator(0_deg), 1,
-										OdomController::makeSettler(4_in, 5_deg));
-										break;
-								}
-						}
-						break;
-				}
-				case BIG_ZONE_3STACK:{
-						start(outerProtectedCube.x);
-						break;
-				}
-				case BIG_ZONE_PUSH:{
-						switch(alliance){
-								case BLUE:{
-										odomController->strafeToPoint(
-										{cubeWidth + barrierWidth + 11_in, 0_in},
-										OdomController::makeAngleCalculator(0_deg), 1,
-										OdomController::makeSettler(4_in, 5_deg));
-
-										break;
-								}
-								case RED:{
-										odomController->strafeToPoint(
-										{-(cubeWidth + barrierWidth + 11_in), 0_in},
-										OdomController::makeAngleCalculator(0_deg), 1,
-										OdomController::makeSettler(4_in, 5_deg));
-
-										break;
-								}
-						}
-						odomController->strafeToPoint(
-						{0_in, 0_in},
-						OdomController::makeAngleCalculator(0_deg), 1,
-						OdomController::makeSettler(4_in, 5_deg));
-
-						odomController->strafeToPoint(
-						{0_in, 1.4_tl},
-						OdomController::makeAngleCalculator(0_deg), 1,
-						OdomController::makeSettler(4_in, 5_deg));
-
-						model->setMaxVoltage(8000);
-						switch(alliance){
-								case BLUE:{
-										odomController->strafeToPoint(
-										{cubeWidth + barrierWidth + 9_in, bigZoneLength + barrierWidth - 9_in },
-										OdomController::makeAngleCalculator(55_deg), 1,
-										OdomController::makeSettler(4_in, 5_deg));
-
-										break;
-								}
-								case RED:{
-										odomController->strafeToPoint(
-										{-(cubeWidth + barrierWidth + 9_in), bigZoneLength + barrierWidth - 9_in},
-										OdomController::makeAngleCalculator(-55_deg), 1,
-										OdomController::makeSettler(4_in, 5_deg));
-
-										break;
-								}
-						}
-						model->setMaxVoltage(12000);
-						odomController->strafeToPoint( {0_in, 0_in},
-						OdomController::makeAngleCalculator(0_deg), 1,
-						OdomController::makeSettler(4_in, 5_deg));
-						//deployTray();
-						break;
-				}
-				default:
-						break;
+	alliance = AutonSelector::getColor();
+	currentAuton = AutonSelector::getAuton(); 
+	tilter.setDown();
+	switch(currentAuton){
+		case AutonSelector::Auton::TEST:{
+				//deployTray();
+				odomController->strafeToPoint(
+								{0_in, 48_in},
+				OdomController::makeAngleCalculator(90_deg), 1,
+				OdomController::makeSettler(0.5_in, 0.5_deg));
+
+				break;
 		}
+		case AutonSelector::Auton::SMALL_ZONE_ONE_CUBE:{
+				switch(alliance){
+						case AutonSelector::Color::RED:{
+								odomController->strafeToPoint(
+								{cubeWidth + barrierWidth + 7_in, 0_in},
+								OdomController::makeAngleCalculator(0_deg), 1,
+								OdomController::makeSettler(4_in, 5_deg));
+
+								odomController->strafeToPoint(
+								{0_in, 0_in},
+								OdomController::makeAngleCalculator(0_deg), 1,
+								OdomController::makeSettler(4_in, 5_deg));
+								break;
+						}
+						case AutonSelector::Color::BLUE:{
+								odomController->strafeToPoint(
+								{-(cubeWidth + barrierWidth + 5_in), 0_in},
+								OdomController::makeAngleCalculator(0_deg), 1,
+								OdomController::makeSettler(4_in, 5_deg));
+
+								odomController->strafeToPoint(
+								{0_in, 0_in},
+								OdomController::makeAngleCalculator(0_deg), 1,
+								OdomController::makeSettler(4_in, 5_deg));
+								break;
+						}
+				}
+				deployTray();
+				break;
+		}
+		case AutonSelector::Auton::BIG_ZONE_ONE_CUBE:{
+				switch(alliance){
+						case AutonSelector::Color::BLUE:{
+								odomController->strafeToPoint(
+								{cubeWidth + barrierWidth + 7_in, 0_in},
+								OdomController::makeAngleCalculator(0_deg), 1,
+								OdomController::makeSettler(4_in, 5_deg));
+
+								odomController->strafeToPoint(
+								{0_in, 0_in},
+								OdomController::makeAngleCalculator(0_deg), 1,
+								OdomController::makeSettler(4_in, 5_deg));
+								break;
+						}
+						case AutonSelector::Color::RED:{
+								odomController->strafeToPoint(
+								{-(cubeWidth + barrierWidth + 7_in), 0_in},
+								OdomController::makeAngleCalculator(0_deg), 1,
+								OdomController::makeSettler(4_in, 5_deg));
+
+								odomController->strafeToPoint(
+								{0_in, 0_in},
+								OdomController::makeAngleCalculator(0_deg), 1,
+								OdomController::makeSettler(4_in, 5_deg));
+								break;
+						}
+				}
+				deployTray();
+				break;
+		}
+		case AutonSelector::Auton::SMALL_ZONE_5STACK:{
+			//pick up stack
+			odomController->strafeToPoint(
+			{0_in, 10_in},
+			OdomController::makeAngleCalculator(0_deg), 1,
+			OdomController::makeSettler(2_in, 5_deg));
+
+			rollerOuttake();
+
+			odomController->strafeToPoint(
+			{0_in, 0_in},
+			OdomController::makeAngleCalculator(0_deg), 1,
+			OdomController::makeSettler(2_in, 5_deg));
+
+			pros::delay(1500);
+
+			rollerIntake();
+			
+			model->setMaxVoltage(4000);
+
+			odomController->strafeToPoint(
+			{0_in, 1.5_tl},
+			OdomController::makeAngleCalculator(0_deg), 1,
+			OdomController::makeSettler(4_in, 5_deg));
+
+			model->setMaxVoltage(12000);
+		//drive to zone
+				switch(alliance){
+						case AutonSelector::Color::BLUE:{
+								odomController->strafeToPoint(
+								{0_in, 1_tl - 6_in},
+								OdomController::makeAngleCalculator(-135_deg), 3,
+								OdomController::makeSettler(3_in, 10_deg));
+
+								rollerStop();
+
+								odomController->strafeToPoint(
+								{-4.5_in, 1_tl/2 + 1_in},
+								OdomController::makeAngleCalculator(-135_deg), 1,
+								OdomController::makeSettler(3_in, 5_deg));
+								break;
+						}
+						case AutonSelector::Color::RED:{
+								odomController->strafeToPoint(
+								{0_in, 1_tl - 6_in},
+								OdomController::makeAngleCalculator(135_deg), 3,
+								OdomController::makeSettler(3_in, 10_deg));
+
+								rollerStop();
+
+								odomController->strafeToPoint(
+								{6_in, 1_tl/2 + 1_in},
+								OdomController::makeAngleCalculator(135_deg), 1,
+								OdomController::makeSettler(3_in, 5_deg));
+								break;
+						}
+				}
+
+				placeStack();
+					
+				model->setMaxVoltage(4000);
+		//back up
+				switch(alliance){
+						case AutonSelector::Color::BLUE:{
+								odomController->strafeToPoint(
+								{6_in, 1_tl + 5_in},
+								OdomController::makeAngleCalculator(-135_deg), 1,
+								OdomController::makeSettler(3_in, 10_deg));
+								model->setMaxVoltage(12000);
+
+								tilter.setDown();
+
+								odomController->strafeToPoint(
+								{1_tl, 0.5_tl},
+								OdomController::makeAngleCalculator(0_deg), 1,
+								OdomController::makeSettler(4_in, 5_deg));
+								break;
+						}
+						case AutonSelector::Color::RED:{
+								odomController->strafeToPoint(
+								{-6_in, 1_tl + 5_in},
+								OdomController::makeAngleCalculator(135_deg), 1,
+								OdomController::makeSettler(3_in, 10_deg));
+								model->setMaxVoltage(12000);
+
+								tilter.setDown();
+
+								odomController->strafeToPoint(
+								{-1_tl, 0.5_tl},
+								OdomController::makeAngleCalculator(0_deg), 1,
+								OdomController::makeSettler(4_in, 5_deg));
+								break;
+						}
+				}
+				break;
+		}
+		case AutonSelector::Auton::SMALL_ZONE_6STACK:{
+			rollerOuttake();
+			pros::delay(1500);
+
+			rollerOuttake(-0.80);
+			
+			model->setMaxVoltage(5000);
+
+			odomController->strafeToPoint(
+			{0_in, 1.3_tl},
+			OdomController::makeAngleCalculator(0_deg), 1,
+			OdomController::makeSettler(4_in, 5_deg));
+
+			model->setMaxVoltage(6000);
+
+			switch(alliance){
+					case AutonSelector::Color::BLUE:{
+							odomController->strafeToPoint(
+							{8_in, 1.5_tl},
+							OdomController::makeAngleCalculator(0_deg), 1,
+							OdomController::makeSettler(3_in, 5_deg));
+
+							odomController->strafeToPoint(
+							{8_in, 2.05_tl},
+							OdomController::makeAngleCalculator(0_deg), 1,
+							OdomController::makeSettler(3_in, 5_deg));
+
+							pros::delay(300);
+							model->setMaxVoltage(12000);
+							rollerOuttake(-0.7);
+
+							odomController->strafeToPoint(
+							{0_in, 1_tl - 2_in},
+							OdomController::makeAngleCalculator(-135_deg), 2,
+							OdomController::makeSettler(3_in, 10_deg));
+
+							rollerStop();
+
+							odomController->strafeToPoint(
+							{-6_in - 10_mm, 1_tl/2 + 3_in - 10_mm},
+							OdomController::makeAngleCalculator(-135_deg), 1,
+							OdomController::makeSettler(4_in, 5_deg));
+							break;
+					}
+					case AutonSelector::Color::RED:{
+							odomController->strafeToPoint(
+							{-3_in, 2.1_tl},
+							OdomController::makeAngleCalculator(0_deg), 1,
+							OdomController::makeSettler(4_in, 5_deg));
+							
+							model->setMaxVoltage(12000);
+
+							odomController->strafeToPoint(
+							{-3_in, 1_tl - 6_in},
+							OdomController::makeAngleCalculator(135_deg), 2,
+							OdomController::makeSettler(3_in, 10_deg));
+
+							rollerStop();
+
+							odomController->strafeToPoint(
+							{6_in, 1_tl/2 + 1_in},
+							OdomController::makeAngleCalculator(135_deg), 1,
+							OdomController::makeSettler(3_in, 5_deg));
+							break;
+					}
+			}
+
+			placeStack();
+				
+			model->setMaxVoltage(4000);
+			switch(alliance){
+					case AutonSelector::Color::BLUE:{
+							odomController->strafeToPoint(
+							{-6_in - 20_mm, 1_tl/2 + 3_in - 20_mm},
+							OdomController::makeAngleCalculator(-135_deg), 1,
+							OdomController::makeSettler(4_in, 5_deg));
+
+							odomController->strafeToPoint(
+							{6_in, 1_tl + 5_in},
+							OdomController::makeAngleCalculator(-135_deg), 1,
+							OdomController::makeSettler(3_in, 10_deg));
+							model->setMaxVoltage(12000);
+
+							tilter.setDown();
+
+							odomController->strafeToPoint(
+							{1_tl, 0.5_tl},
+							OdomController::makeAngleCalculator(0_deg), 1,
+							OdomController::makeSettler(4_in, 5_deg));
+							break;
+					}
+					case AutonSelector::Color::RED:{
+							odomController->strafeToPoint(
+							{-6_in, 1_tl + 5_in},
+							OdomController::makeAngleCalculator(135_deg), 1,
+							OdomController::makeSettler(3_in, 10_deg));
+							model->setMaxVoltage(12000);
+
+							tilter.setDown();
+
+							odomController->strafeToPoint(
+							{-1_tl, 0.5_tl},
+							OdomController::makeAngleCalculator(0_deg), 1,
+							OdomController::makeSettler(4_in, 5_deg));
+							break;
+					}
+			}
+			break;
+		}
+		case AutonSelector::Auton::SMALL_ZONE_7STACK:{
+				rollerOuttake();
+		    switch(alliance){
+						case AutonSelector::Color::BLUE:{
+										odomController->strafeToPoint(
+										{-3_in, 3_in},
+										OdomController::makeAngleCalculator(0_deg), 1,
+										OdomController::makeSettler(2_in, 5_deg));
+										break;
+						}
+						case AutonSelector::Color::RED:{
+										odomController->strafeToPoint(
+										{3_in, 3_in},
+										OdomController::makeAngleCalculator(0_deg), 1,
+										OdomController::makeSettler(2_in, 5_deg));
+										break;
+						}
+		    }
+				pros::delay(1000);
+
+				rollerIntake();
+				
+				model->setMaxVoltage(6000);
+
+				odomController->strafeToPoint(
+				{0_in, 1.5_tl},
+				OdomController::makeAngleCalculator(0_deg), 1,
+				OdomController::makeSettler(6_in, 5_deg));
+
+				model->setMaxVoltage(8000);
+
+				switch(alliance){
+						case AutonSelector::Color::BLUE:{
+								odomController->strafeToPoint(
+								{-2_in, 2.1_tl},
+								OdomController::makeAngleCalculator(30_deg), 1,
+								OdomController::makeSettler(4_in, 5_deg));
+
+								odomController->strafeToPoint(
+								{3_in, 1.7_tl},
+								OdomController::makeAngleCalculator(-45_deg), 1,
+								OdomController::makeSettler(4_in, 5_deg));
+
+								odomController->strafeToPoint(
+								{8_in, 1.9_tl},
+								OdomController::makeAngleCalculator(-45_deg), 1,
+								OdomController::makeSettler(4_in, 5_deg));
+
+								model->setMaxVoltage(12000);
+
+								odomController->strafeToPoint(
+								{3_in, 1_tl - 6_in},
+								OdomController::makeAngleCalculator(-135_deg), 2,
+								OdomController::makeSettler(3_in, 10_deg));
+
+								rollerStop();
+
+								odomController->strafeToPoint(
+								{-4_in, 1_tl/2},
+								OdomController::makeAngleCalculator(-135_deg), 1,
+								OdomController::makeSettler(3_in, 5_deg));
+								break;
+						}
+						case AutonSelector::Color::RED:{
+								odomController->strafeToPoint(
+								{2_in, 2.1_tl},
+								OdomController::makeAngleCalculator(-30_deg), 1,
+								OdomController::makeSettler(4_in, 5_deg));
+
+								odomController->strafeToPoint(
+								{-3_in, 1.7_tl},
+								OdomController::makeAngleCalculator(-45_deg), 1,
+								OdomController::makeSettler(4_in, 5_deg));
+
+								odomController->strafeToPoint(
+								{-8_in, 1.9_tl},
+								OdomController::makeAngleCalculator(-45_deg), 1,
+								OdomController::makeSettler(4_in, 5_deg));
+								
+								model->setMaxVoltage(12000);
+
+								odomController->strafeToPoint(
+								{-3_in, 1_tl - 6_in},
+								OdomController::makeAngleCalculator(135_deg), 2,
+								OdomController::makeSettler(3_in, 10_deg));
+
+								rollerStop();
+
+								odomController->strafeToPoint(
+								{6_in, 1_tl/2 + 1_in},
+								OdomController::makeAngleCalculator(135_deg), 1,
+								OdomController::makeSettler(3_in, 5_deg));
+								break;
+						}
+				}
+
+				placeStack();
+					
+				model->setMaxVoltage(4000);
+				switch(alliance){
+						case AutonSelector::Color::BLUE:{
+								odomController->strafeToPoint(
+								{6_in, 1_tl + 5_in},
+								OdomController::makeAngleCalculator(-135_deg), 1,
+								OdomController::makeSettler(3_in, 10_deg));
+								model->setMaxVoltage(12000);
+
+								tilter.setDown();
+
+								odomController->strafeToPoint(
+								{1_tl, 0.5_tl},
+								OdomController::makeAngleCalculator(0_deg), 1,
+								OdomController::makeSettler(4_in, 5_deg));
+								break;
+						}
+						case AutonSelector::Color::RED:{
+								odomController->strafeToPoint(
+								{-6_in, 1_tl + 5_in},
+								OdomController::makeAngleCalculator(135_deg), 1,
+								OdomController::makeSettler(3_in, 10_deg));
+								model->setMaxVoltage(12000);
+
+								tilter.setDown();
+
+								odomController->strafeToPoint(
+								{-1_tl, 0.5_tl},
+								OdomController::makeAngleCalculator(0_deg), 1,
+								OdomController::makeSettler(4_in, 5_deg));
+								break;
+						}
+				}
+				break;
+		}
+		case AutonSelector::Auton::BIG_ZONE_3STACK:{
+				start(outerProtectedCube.x);
+				break;
+		}
+		case AutonSelector::Auton::BIG_ZONE_PUSH:{
+				switch(alliance){
+						case AutonSelector::Color::BLUE:{
+								odomController->strafeToPoint(
+								{cubeWidth + barrierWidth + 11_in, 0_in},
+								OdomController::makeAngleCalculator(0_deg), 1,
+								OdomController::makeSettler(4_in, 5_deg));
+
+								break;
+						}
+						case AutonSelector::Color::RED:{
+								odomController->strafeToPoint(
+								{-(cubeWidth + barrierWidth + 11_in), 0_in},
+								OdomController::makeAngleCalculator(0_deg), 1,
+								OdomController::makeSettler(4_in, 5_deg));
+
+								break;
+						}
+				}
+				odomController->strafeToPoint(
+				{0_in, 0_in},
+				OdomController::makeAngleCalculator(0_deg), 1,
+				OdomController::makeSettler(4_in, 5_deg));
+
+				odomController->strafeToPoint(
+				{0_in, 1.4_tl},
+				OdomController::makeAngleCalculator(0_deg), 1,
+				OdomController::makeSettler(4_in, 5_deg));
+
+				model->setMaxVoltage(12000);
+				switch(alliance){
+						case AutonSelector::Color::BLUE:{
+								odomController->strafeToPoint(
+								{cubeWidth + barrierWidth + 9_in, bigZoneLength + barrierWidth - 9_in },
+								OdomController::makeAngleCalculator(55_deg), 1,
+								OdomController::makeSettler(4_in, 5_deg));
+
+								break;
+						}
+						case AutonSelector::Color::RED:{
+								odomController->strafeToPoint(
+								{-(cubeWidth + barrierWidth + 9_in), bigZoneLength + barrierWidth - 9_in},
+								OdomController::makeAngleCalculator(-55_deg), 1,
+								OdomController::makeSettler(4_in, 5_deg));
+
+								break;
+						}
+				}
+				model->setMaxVoltage(12000);
+				odomController->strafeToPoint( {0_in, 0_in},
+				OdomController::makeAngleCalculator(0_deg), 1,
+				OdomController::makeSettler(4_in, 5_deg));
+				deployTray();
+				break;
+		}
+		default:
+				break;
+	}
 }
 
 Stacker stacker = *Stacker::getInstance();

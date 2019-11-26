@@ -74,7 +74,7 @@ void Tilter::setMiddle(){
 		state = UP;
 }
 void Tilter::setUp(){
-		tilterMotor.move_absolute(UP_ENC + offset, 127 * 0.6);
+		tilterMotor.move_absolute(UP_ENC + offset - 400, 127 * 0.4);
 		state = UP;
 }
 void Tilter::setDown(){
