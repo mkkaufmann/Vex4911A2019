@@ -1,5 +1,4 @@
 #include "main.h"
-
 #include "lib7842/api.hpp"
 #include "subsystems/stacker.hpp"
 #include "subsystems/tilter.hpp"
@@ -156,7 +155,7 @@ void initialize() {
 	pros::delay(200);
 	odom->startTask("Odometry");
 	scr.makePage<OdomDebug>().attachOdom(odom);
-	      scr.makePage<AutonSelector>();
+	scr.makePage<AutonSelector>();
 	scr.startTask("Screen");
 
 	switch(alliance){
@@ -292,10 +291,8 @@ void autonomous() {
 
 			rollerOuttake();
 
-			odomController->strafeToPoint(
-			{0_in, 0_in},
-			OdomController::makeAngleCalculator(0_deg), 1,
-			OdomController::makeSettler(2_in, 5_deg));
+			
+			driveToPoint({0_in, 0_in}, 0_deg, 1, 2_in);
 
 			pros::delay(1500);
 
@@ -303,10 +300,7 @@ void autonomous() {
 			
 			model->setMaxVoltage(4000);
 
-			odomController->strafeToPoint(
-			{0_in, 1.5_tl},
-			OdomController::makeAngleCalculator(0_deg), 1,
-			OdomController::makeSettler(4_in, 5_deg));
+			driveToPoint({0_in, 1.5_tl});
 
 			model->setMaxVoltage(12000);
 			//drive to zone
@@ -690,10 +684,11 @@ LatchedBoolean left = LatchedBoolean();
 LatchedBoolean right = LatchedBoolean();
 LatchedBoolean offsetPressForward = LatchedBoolean();
 LatchedBoolean offsetPressBackward = LatchedBoolean();
+LatchedBoolean toggleSpeed = LatchedBoolean();
 
 void opcontrol() {
 	model->setMaxVoltage(12000);
-  	while (true) {
+  	while (true) {	
 		double turn = Util::map(Util::curveJoystick(
 		      			  false, 
 		      			  Util::map(controller.getAnalog(ControllerAnalog::leftX), -1, 1, -127, 127), 
@@ -744,6 +739,15 @@ void opcontrol() {
 
 		stackerMotor1->moveVoltage(stacker.getOutput());
 		stackerMotor2->moveVoltage(stacker.getOutput());
+		
+		if(toggleSpeed.update(controller.getDigital(ControllerDigital::Y))){
+			if(model->ChassisModel::getMaxVoltage() == 12000){
+				model->setMaxVoltage(4000);	
+			}else{
+				model->setMaxVoltage(12000);
+			}
+		}
+
 
     		pros::delay(10);
 	}
