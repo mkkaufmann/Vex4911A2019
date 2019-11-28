@@ -220,7 +220,7 @@ QLength negativeIfRed(QLength val){
 
 void driveToPoint(
 		Vector target, 
-		QAngle targetAngle, 
+		QAngle targetAngle=0_deg, 
 		double turnPriority=1, 
 		QLength settleDistance=4_in, 
 		QAngle settleAngle=5_deg){
@@ -257,27 +257,13 @@ void autonomous() {
 		case AutonSelector::Auton::SMALL_ZONE_ONE_CUBE:{
 			switch(alliance){
 				case AutonSelector::Color::RED:{
-					odomController->strafeToPoint(
-					{cubeWidth + barrierWidth + 7_in, 0_in},
-					OdomController::makeAngleCalculator(0_deg), 1,
-					OdomController::makeSettler(4_in, 5_deg));
-
-					odomController->strafeToPoint(
-					{0_in, 0_in},
-					OdomController::makeAngleCalculator(0_deg), 1,
-					OdomController::makeSettler(4_in, 5_deg));
+					driveToPoint({cubeWidth + barrierWidth + 7_in, 0_in});	
+					driveToPoint({0_in, 0_in});
 					break;
 				}
 				case AutonSelector::Color::BLUE:{
-					odomController->strafeToPoint(
-					{-(cubeWidth + barrierWidth + 5_in), 0_in},
-					OdomController::makeAngleCalculator(0_deg), 1,
-					OdomController::makeSettler(4_in, 5_deg));
-
-					odomController->strafeToPoint(
-					{0_in, 0_in},
-					OdomController::makeAngleCalculator(0_deg), 1,
-					OdomController::makeSettler(4_in, 5_deg));
+					driveToPoint({-(cubeWidth + barrierWidth + 7_in), 0_in});
+					driveToPoint({0_in, 0_in});
 					break;
 				}
 			}
@@ -287,27 +273,13 @@ void autonomous() {
 		case AutonSelector::Auton::BIG_ZONE_ONE_CUBE:{
 			switch(alliance){
 				case AutonSelector::Color::BLUE:{
-					odomController->strafeToPoint(
-					{cubeWidth + barrierWidth + 7_in, 0_in},
-					OdomController::makeAngleCalculator(0_deg), 1,
-					OdomController::makeSettler(4_in, 5_deg));
-
-					odomController->strafeToPoint(
-					{0_in, 0_in},
-					OdomController::makeAngleCalculator(0_deg), 1,
-					OdomController::makeSettler(4_in, 5_deg));
+					driveToPoint({cubeWidth + barrierWidth + 7_in, 0_in});
+					driveToPoint({0_in, 0_in});
 					break;
 				}
 				case AutonSelector::Color::RED:{
-					odomController->strafeToPoint(
-					{-(cubeWidth + barrierWidth + 7_in), 0_in},
-					OdomController::makeAngleCalculator(0_deg), 1,
-					OdomController::makeSettler(4_in, 5_deg));
-
-					odomController->strafeToPoint(
-					{0_in, 0_in},
-					OdomController::makeAngleCalculator(0_deg), 1,
-					OdomController::makeSettler(4_in, 5_deg));
+					driveToPoint({-(cubeWidth + barrierWidth + 7_in), 0_in});
+					driveToPoint({0_in, 0_in});
 					break;
 				}
 			}
@@ -316,10 +288,7 @@ void autonomous() {
 		}
 		case AutonSelector::Auton::SMALL_ZONE_5STACK:{
 			//pick up stack
-			odomController->strafeToPoint(
-			{0_in, 10_in},
-			OdomController::makeAngleCalculator(0_deg), 1,
-			OdomController::makeSettler(2_in, 5_deg));
+			driveToPoint({0_in, 10_in}, 0_deg, 1, 2_in);
 
 			rollerOuttake();
 
