@@ -48,6 +48,7 @@ std::function<void()> Tilter::outAction(){
   };
 }
 
+//used in teleop
 void Tilter::shiftUp(){
   switch(state){
     case DOWN:
@@ -69,6 +70,7 @@ void Tilter::shiftDown(){
   }
 }
 
+//used in autonomous
 void Tilter::setMiddle(){
 		tilterMotor.move_absolute(UP_ENC + offset, 127 * 1);
 		state = UP;
@@ -86,6 +88,7 @@ Tilter::TilterState Tilter::getState(){
   return state;
 }
 
+//used for adjusting in teleop
 void Tilter::adjustThrottle(double output){
 		if(output == 0){
 				isAdjusting = false;
@@ -99,6 +102,7 @@ void Tilter::adjustThrottle(double output){
 		}
 }
 
+//used for offsetting for skipping
 void Tilter::offsetForward(){
 		offset += OFFSET_INC;
 }
@@ -115,6 +119,7 @@ Tilter::Tilter(){
   shiftDownAction = [this]()->void{shiftDown();};
 }
 
+//encoder values of the different positions
 const int Tilter::DOWN_ENC = 0;
 const int Tilter::UP_ENC = -4200;//tune
 const int Tilter::MID_ENC = UP_ENC * 0.8;//tune
