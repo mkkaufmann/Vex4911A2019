@@ -131,8 +131,8 @@ const QLength barrierWidth = 2_in;
 
 //These are used to determine which autonomous is run
 //Currently are updated based on the autonomous selector
-AutonSelector::Color alliance = AutonSelector::Color::BLUE;
-AutonSelector::Auton currentAuton = AutonSelector::Auton::SMALL_ZONE_6STACK;
+AutonSelector::Color alliance;
+AutonSelector::Auton currentAuton;
 
 void initialize() {
 	pros::delay(200);
@@ -184,7 +184,14 @@ void autonomous() {
 	tilter.setDown();
 	switch(currentAuton){
 		case AutonSelector::Auton::TEST:{
-			driveToPoint({0_in, 48_in}, 90_deg);
+			//drive in circle around 
+			QLength radius = 1_tl;
+			int points = 20;
+			for(double theta = 0; theta <= M_2_PI; theta+=M_2_PI/points){
+				QLength xTarget = std::cos(theta) * radius;
+				QLength yTarget = std::sin(theta) * radius + radius;
+				driveToPoint({xTarget, yTarget}, {0_tl, radius});
+			}
 			break;
 		}
 		case AutonSelector::Auton::SMALL_ZONE_ONE_CUBE:{
