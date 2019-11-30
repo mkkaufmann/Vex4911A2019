@@ -6,7 +6,7 @@ AutonSelector::Color AutonSelector::color = AutonSelector::Color::BLUE;
 AutonSelector::Auton AutonSelector::auton = AutonSelector::Auton::SMALL_ZONE_5STACK;
 const char* AutonSelector::colormap[3] = {"Red", "Blue", ""};
 const char* AutonSelector::autonmap[12] = {"Demo", "one", "six", "\n"
-					   "ONE", "TwO", "THREE", "FOUR"};
+					   "ONE", "TwO", "THREE", "FOUR", ""};
 void AutonSelector::initialize() {
   initializeAuton();
   initializeColor();

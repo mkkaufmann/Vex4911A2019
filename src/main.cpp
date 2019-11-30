@@ -7,11 +7,11 @@
 using namespace lib7842;
 using namespace okapi;
 
-Controller controller(ControllerId::master);
+Controller controller{ControllerId::master};
 
 //This is the model of the robot chassis
 //It keeps track of the motors, encoder wheels, max Velocity (in RPM), and max Voltage
-auto model = std::make_shared<ThreeEncoderXDriveModel>(
+auto model {std::make_shared<ThreeEncoderXDriveModel>(
 	// motors
 	std::make_shared<Motor>(4), //topLeft
     	std::make_shared<Motor>(-3), //topRight
@@ -24,21 +24,21 @@ auto model = std::make_shared<ThreeEncoderXDriveModel>(
     	// limits
     	200,//max Velocity
 	12000//max Voltage
-);
+)};
 
 //keeps track of position and orientation based on bot measurements
-auto odom = std::make_shared<CustomOdometry>(
+auto odom {std::make_shared<CustomOdometry>(
 	model,
 	ChassisScales({
 		2.75_in,//Encoder wheel diameter
 		14_in,//Drive base width, assumes encoder wheels are the same distance from the center
 		0.00_in//Middle wheel distance, which doesn't matter to the math
 	}, 360)//Encoder ticks per rotation
-);
+)};
 
-Screen scr(lv_scr_act(), LV_COLOR_RED);
+Screen scr{lv_scr_act(), LV_COLOR_RED};
 
-auto odomController = std::make_shared<OdomXController>(
+auto odomController {std::make_shared<OdomXController>(
 	model, odom,
     	//Distance PID - To mm
 	//Used for strafing and driving
@@ -65,13 +65,13 @@ auto odomController = std::make_shared<OdomXController>(
 		TimeUtilFactory::withSettledUtilParams(10, 10, 100_ms)
 	),
     	2_in//this is how close the bot has to be to the target in order to settle
-);
+)};
 
-Tilter tilter = *Tilter::getInstance();
+Tilter tilter {*Tilter::getInstance()};
 
 //replace with a motor group
-auto stackerMotor1 = std::make_shared<Motor>(6);
-auto stackerMotor2 = std::make_shared<Motor>(-5);
+auto stackerMotor1 {std::make_shared<Motor>(6)};
+auto stackerMotor2 {std::make_shared<Motor>(-5)};
 
 //Sets the rollers to full speed outward
 void rollerOuttake(){
@@ -117,22 +117,22 @@ void placeStack(){
 }
 
 //Constant distances used for autonomous plotting
-const QLength botWidth = 17.5_in;
-const QLength botLength = 17.5_in;
+const QLength botWidth {17.5_in};
+const QLength botLength {17.5_in};
 
-const QLength cubeWidth = 5.5_in;
-const QLength fieldWidth = 6 * tile;
-const QLength towerBaseWidth = 7.8_in;
-const QLength zoneWidth = 10_in;
-const QLength bigZoneLength = 15.5_in;
-const QLength barrierWidth = 2_in;
+const QLength cubeWidth {5.5_in};
+const QLength fieldWidth {6 * tile};
+const QLength towerBaseWidth {7.8_in};
+const QLength zoneWidth {10_in};
+const QLength bigZoneLength {15.5_in};
+const QLength barrierWidth {2_in};
 
 
 
 //These are used to determine which autonomous is run
 //Currently are updated based on the autonomous selector
-AutonSelector::Color alliance;
-AutonSelector::Auton currentAuton;
+AutonSelector::Color alliance {AutonSelector::getColor()};
+AutonSelector::Auton currentAuton{AutonSelector::getAuton()};
 
 void initialize() {
 	pros::delay(200);
@@ -452,6 +452,7 @@ void autonomous() {
 				case AutonSelector::Color::RED:{
 					driveToPoint({-0.5_tl, 1.2_tl}, {-1_tl, 10_in}); 
 					break;
+				}
 				case AutonSelector::Color::BLUE:{
 					driveToPoint({0.5_tl, 1.2_tl}, {1_tl, 10_in}); 
 					break;
@@ -520,14 +521,14 @@ void autonomous() {
 	}
 }
 
-Stacker stacker = *Stacker::getInstance();
+Stacker stacker{*Stacker::getInstance()};
 
 //used for toggle presses
-LatchedBoolean left = LatchedBoolean();
-LatchedBoolean right = LatchedBoolean();
-LatchedBoolean offsetPressForward = LatchedBoolean();
-LatchedBoolean offsetPressBackward = LatchedBoolean();
-LatchedBoolean toggleSpeed = LatchedBoolean();
+LatchedBoolean left{};
+LatchedBoolean right{};
+LatchedBoolean offsetPressForward{};
+LatchedBoolean offsetPressBackward{};
+LatchedBoolean toggleSpeed{}; 
 
 void opcontrol() {
 	model->setMaxVoltage(12000);
@@ -593,7 +594,7 @@ void opcontrol() {
 
 		//slow the speed of the drivetrain for moving stacks
 		if(toggleSpeed.update(controller.getDigital(ControllerDigital::Y))){
-			if(model->ChassisModel::getMaxVoltage() == 12000){
+			if(model->getMaxVoltage() == 12000){
 				model->setMaxVoltage(4000);	
 			}else{
 				model->setMaxVoltage(12000);
