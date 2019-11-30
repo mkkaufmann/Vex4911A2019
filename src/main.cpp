@@ -374,6 +374,99 @@ void autonomous() {
 			break;
 		}
 		case AutonSelector::Auton::BIG_ZONE_3STACK:{
+			//deploy tray
+			deployTray();
+			//intake
+			//maybe try 80% power
+			//maybe slow down as well
+			rollerIntake();
+			//drive forward, grab cube 
+			driveToPoint({0_in, 0.5_tl}); 
+			//turn around and grab cube by zone
+			//slow intake
+			//may need to tune Y value
+			rollerOuttake(-0.7);
+			switch(alliance){
+				case AutonSelector::Color::RED:{
+					driveToPoint({-0.5_tl, 1.2_tl}, {-1_tl, 10_in}); 
+					break;
+				}
+				case AutonSelector::Color::BLUE:{
+					driveToPoint({0.5_tl, 1.2_tl}, {1_tl, 10_in}); 
+					break;
+				}
+			}
+			//line up
+			//definitely needs tuned
+			switch(alliance){
+				case AutonSelector::Color::RED:{
+					driveToPoint({-0.7_tl, 10_in}, -135_deg); 
+					break;
+				}
+				case AutonSelector::Color::BLUE:{
+					driveToPoint({0.7_tl, 10_in}, 135_deg); 
+					break;
+				}
+			}
+			//place
+			placeStack();
+			//back up
+			model->setMaxVoltage(4000);
+			odomController->moveDistance(-10_in);
+			break;
+		}
+		case AutonSelector::Auton::BIG_ZONE_LARGESTACK:{
+			//deploy tray
+			deployTray();
+			//intake
+			//maybe try 80% power
+			//maybe slow down as well
+			rollerIntake();
+			//drive forward, grab cube and stack
+			driveToPoint({0_in, 1.3_tl}); 
+			//grab cube by tower
+			switch(alliance){
+				case AutonSelector::Color::RED:{
+					driveToPoint({-8_in, 1.5_tl}); 
+					driveToPoint({-8_in, 2.05_tl}); 
+					break;
+				}
+				case AutonSelector::Color::BLUE:{
+					driveToPoint({8_in, 1.5_tl}); 
+					driveToPoint({8_in, 2.05_tl}); 
+					break;
+				}
+			}
+			//turn around and grab cube by zone
+			//slow intake
+			//may need to tune Y value
+			rollerOuttake(-0.7);
+			switch(alliance){
+				case AutonSelector::Color::RED:{
+					driveToPoint({-0.5_tl, 1.2_tl}, {-1_tl, 10_in}); 
+					break;
+				case AutonSelector::Color::BLUE:{
+					driveToPoint({0.5_tl, 1.2_tl}, {1_tl, 10_in}); 
+					break;
+				}
+			}
+			//line up
+			//definitely needs tuned
+			switch(alliance){
+				case AutonSelector::Color::RED:{
+					driveToPoint({-0.7_tl, 10_in}, -135_deg); 
+					break;
+				}
+				case AutonSelector::Color::BLUE:{
+					driveToPoint({0.7_tl, 10_in}, 135_deg); 
+					break;
+				}
+			}
+			//place
+			placeStack();
+			//back up
+			model->setMaxVoltage(4000);
+			odomController->moveDistance(-10_in);
 			break;
 		}
 		case AutonSelector::Auton::BIG_ZONE_PUSH:{
