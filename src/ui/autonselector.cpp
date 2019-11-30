@@ -5,8 +5,8 @@ namespace lib7842 {
 AutonSelector::Color AutonSelector::color = AutonSelector::Color::BLUE;
 AutonSelector::Auton AutonSelector::auton = AutonSelector::Auton::SMALL_ZONE_5STACK;
 const char* AutonSelector::colormap[3] = {"Red", "Blue", ""};
-const char* AutonSelector::autonmap[12] = {"ONE", "TWO", "THREE", "FOUR", "FIVE",  "SIX",
-                                    "\n",  "one", "five",  "six",  "seven", ""};
+const char* AutonSelector::autonmap[12] = {"Demo", "one", "six", "\n"
+					   "ONE", "TwO", "THREE", "FOUR"};
 void AutonSelector::initialize() {
   initializeAuton();
   initializeColor();
@@ -67,9 +67,9 @@ void AutonSelector::initializeColor() {
 }
 
 /*
- * autonomous selector
+ * color selector
  */
-lv_res_t AutonSelector::autonAction(lv_obj_t* btnm, const char * txt) {
+lv_res_t AutonSelector::colorAction(lv_obj_t* btnm, const char * txt) {
     lv_style_t* style = lv_btnm_get_style(btnm, LV_BTNM_STYLE_BTN_TGL_REL);	
 		style->body.main_color = LV_COLOR_RED;
      if (strcmp(txt, "Red") == 0) {
@@ -85,9 +85,9 @@ lv_res_t AutonSelector::autonAction(lv_obj_t* btnm, const char * txt) {
 }
 
 /**
- * color selector
+ * auton selector
  */
-lv_res_t AutonSelector::colorAction(lv_obj_t* btnm, const char * txt) {
+lv_res_t AutonSelector::autonAction(lv_obj_t* btnm, const char * txt) {
      if (strcmp(txt, "ONE") == 0) {
        auton = AutonSelector::Auton::BIG_ZONE_ONE_CUBE;
      } 
@@ -98,13 +98,7 @@ lv_res_t AutonSelector::colorAction(lv_obj_t* btnm, const char * txt) {
        auton = AutonSelector::Auton::BIG_ZONE_3STACK;
      }
 		 else if (strcmp(txt, "FOUR") == 0) {
-       auton = AutonSelector::Auton::BIG_ZONE_3STACK;
-     }
-		 else if (strcmp(txt, "FIVE") == 0) {
-       auton = AutonSelector::Auton::BIG_ZONE_3STACK;
-     }
-		 else if (strcmp(txt, "SIX") == 0) {
-       auton = AutonSelector::Auton::BIG_ZONE_3STACK;
+       auton = AutonSelector::Auton::BIG_ZONE_LARGESTACK;
      }
 		 else if (strcmp(txt, "one") == 0) {
        auton = AutonSelector::Auton::SMALL_ZONE_ONE_CUBE;
@@ -117,6 +111,9 @@ lv_res_t AutonSelector::colorAction(lv_obj_t* btnm, const char * txt) {
      }
 		 else if (strcmp(txt, "seven") == 0) {
        auton = AutonSelector::Auton::SMALL_ZONE_7STACK;
+     }
+		 else if (strcmp(txt, "Demo") == 0) {
+       auton = AutonSelector::Auton::TEST;
      }
 
   return LV_RES_OK;
