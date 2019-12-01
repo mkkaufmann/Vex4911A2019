@@ -2,11 +2,11 @@
 
 namespace lib7842 {
 
-AutonSelector::Color AutonSelector::color = AutonSelector::Color::BLUE;
-AutonSelector::Auton AutonSelector::auton = AutonSelector::Auton::SMALL_ZONE_5STACK;
+AutonSelector::Color AutonSelector::color = AutonSelector::Color::RED;
+AutonSelector::Auton AutonSelector::auton = AutonSelector::Auton::SMALL_ZONE_6STACK;
 const char* AutonSelector::colormap[3] = {"Red", "Blue", ""};
-const char* AutonSelector::autonmap[12] = {"Demo", "one", "six", "\n"
-					   "ONE", "TwO", "THREE", "FOUR", ""};
+const char* AutonSelector::autonmap[9] = {"Demo", "one", "six", "\n"
+					   "ONE", "TWO", "THREE", "FOUR", ""};
 void AutonSelector::initialize() {
   initializeAuton();
   initializeColor();

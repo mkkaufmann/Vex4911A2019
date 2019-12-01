@@ -42,6 +42,7 @@ public:
     UP,
   };
 
+  okapi::Potentiometer trayAngle;
   TilterState getState();
 private:
   static const int DOWN_ENC;

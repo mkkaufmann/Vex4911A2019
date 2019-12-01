@@ -30,8 +30,8 @@ auto model {std::make_shared<ThreeEncoderXDriveModel>(
 auto odom {std::make_shared<CustomOdometry>(
 	model,
 	ChassisScales({
-		2.75_in,//Encoder wheel diameter
-		14_in,//Drive base width, assumes encoder wheels are the same distance from the center
+		2.792_in,//Encoder wheel diameter
+		14.0006164_in,//Drive base width, assumes encoder wheels are the same distance from the center
 		0.00_in//Middle wheel distance, which doesn't matter to the math
 	}, 360)//Encoder ticks per rotation
 )};
@@ -110,10 +110,8 @@ void deployTray(){
 //Macro for placing a stack
 //Prevents code progression for 3.6 seconds
 void placeStack(){
-     	tilter.setMiddle();
-     	pros::delay(2000);
+	rollerStop();
      	tilter.setUp();
-     	pros::delay(1600);
 }
 
 //Constant distances used for autonomous plotting
@@ -139,8 +137,8 @@ void initialize() {
 
 	//Start UI
 	odom->startTask("Odometry");
-	scr.makePage<OdomDebug>().attachOdom(odom);
 	scr.makePage<AutonSelector>();
+	scr.makePage<OdomDebug>().attachOdom(odom);
 	scr.startTask("Screen");
 }
 
@@ -177,6 +175,8 @@ void driveToPoint(
 }
 
 void autonomous() {
+	odom->reset();
+	model->setMaxVoltage(12000);
 	//Get the chosen alliance and auton
 	alliance = AutonSelector::getColor();
 	currentAuton = AutonSelector::getAuton(); 
@@ -184,14 +184,7 @@ void autonomous() {
 	tilter.setDown();
 	switch(currentAuton){
 		case AutonSelector::Auton::TEST:{
-			//drive in circle around 
-			QLength radius = 1_tl;
-			int points = 20;
-			for(double theta = 0; theta <= M_2_PI; theta+=M_2_PI/points){
-				QLength xTarget = std::cos(theta) * radius;
-				QLength yTarget = std::sin(theta) * radius + radius;
-				driveToPoint({xTarget, yTarget}, {0_tl, radius});
-			}
+			tilter.setUp();
 			break;
 		}
 		case AutonSelector::Auton::SMALL_ZONE_ONE_CUBE:{
@@ -300,14 +293,16 @@ void autonomous() {
 			break;
 		}
 		case AutonSelector::Auton::SMALL_ZONE_6STACK:{
+			driveToPoint({0_in, 14_in});
 			//deploy tray
+			driveToPoint({0_in, 1_in});
 			rollerOuttake();
-			pros::delay(1500);
+			pros::delay(2000);
 
 			//slow intake
-			rollerOuttake(-0.80);
+			rollerIntake();
 			
-			//slowly pick up the line
+			//slowly pick up the line 
 			model->setMaxVoltage(5000);
 
 			driveToPoint({0_in, 1.3_tl});
@@ -326,7 +321,7 @@ void autonomous() {
 					//slowly intake so as to keep the cubes from dropping
 					rollerOuttake(-0.7);
 
-					driveToPoint({0_in, 1_tl - 2_in}, -135_deg, 2, 3_in, 10_deg);
+					driveToPoint({4_in, 1_tl - 2_in}, -135_deg, 1.5, 3_in, 10_deg);
 
 					rollerStop();
 
@@ -335,16 +330,22 @@ void autonomous() {
 					break;
 				}
 				case AutonSelector::Color::RED:{
-					//needs flipping from other color
-					driveToPoint({-3_in, 2.1_tl}); 
-					
-					model->setMaxVoltage(12000);
+					//grab 6th cube
+					driveToPoint({-8_in, 1.5_tl}, 0_deg, 1, 3_in);
+					driveToPoint({-8_in, 2.05_tl}, 0_deg, 1, 3_in);
 
-					driveToPoint({-3_in, 1_tl - 6_in}, 135_deg, 2, 3_in, 10_deg);
+					pros::delay(300);
+					model->setMaxVoltage(12000);
+					
+					//slowly intake so as to keep the cubes from dropping
+					rollerOuttake(-0.7);
+
+					driveToPoint({-4_in, 1_tl - 2_in}, 135_deg, 1.5, 3_in, 10_deg);
 
 					rollerStop();
 
-					driveToPoint({6_in, 1_tl/2 + 1_in}, 135_deg, 1, 3_in);
+					//line up to place
+					driveToPoint({5.5_in , 1_tl/2 + 0_in}, 135_deg, 1, 6_in, 10_deg);
 					break;
 				}
 			}
@@ -366,7 +367,10 @@ void autonomous() {
 					break;
 				}
 				case AutonSelector::Color::RED:{
-					driveToPoint({-6_in, 1_tl + 5_in}, 135_deg, 1, 3_in, 10_deg);  
+					model->setMaxVoltage(6000);
+					driveToPoint({5.5_in - 6_in, 1_tl/2 + 6_in}, 135_deg, 1, 6_in, 10_deg);
+
+					driveToPoint({-6_in, 1_tl + 5_in}, 135_deg, 1, 3_in, 10_deg);
 					model->setMaxVoltage(12000);
 
 					tilter.setDown();
@@ -381,25 +385,30 @@ void autonomous() {
 			break;
 		}
 		case AutonSelector::Auton::BIG_ZONE_3STACK:{
+			driveToPoint({0_in, 14_in});
 			//deploy tray
-			deployTray();
+			driveToPoint({0_in, 1_in});
+			rollerOuttake();
+			pros::delay(2000);
 			//intake
 			//maybe try 80% power
 			//maybe slow down as well
 			rollerIntake();
 			//drive forward, grab cube 
-			driveToPoint({0_in, 0.5_tl}); 
+			driveToPoint({0_in, 1_tl}); 
 			//turn around and grab cube by zone
 			//slow intake
 			//may need to tune Y value
 			rollerOuttake(-0.7);
+
+			model->setMaxVoltage(8000);
 			switch(alliance){
 				case AutonSelector::Color::RED:{
-					driveToPoint({-0.5_tl, 1.2_tl}, {-1_tl, 10_in}); 
+					driveToPoint({-0.5_tl, 2_tl}, {-1_tl, 10_in}); 
 					break;
 				}
 				case AutonSelector::Color::BLUE:{
-					driveToPoint({0.5_tl, 1.2_tl}, {1_tl, 10_in}); 
+					driveToPoint({0.5_tl, 2_tl}, {1_tl, 10_in}); 
 					break;
 				}
 			}
@@ -407,19 +416,29 @@ void autonomous() {
 			//definitely needs tuned
 			switch(alliance){
 				case AutonSelector::Color::RED:{
-					driveToPoint({-0.7_tl, 10_in}, -135_deg); 
+					driveToPoint({-25_in, 20.5_in}, -135_deg); 
 					break;
 				}
 				case AutonSelector::Color::BLUE:{
-					driveToPoint({0.7_tl, 10_in}, 135_deg); 
+					driveToPoint({0.7_tl, 1_tl}, 135_deg); 
 					break;
 				}
 			}
+			
 			//place
 			placeStack();
-			//back up
 			model->setMaxVoltage(4000);
-			odomController->moveDistance(-10_in);
+			switch(alliance){
+				case AutonSelector::Color::RED:{
+					driveToPoint({-25_in + 6_in, 20.5_in + 6_in}, -135_deg); 
+					break;
+				}
+				case AutonSelector::Color::BLUE:{
+					driveToPoint({0.7_tl, 1_tl}, 135_deg); 
+					break;
+				}
+			}
+			//back up
 			break;
 		}
 		case AutonSelector::Auton::BIG_ZONE_LARGESTACK:{
@@ -470,6 +489,7 @@ void autonomous() {
 					break;
 				}
 			}
+			pros::delay(500);
 			//place
 			placeStack();
 			//back up
@@ -521,7 +541,6 @@ void autonomous() {
 	}
 }
 
-Potentiometer trayAngle{7};
 
 Stacker stacker{*Stacker::getInstance()};
 
@@ -569,6 +588,8 @@ void opcontrol() {
 		tilter.in();
 		tilter.out();
 
+
+		
 		//control the tilter
 		if(left.update(controller.getDigital(ControllerDigital::L2))){
 			tilter.shiftDown();
@@ -593,7 +614,6 @@ void opcontrol() {
 		stackerMotor1->moveVoltage(stacker.getOutput());
 		stackerMotor2->moveVoltage(stacker.getOutput());
 
-		controller.setText(0, 0, std::to_string(trayAngle.get())); 
 		//slow the speed of the drivetrain for moving stacks
 		if(toggleSpeed.update(controller.getDigital(ControllerDigital::Y))){
 			if(model->getMaxVoltage() == 12000){
@@ -602,7 +622,6 @@ void opcontrol() {
 				model->setMaxVoltage(12000);
 			}
 		}
-
     		pros::delay(10);
 	}
 }
