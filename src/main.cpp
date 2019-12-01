@@ -521,6 +521,8 @@ void autonomous() {
 	}
 }
 
+Potentiometer trayAngle{7};
+
 Stacker stacker{*Stacker::getInstance()};
 
 //used for toggle presses
@@ -533,7 +535,6 @@ LatchedBoolean toggleSpeed{};
 void opcontrol() {
 	model->setMaxVoltage(12000);
   	while (true) {	
-
 		//maps the drive inputs into curves, making them easier to finely control
 		double turn = Util::map(Util::curveJoystick(
 		      			  false, 
@@ -592,6 +593,7 @@ void opcontrol() {
 		stackerMotor1->moveVoltage(stacker.getOutput());
 		stackerMotor2->moveVoltage(stacker.getOutput());
 
+		controller.setText(0, 0, std::to_string(trayAngle.get())); 
 		//slow the speed of the drivetrain for moving stacks
 		if(toggleSpeed.update(controller.getDigital(ControllerDigital::Y))){
 			if(model->getMaxVoltage() == 12000){
