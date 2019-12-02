@@ -307,7 +307,7 @@ void autonomous() {
 
 			driveToPoint({0_in, 1.3_tl});
 
-			model->setMaxVoltage(6000);
+			model->setMaxVoltage(5000);
 
 			switch(alliance){
 				case AutonSelector::Color::BLUE:{
@@ -348,7 +348,7 @@ void autonomous() {
 					driveToPoint({6_in , 1_tl/2 -1_in}, 135_deg, 1, 6_in, 10_deg);
 					break;
 				}
-			}
+			}	
 
 			placeStack();
 				
@@ -458,13 +458,12 @@ void autonomous() {
 					driveToPoint({-10_in, 1.5_tl}); 
 					model->setMaxVoltage(5000);
 					driveToPoint({-10_in, 2.05_tl}); 
-//					driveToPoint({-36_in, 1.8_tl}, 45_deg); 
-					//driveToPoint({-25_in, 2.4_tl}, 45_deg); 
 					break;
 				}
 				case AutonSelector::Color::BLUE:{
-					driveToPoint({8_in, 1.5_tl}); 
-					driveToPoint({8_in, 2.05_tl}); 
+					driveToPoint({10_in, 1.5_tl}); 
+					model->setMaxVoltage(5000);
+					driveToPoint({10_in, 2.05_tl}); 
 					break;
 				}
 			}
@@ -480,7 +479,8 @@ void autonomous() {
 					break;
 				}
 				case AutonSelector::Color::BLUE:{
-					driveToPoint({0.5_tl, 1.2_tl}, {1_tl, 10_in}); 
+					driveToPoint({5_in, 1.8_tl}, 135_deg); 
+					driveToPoint({12_in, 36.2_in}, 135_deg); 
 					break;
 				}
 			}
@@ -494,7 +494,7 @@ void autonomous() {
 					break;
 				}
 				case AutonSelector::Color::BLUE:{
-					driveToPoint({0.7_tl, 10_in}, 135_deg); 
+					driveToPoint({27_in , 20.5_in}, 135_deg); 
 					break;
 				}
 			}
@@ -508,7 +508,7 @@ void autonomous() {
 					break;
 				}
 				case AutonSelector::Color::BLUE:{
-					driveToPoint({0.7_tl, 1_tl}, 135_deg); 
+					driveToPoint({27_in - 15_in, 20.5_in + 15_in}, 135_deg); 
 					break;
 				}
 			}
