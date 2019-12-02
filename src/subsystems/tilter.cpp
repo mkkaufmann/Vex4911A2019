@@ -77,7 +77,7 @@ void Tilter::setMiddle(){
 }
 void Tilter::setUp(){
 		//tilterMotor.move_absolute(UP_ENC + offset - 400, 127 * 0.4);
-		while(trayAngle.get() < 900){
+		while(trayAngle.get() < 930){
 			tilterMotor.move_absolute(UP_ENC + offset, 127);
 			if(tilterMotor.get_position() < UP_ENC + offset + 100){
 				offsetForward();
@@ -127,7 +127,7 @@ Tilter::Tilter():trayAngle(7){
 
 //encoder values of the different positions
 const int Tilter::DOWN_ENC = 0;
-const int Tilter::UP_ENC = -4800;//tune
+const int Tilter::UP_ENC = -4600;//tune
 const int Tilter::MID_ENC = UP_ENC * 0.8;//tune
 const int Tilter::OFFSET_INC = -50;//tune
 Tilter* Tilter::instance = Tilter::getInstance();

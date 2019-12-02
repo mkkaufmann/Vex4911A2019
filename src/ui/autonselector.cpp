@@ -36,7 +36,7 @@ void AutonSelector::initializeAuton() {
   autonReleased.body.main_color = LV_COLOR_MAKE(168, 168, 168);
   autonSelector.setMap(autonmap)
     .setAction(autonAction)
-    .setToggle(true, 7)
+    .setToggle(true, 2)
     .setStyle(LV_BTNM_STYLE_BG, &autonBackground)
     .setStyle(LV_BTNM_STYLE_BTN_PR, &autonReleased)
     .setStyle(LV_BTNM_STYLE_BTN_TGL_PR, &colorPressed)
@@ -56,7 +56,7 @@ void AutonSelector::initializeColor() {
 
   colorSelector.setMap(colormap)
     .setAction(colorAction)
-    .setToggle(true, 1)
+    .setToggle(true, 0)
     .setStyle(LV_BTNM_STYLE_BG, &autonBackground)
     .setStyle(LV_BTNM_STYLE_BTN_PR, &colorReleased)
     .setStyle(LV_BTNM_STYLE_BTN_TGL_PR, &colorPressed)

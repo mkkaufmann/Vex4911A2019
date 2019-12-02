@@ -303,7 +303,7 @@ void autonomous() {
 			rollerIntake();
 			
 			//slowly pick up the line 
-			model->setMaxVoltage(5000);
+			model->setMaxVoltage(4500);
 
 			driveToPoint({0_in, 1.3_tl});
 
@@ -345,7 +345,7 @@ void autonomous() {
 					rollerStop();
 
 					//line up to place
-					driveToPoint({5.5_in , 1_tl/2 + 0_in}, 135_deg, 1, 6_in, 10_deg);
+					driveToPoint({6_in , 1_tl/2 -1_in}, 135_deg, 1, 6_in, 10_deg);
 					break;
 				}
 			}
@@ -389,10 +389,8 @@ void autonomous() {
 			//deploy tray
 			driveToPoint({0_in, 1_in});
 			rollerOuttake();
-			pros::delay(2000);
+			pros::delay(1700);
 			//intake
-			//maybe try 80% power
-			//maybe slow down as well
 			rollerIntake();
 			//drive forward, grab cube 
 			driveToPoint({0_in, 1_tl}); 
@@ -401,14 +399,14 @@ void autonomous() {
 			//may need to tune Y value
 			rollerOuttake(-0.7);
 
-			model->setMaxVoltage(8000);
+			model->setMaxVoltage(10000);
 			switch(alliance){
 				case AutonSelector::Color::RED:{
-					driveToPoint({-0.5_tl, 2_tl}, {-1_tl, 10_in}); 
+					driveToPoint({-12_in, 2_tl}, {-1_tl, 10_in}); 
 					break;
 				}
 				case AutonSelector::Color::BLUE:{
-					driveToPoint({0.5_tl, 2_tl}, {1_tl, 10_in}); 
+					driveToPoint({12_in, 2_tl}, {1_tl, 10_in}); 
 					break;
 				}
 			}
@@ -416,11 +414,11 @@ void autonomous() {
 			//definitely needs tuned
 			switch(alliance){
 				case AutonSelector::Color::RED:{
-					driveToPoint({-25_in, 20.5_in}, -135_deg); 
+					driveToPoint({-27_in, 20.5_in}, -135_deg); 
 					break;
 				}
 				case AutonSelector::Color::BLUE:{
-					driveToPoint({0.7_tl, 1_tl}, 135_deg); 
+					driveToPoint({27_in, 20.5_in}, 135_deg); 
 					break;
 				}
 			}
@@ -428,33 +426,40 @@ void autonomous() {
 			//place
 			placeStack();
 			model->setMaxVoltage(4000);
+			//back up
 			switch(alliance){
 				case AutonSelector::Color::RED:{
-					driveToPoint({-25_in + 6_in, 20.5_in + 6_in}, -135_deg); 
+					driveToPoint({-27_in + 15_in, 20.5_in + 15_in}, -135_deg); 
 					break;
 				}
 				case AutonSelector::Color::BLUE:{
-					driveToPoint({0.7_tl, 1_tl}, 135_deg); 
+					driveToPoint({27_in - 15_in, 20.5_in + 15_in}, 135_deg); 
 					break;
 				}
 			}
-			//back up
 			break;
+			tilter.setDown();
 		}
 		case AutonSelector::Auton::BIG_ZONE_LARGESTACK:{
+			driveToPoint({0_in, 14_in});
 			//deploy tray
-			deployTray();
+			driveToPoint({0_in, 1_in});
+			rollerOuttake();
+			pros::delay(1700);
 			//intake
-			//maybe try 80% power
-			//maybe slow down as well
-			rollerIntake();
+			rollerOuttake(-0.7);
 			//drive forward, grab cube and stack
+			driveToPoint({0_in, 1_tl}); 
+			model->setMaxVoltage(5000);
 			driveToPoint({0_in, 1.3_tl}); 
 			//grab cube by tower
 			switch(alliance){
 				case AutonSelector::Color::RED:{
-					driveToPoint({-8_in, 1.5_tl}); 
-					driveToPoint({-8_in, 2.05_tl}); 
+					driveToPoint({-10_in, 1.5_tl}); 
+					model->setMaxVoltage(5000);
+					driveToPoint({-10_in, 2.05_tl}); 
+//					driveToPoint({-36_in, 1.8_tl}, 45_deg); 
+					//driveToPoint({-25_in, 2.4_tl}, 45_deg); 
 					break;
 				}
 				case AutonSelector::Color::BLUE:{
@@ -463,13 +468,15 @@ void autonomous() {
 					break;
 				}
 			}
+			model->setMaxVoltage(12000);
 			//turn around and grab cube by zone
 			//slow intake
 			//may need to tune Y value
-			rollerOuttake(-0.7);
+			rollerOuttake(-1);
 			switch(alliance){
 				case AutonSelector::Color::RED:{
-					driveToPoint({-0.5_tl, 1.2_tl}, {-1_tl, 10_in}); 
+					driveToPoint({-5_in, 1.8_tl}, -135_deg); 
+					driveToPoint({-12_in, 36.2_in}, -135_deg); 
 					break;
 				}
 				case AutonSelector::Color::BLUE:{
@@ -477,11 +484,13 @@ void autonomous() {
 					break;
 				}
 			}
+			rollerIntake();
+			pros::delay(500);
 			//line up
 			//definitely needs tuned
 			switch(alliance){
 				case AutonSelector::Color::RED:{
-					driveToPoint({-0.7_tl, 10_in}, -135_deg); 
+					driveToPoint({-27_in , 20.5_in}, -135_deg); 
 					break;
 				}
 				case AutonSelector::Color::BLUE:{
@@ -489,12 +498,21 @@ void autonomous() {
 					break;
 				}
 			}
-			pros::delay(500);
 			//place
 			placeStack();
 			//back up
 			model->setMaxVoltage(4000);
-			odomController->moveDistance(-10_in);
+			switch(alliance){
+				case AutonSelector::Color::RED:{
+					driveToPoint({-27_in + 15_in, 20.5_in + 15_in}, -135_deg); 
+					break;
+				}
+				case AutonSelector::Color::BLUE:{
+					driveToPoint({0.7_tl, 1_tl}, 135_deg); 
+					break;
+				}
+			}
+			tilter.setDown();
 			break;
 		}
 		case AutonSelector::Auton::BIG_ZONE_PUSH:{
