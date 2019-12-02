@@ -6,7 +6,6 @@
 #include "ui/autonselector.hpp"
 using namespace lib7842;
 using namespace okapi;
-
 Controller controller{ControllerId::master};
 
 //This is the model of the robot chassis
@@ -32,7 +31,7 @@ auto odom {std::make_shared<CustomOdometry>(
 	ChassisScales({
 		2.792_in,//Encoder wheel diameter
 		14.0006164_in,//Drive base width, assumes encoder wheels are the same distance from the center
-		0.00_in//Middle wheel distance, which doesn't matter to the math
+		6.50_in//Middle wheel distance, which doesn't matter to the math
 	}, 360)//Encoder ticks per rotation
 )};
 
