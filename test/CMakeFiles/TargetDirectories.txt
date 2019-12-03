@@ -1,3 +1,0 @@
-/home/mkaufmann/projects/Vex4911A2019/test/CMakeFiles/rebuild_cache.dir
-/home/mkaufmann/projects/Vex4911A2019/test/CMakeFiles/runTests.dir
-/home/mkaufmann/projects/Vex4911A2019/test/CMakeFiles/edit_cache.dir
