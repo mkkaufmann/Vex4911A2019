@@ -6,7 +6,7 @@
 #include <functional>
 class Tilter : public Subsystem{
 public:
-  static Tilter* getInstance();
+  static Tilter& getInstance();
 
   void stop();
 

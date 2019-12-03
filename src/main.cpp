@@ -4,6 +4,7 @@
 #include "subsystems/tilter.hpp"
 #include "util/util.hpp"
 #include "ui/autonselector.hpp"
+
 using namespace lib7842;
 using namespace okapi;
 
@@ -67,7 +68,7 @@ auto odomController {std::make_shared<OdomXController>(
     	2_in//this is how close the bot has to be to the target in order to settle
 )};
 
-Tilter tilter {*Tilter::getInstance()};
+Tilter tilter {Tilter::getInstance()};
 
 //replace with a motor group
 auto stackerMotor1 {std::make_shared<Motor>(6)};

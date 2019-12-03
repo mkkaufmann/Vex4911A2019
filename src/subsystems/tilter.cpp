@@ -1,7 +1,7 @@
 #include "subsystems/tilter.hpp"
 #include "util/util.hpp"
 
-Tilter* Tilter::getInstance(){
+Tilter Tilter::getInstance(){
   if(instance == NULL){
     instance = new Tilter();
   }
@@ -144,4 +144,4 @@ const int Tilter::DOWN_ENC = 0;
 const int Tilter::UP_ENC = -4900;//tune
 const int Tilter::MID_ENC = UP_ENC * 0.75;//tune
 const int Tilter::OFFSET_INC = -50;//tune
-Tilter* Tilter::instance = Tilter::getInstance();
+Tilter Tilter::instance = Tilter::getInstance();
