@@ -6,6 +6,7 @@
 #include "ui/autonselector.hpp"
 using namespace lib7842;
 using namespace okapi;
+
 Controller controller{ControllerId::master};
 
 //This is the model of the robot chassis
@@ -302,11 +303,11 @@ void autonomous() {
 			rollerIntake();
 			
 			//slowly pick up the line 
-			model->setMaxVoltage(4500);
+			model->setMaxVoltage(5500);
 
-			driveToPoint({0_in, 1.3_tl});
+			driveToPoint({0_in, 1.5_tl});
 
-			model->setMaxVoltage(5000);
+			model->setMaxVoltage(5500);
 
 			switch(alliance){
 				case AutonSelector::Color::BLUE:{
@@ -320,12 +321,12 @@ void autonomous() {
 					//slowly intake so as to keep the cubes from dropping
 					rollerOuttake(-0.7);
 
-					driveToPoint({4_in, 1_tl - 2_in}, -135_deg, 1.5, 3_in, 10_deg);
+					driveToPoint({-10_in + 5_in, -1_in + 5_in}, -135_deg, 1.5, 3_in, 10_deg);
 
 					rollerStop();
 
 					//line up to place
-					driveToPoint({-6_in - 10_mm, 1_tl/2 + 3_in - 10_mm}, -135_deg);
+					driveToPoint({-10_in, -1_in}, -135_deg, 1, 6_in, 10_deg);
 					break;
 				}
 				case AutonSelector::Color::RED:{
@@ -339,12 +340,12 @@ void autonomous() {
 					//slowly intake so as to keep the cubes from dropping
 					rollerOuttake(-0.7);
 
-					driveToPoint({-4_in, 1_tl - 2_in}, 135_deg, 1.5, 3_in, 10_deg);
+					driveToPoint({10_in - 5_in, -1_in + 5_in}, 135_deg, 1.5, 3_in, 10_deg);
 
 					rollerStop();
 
 					//line up to place
-					driveToPoint({6_in , 1_tl/2 -1_in}, 135_deg, 1, 6_in, 10_deg);
+					driveToPoint({10_in, -1_in}, 135_deg, 1, 6_in, 10_deg);
 					break;
 				}
 			}	
@@ -355,9 +356,8 @@ void autonomous() {
 			model->setMaxVoltage(4000);
 			switch(alliance){
 				case AutonSelector::Color::BLUE:{
-					driveToPoint({-6_in - 20_mm, 1_tl/2 + 3_in - 20_mm}, -135_deg);
-
-					driveToPoint({6_in, 1_tl + 5_in}, -135_deg, 1, 3_in, 10_deg);
+					model->setMaxVoltage(6000);
+					driveToPoint({-10_in + 15_in, -1_in + 15_in}, -135_deg, 1.5, 3_in, 10_deg);
 					model->setMaxVoltage(12000);
 
 					tilter.setDown();
@@ -367,9 +367,7 @@ void autonomous() {
 				}
 				case AutonSelector::Color::RED:{
 					model->setMaxVoltage(6000);
-					driveToPoint({5.5_in - 6_in, 1_tl/2 + 6_in}, 135_deg, 1, 6_in, 10_deg);
-
-					driveToPoint({-6_in, 1_tl + 5_in}, 135_deg, 1, 3_in, 10_deg);
+					driveToPoint({10_in - 15_in, -1_in + 15_in}, 135_deg, 1.5, 3_in, 10_deg);
 					model->setMaxVoltage(12000);
 
 					tilter.setDown();
