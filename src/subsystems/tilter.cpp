@@ -26,8 +26,8 @@ void Tilter::out(){
       tilterMotor.move_absolute(DOWN_ENC + offset, 127);
       break;
     case UP:
-		if(trayAngle.get() < 900){
-			if(trayAngle.get() > 700){
+		if(trayAngle.get() < 670){
+			if(trayAngle.get() > 500){
 				tilterMotor.move_absolute(UP_ENC + offset, 127 * 0.5);
 			}else{
 				tilterMotor.move_absolute(UP_ENC + offset, 127);
@@ -86,8 +86,8 @@ void Tilter::setMiddle(){
 		state = UP;
 }
 void Tilter::setUp(){
-		while(trayAngle.get() < 900){
-			if(trayAngle.get() > 700){
+		while(trayAngle.get() < 670){
+			if(trayAngle.get() > 500){
 				tilterMotor.move_absolute(UP_ENC + offset, 127 * 0.5);
 			}else{
 				tilterMotor.move_absolute(UP_ENC + offset, 127);
@@ -128,6 +128,10 @@ void Tilter::offsetForward(){
 
 void Tilter::offsetBackward(){
 		offset -= OFFSET_INC;
+}
+
+int Tilter::getTrayAngle(){
+	return trayAngle.get();
 }
 
 Tilter::Tilter():trayAngle(7){

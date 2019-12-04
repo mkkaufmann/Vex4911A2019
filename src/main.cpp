@@ -603,6 +603,7 @@ void opcontrol() {
 		tilter.in();
 		tilter.out();
 
+		controller.setText(0, 0, std::to_string(tilter.getTrayAngle()));
 
 		
 		//control the tilter

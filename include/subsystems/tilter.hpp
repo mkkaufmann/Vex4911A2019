@@ -36,6 +36,8 @@ public:
   void offsetForward();
   void offsetBackward();
 
+  int getTrayAngle();
+
   enum TilterState {
     DOWN,
     MID,
