@@ -5,5 +5,7 @@ public:
 	void in();
 	void out();
 	static Intake& getInstance();
+private:
+	static Intake instance;
 };
 

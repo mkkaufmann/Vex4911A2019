@@ -17,9 +17,8 @@ public:
 
 	void placeStack();
 private:
-	Robot();
-	static bool hasInstance;
 	static Robot instance;
+	Robot();
 	std::shared_ptr<ThreeEncoderXDriveModel> model;
 	std::shared_ptr<CustomOdometry> odom;
 	std::shared_ptr<OdomXController> odomController;

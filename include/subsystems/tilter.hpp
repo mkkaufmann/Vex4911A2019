@@ -38,9 +38,6 @@ public:
 		DOWN
 	};
 private:
-	//tracks whether a singleton instance has been created
-	static bool hasInstance;
-	
 	//singleton instance
 	static Tilter instance;
 

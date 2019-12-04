@@ -1,10 +1,6 @@
 #include "subsystems/robot.hpp" 
 
 Robot& Robot::getInstance(){
-	if(!hasInstance){
-		instance = Robot();
-		hasInstance = true;
-	}
 	return instance;
 }
 
@@ -94,5 +90,4 @@ Robot::Robot() : tilter(Tilter::getInstance()), intake(Intake::getInstance()){
 	);
 }
 
-bool Robot::hasInstance = false;
 Robot Robot::instance = Robot::getInstance();

@@ -1,10 +1,6 @@
 #include "subsystems/tilter.hpp"
 
 Tilter& Tilter::getInstance(){
-	if(!hasInstance){
-		hasInstance = true;
-		instance = Tilter();
-	}
 	return instance;
 }
 
@@ -80,7 +76,6 @@ int Tilter::getTrayAngle(){
 	return trayAngle.get();
 }
 
-bool Tilter::hasInstance = false;
 Tilter Tilter::instance = Tilter::getInstance();
 
 Tilter::Tilter(): 
@@ -91,7 +86,7 @@ Tilter::Tilter():
 	position = DOWN;
 }
 
-const int UP_ENC = -4900;
-const int DOWN_ENC = 0;
-const int OFFSET_INC = -50;
-const int UP_POT = 670;
+const int Tilter::UP_ENC = -4900;
+const int Tilter::DOWN_ENC = 0;
+const int Tilter::OFFSET_INC = -50;
+const int Tilter::UP_POT = 670;
