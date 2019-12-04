@@ -4,9 +4,8 @@ Tilter& Tilter::getInstance(){
 	return instance;
 }
 
-void Tilter::in(){};
 
-void Tilter::out(){
+void Tilter::loop(){
 	switch(position){
 		case DOWN:{
 			tilter.moveAbsolute(DOWN_ENC + offset, 12000);

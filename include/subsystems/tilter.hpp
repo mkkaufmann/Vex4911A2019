@@ -1,17 +1,13 @@
 #pragma once
 #include "main.h"
-#include "subsystem.hpp"
 
-class Tilter : public Subsystem{
+class Tilter{
 public:
 	//gets or creates the singleton instance and returns it
 	static Tilter& getInstance();
 
-	//manages inputs
-	void in();
-
 	//manages outputs
-	void out();
+	void loop();
 
 	//moves the tilter up in auton (blocks code progression)
 	void autoUp();

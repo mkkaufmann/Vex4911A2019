@@ -1,9 +1,5 @@
 #include "subsystems/robot.hpp" 
 
-Robot& Robot::getInstance(){
-	return instance;
-}
-
 void Robot::initialize(){
 
 }
@@ -28,8 +24,56 @@ Intake& Robot::getIntake(){
 	return intake;
 }
 
+void Robot::drive(double x, double y, double turn){
+	model->xArcade(x, y, turn);
+}
+
+void Robot::setSpeed(double percent){
+	model->setMaxVoltage(percent * 12000);
+}
+
 void Robot::placeStack(){
-	//implement
+	intake.stop();
+	tilter.autoUp();
+}
+
+void Robot::deployTray(){
+	intake.outtake();
+	pros::delay(1500);
+	intake.stop();
+}
+
+void Robot::toggleSlow(){
+	if(model->getMaxVoltage() == 12000){
+		setSpeed(0.33);
+	}else{
+		setSpeed(1);
+	}
+}
+
+void Robot::driveToPoint(
+		Vector target, 
+		QAngle targetAngle, 
+		double turnPriority, 
+		QLength settleDistance, 
+		QAngle settleAngle){
+	odomController->strafeToPoint(
+	target,
+	OdomController::makeAngleCalculator(targetAngle), turnPriority,
+	OdomController::makeSettler(settleDistance, settleAngle));
+}
+
+void Robot::driveToFacePoint(
+		Vector target, 
+		Vector pointToFace, 
+		double turnPriority, 
+		QLength settleDistance, 
+		QAngle settleAngle){
+
+	odomController->strafeToPoint(
+	target,
+	OdomController::makeAngleCalculator(pointToFace), turnPriority,
+	OdomController::makeSettler(settleDistance, settleAngle));
 }
 
 Robot::Robot() : tilter(Tilter::getInstance()), intake(Intake::getInstance()){
@@ -89,5 +133,3 @@ Robot::Robot() : tilter(Tilter::getInstance()), intake(Intake::getInstance()){
 		2_in//this is how close the bot has to be to the target in order to settle
 	);
 }
-
-Robot Robot::instance = Robot::getInstance();

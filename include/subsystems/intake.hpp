@@ -1,11 +1,15 @@
 #pragma once
-#include "subsystem.hpp"
-class Intake : public Subsystem{
+#include "main.h"
+class Intake{
 public:
-	void in();
-	void out();
+	void setSpeed(double percent);
+	void outtake();
+	void intake();
+	void stop();
 	static Intake& getInstance();
 private:
 	static Intake instance;
+	okapi::MotorGroup rollers;	
+	Intake();
 };
 

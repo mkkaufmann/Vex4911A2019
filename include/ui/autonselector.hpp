@@ -36,7 +36,6 @@ enum Auton{
 		SMALL_ZONE_7STACK,
 		BIG_ZONE_3STACK,
 		BIG_ZONE_LARGESTACK,
-		BIG_ZONE_PUSH,
 		TEST
 };
 
@@ -66,8 +65,8 @@ private:
 
   static lv_res_t autonAction(lv_obj_t*, const char *); // action when auton is pressed
   static lv_res_t colorAction(lv_obj_t*, const char *); // action when color button is pressed
-  static const char* colormap[3];
-	static const char* autonmap[9];
+	static const char* colormap[3];
+	static const char* autonmap[8];
 };
 
 } // namespace lib7842

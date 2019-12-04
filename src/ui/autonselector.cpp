@@ -5,8 +5,8 @@ namespace lib7842 {
 AutonSelector::Color AutonSelector::color = AutonSelector::Color::RED;
 AutonSelector::Auton AutonSelector::auton = AutonSelector::Auton::SMALL_ZONE_6STACK;
 const char* AutonSelector::colormap[3] = {"Red", "Blue", ""};
-const char* AutonSelector::autonmap[9] = {"Demo", "one", "six", "\n"
-					   "ONE", "TWO", "THREE", "FOUR", ""};
+const char* AutonSelector::autonmap[8] = {"Demo", "one", "six", "\n"
+					   "ONE", "THREE", "FOUR", ""};
 void AutonSelector::initialize() {
   initializeAuton();
   initializeColor();
@@ -91,9 +91,6 @@ lv_res_t AutonSelector::autonAction(lv_obj_t* btnm, const char * txt) {
      if (strcmp(txt, "ONE") == 0) {
        auton = AutonSelector::Auton::BIG_ZONE_ONE_CUBE;
      } 
-		 else if (strcmp(txt, "TWO") == 0) {
-       auton = AutonSelector::Auton::BIG_ZONE_PUSH;
-     }
 		 else if (strcmp(txt, "THREE") == 0) {
        auton = AutonSelector::Auton::BIG_ZONE_3STACK;
      }
