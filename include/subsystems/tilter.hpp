@@ -1,64 +1,74 @@
-#ifndef TILTER_HPP
-#define TILTER_HPP
-#include "subsystem.hpp"
-#include "constants.hpp"
+#pragma once
 #include "main.h"
-#include <functional>
+#include "subsystem.hpp"
+
 class Tilter : public Subsystem{
 public:
-  static Tilter& getInstance();
+	//gets or creates the singleton instance and returns it
+	static Tilter& getInstance();
 
-  void stop();
+	//manages inputs
+	void in();
 
-  void in();
+	//manages outputs
+	void out();
 
-  std::function<void()> inAction();
+	//moves the tilter up in auton (blocks code progression)
+	void autoUp();
 
-  void out();
+	//moves the tilter down in auton (does not block code progression)
+	void autoDown();
+	
+	//sets the tilter state to up in opcontrol
+	void up();
 
-  std::function<void()> outAction();
+	//sets the tilter state to down in opcontrol
+	void down();
 
-  void shiftUp();
+	//offsets the target encoder positions for calibration
+	void offsetForward();
+	void offsetBackward();
 
-  std::function<void()> shiftUpAction;
-
-  void shiftDown();
-  
-  void setMiddle();
-
-  void setUp();
-  void setDown();
-
-  std::function<void()> shiftDownAction;
-
-  void adjustThrottle(double output);
-
-  void offsetForward();
-  void offsetBackward();
-
-  enum TilterState {
-    DOWN,
-    MID,
-    UP,
-  };
-
-  okapi::Potentiometer trayAngle;
-  TilterState getState();
+	//returns the potentiometer value
+	int getTrayAngle();
+	
+	//possible states of the tilter
+	enum Position{
+		UP,
+		DOWN
+	};
 private:
-  static const int DOWN_ENC;
-  static const int MID_ENC;
-  static const int UP_ENC;
-  static const int OFFSET_INC;
-  int offset;
-  bool isAdjusting;
-  int adjustOutput;
+	//tracks whether a singleton instance has been created
+	static bool hasInstance;
+	
+	//singleton instance
+	static Tilter instance;
 
-  pros::Motor tilterMotor = pros::Motor(Constants::TILTER_MOTOR_PORT);
-  static Tilter* instance;
+	//motor that runs the tilter
+	okapi::Motor tilter;
 
-  TilterState state;
+	//potentiometer used for calibration
+	okapi::Potentiometer trayAngle;
 
-  Tilter();
+	//offset for skipping/calibration
+	int offset;
 
+	//state of the tilter
+	Position position;
+
+	//constructor is private for singleton
+	Tilter();
+
+	//encoder value for the tray to be up
+	static const int UP_ENC;
+
+	//encoder value for the tray to be down
+	static const int DOWN_ENC;
+
+	//encoder ticks to offset by in one increment
+	// + is forward
+	static const int OFFSET_INC;
+
+	//potentiometer value at the top
+	static const int UP_POT;
 };
-#endif

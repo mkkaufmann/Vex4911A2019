@@ -12,11 +12,13 @@ public:
 	std::shared_ptr<ThreeEncoderXDriveModel> getModel();
 	std::shared_ptr<CustomOdometry> getOdom();
 	std::shared_ptr<OdomXController> getOdomController();
-	void placeStack();
 	Tilter& getTilter();
 	Intake& getIntake();
+
+	void placeStack();
 private:
 	Robot();
+	static bool hasInstance;
 	static Robot instance;
 	std::shared_ptr<ThreeEncoderXDriveModel> model;
 	std::shared_ptr<CustomOdometry> odom;

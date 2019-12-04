@@ -1,10 +1,39 @@
 #include "subsystems/robot.hpp" 
 
 Robot& Robot::getInstance(){
-	if(instance == NULL){
-
+	if(!hasInstance){
+		instance = Robot();
+		hasInstance = true;
 	}
 	return instance;
+}
+
+void Robot::initialize(){
+
+}
+
+std::shared_ptr<ThreeEncoderXDriveModel> Robot::getModel(){
+	return model;
+}
+	
+std::shared_ptr<CustomOdometry> Robot::getOdom(){
+	return odom;
+}
+
+std::shared_ptr<OdomXController> Robot::getOdomController(){
+	return odomController;
+}
+
+Tilter& Robot::getTilter(){
+	return tilter;
+}
+
+Intake& Robot::getIntake(){
+	return intake;
+}
+
+void Robot::placeStack(){
+	//implement
 }
 
 Robot::Robot() : tilter(Tilter::getInstance()), intake(Intake::getInstance()){
@@ -65,28 +94,5 @@ Robot::Robot() : tilter(Tilter::getInstance()), intake(Intake::getInstance()){
 	);
 }
 
-void Robot::initialize(){
-
-}
-
-std::shared_ptr<ThreeEncoderXDriveModel> Robot::getModel(){
-
-}
-	
-std::shared_ptr<CustomOdometry> Robot::getOdom(){
-
-}
-
-std::shared_ptr<OdomXController> Robot::getOdomController(){
-
-}
-
-Tilter& Robot::getTilter(){
-
-}
-
-Intake& Robot::getIntake(){
-
-}
-
+bool Robot::hasInstance = false;
 Robot Robot::instance = Robot::getInstance();

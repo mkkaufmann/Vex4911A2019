@@ -1,9 +1,10 @@
 #include "main.h"
 #include "lib7842/api.hpp"
-#include "subsystems/stacker.hpp"
+#include "subsystems/intake.hpp"
 #include "subsystems/tilter.hpp"
 #include "util/util.hpp"
 #include "ui/autonselector.hpp"
+#include "util/latchedboolean.hpp"
 
 using namespace lib7842;
 using namespace okapi;
@@ -112,7 +113,7 @@ void deployTray(){
 //Prevents code progression for 3.6 seconds
 void placeStack(){
 	rollerStop();
-     	tilter.setUp();
+     	tilter.autoUp();
 }
 
 //Constant distances used for autonomous plotting
@@ -182,10 +183,10 @@ void autonomous() {
 	alliance = AutonSelector::getColor();
 	currentAuton = AutonSelector::getAuton(); 
 
-	tilter.setDown();
+	tilter.autoDown();
 	switch(currentAuton){
 		case AutonSelector::Auton::TEST:{
-			tilter.setUp();
+			tilter.autoUp();
 			break;
 		}
 		case AutonSelector::Auton::SMALL_ZONE_ONE_CUBE:{
@@ -277,7 +278,7 @@ void autonomous() {
 				case AutonSelector::Color::BLUE:{
 					driveToPoint({6_in, 1_tl + 5_in}, -135_deg, 1, 3_in, 10_deg);
 					model->setMaxVoltage(12000);
-					tilter.setDown();
+					tilter.autoDown();
 					//drive to next location
 					driveToPoint({1_tl, 0.5_tl});
 					break;
@@ -285,7 +286,7 @@ void autonomous() {
 				case AutonSelector::Color::RED:{
 					driveToPoint({-6_in, 1_tl + 5_in}, 135_deg, 1, 3_in, 10_deg);
 					model->setMaxVoltage(12000);
-					tilter.setDown();
+					tilter.autoDown();
 					//drive to next location
 					driveToPoint({-1_tl, 0.5_tl});
 					break;
@@ -361,7 +362,7 @@ void autonomous() {
 					driveToPoint({-10_in + 15_in, -1_in + 15_in}, -135_deg, 1.5, 3_in, 10_deg);
 					model->setMaxVoltage(12000);
 
-					tilter.setDown();
+					tilter.autoDown();
 
 					driveToPoint({1_tl, 0.5_tl});
 					break;
@@ -371,7 +372,7 @@ void autonomous() {
 					driveToPoint({10_in - 15_in, -1_in + 15_in}, 135_deg, 1.5, 3_in, 10_deg);
 					model->setMaxVoltage(12000);
 
-					tilter.setDown();
+					tilter.autoDown();
 
 					driveToPoint({-1_tl, 0.5_tl});
 					break;
@@ -436,7 +437,7 @@ void autonomous() {
 				}
 			}
 			break;
-			tilter.setDown();
+			tilter.autoDown();
 		}
 		case AutonSelector::Auton::BIG_ZONE_LARGESTACK:{
 			driveToPoint({0_in, 14_in});
@@ -510,7 +511,7 @@ void autonomous() {
 					break;
 				}
 			}
-			tilter.setDown();
+			tilter.autoDown();
 			break;
 		}
 		case AutonSelector::Auton::BIG_ZONE_PUSH:{
@@ -558,7 +559,6 @@ void autonomous() {
 }
 
 
-Stacker stacker{*Stacker::getInstance()};
 
 //used for toggle presses
 LatchedBoolean left{};
@@ -589,18 +589,19 @@ void opcontrol() {
 
 		//control the rollers
 		if(controller.getDigital(ControllerDigital::left)){
-			stacker.slowOuttake();
+			stackerMotor1->moveVoltage(6000);
+			stackerMotor2->moveVoltage(6000);
 		}else if(controller.getDigital(ControllerDigital::R1)){
-			stacker.outtake();
+			stackerMotor1->moveVoltage(12000);
+			stackerMotor2->moveVoltage(12000);
 		}else if(controller.getDigital(ControllerDigital::R2)){
-			stacker.intake();
+			stackerMotor1->moveVoltage(-12000);
+			stackerMotor2->moveVoltage(-12000);
 		}else{
-			stacker.stop();
+			stackerMotor1->moveVoltage(0);
+			stackerMotor2->moveVoltage(0);
 		}
 
-		stacker.in();
-		stacker.out();
-		
 		tilter.in();
 		tilter.out();
 
@@ -608,15 +609,10 @@ void opcontrol() {
 		
 		//control the tilter
 		if(left.update(controller.getDigital(ControllerDigital::L2))){
-			tilter.shiftDown();
+			tilter.down();
 		}
 		if(right.update(controller.getDigital(ControllerDigital::L1))){
-			tilter.shiftUp();
-		}else if(controller.getDigital(ControllerDigital::down)){
-			//adjusts once the tilter is up
-			tilter.adjustThrottle(-127 * 0.5);
-		}else{
-			tilter.adjustThrottle(0);
+			tilter.up();
 		}
 
 		//used to offset the tilter in case of skipping
@@ -627,8 +623,6 @@ void opcontrol() {
 			tilter.offsetBackward();
 		}
 
-		stackerMotor1->moveVoltage(stacker.getOutput());
-		stackerMotor2->moveVoltage(stacker.getOutput());
 
 		//slow the speed of the drivetrain for moving stacks
 		if(toggleSpeed.update(controller.getDigital(ControllerDigital::Y))){

@@ -1,147 +1,97 @@
 #include "subsystems/tilter.hpp"
-#include "util/util.hpp"
 
-Tilter Tilter::getInstance(){
-  if(instance == NULL){
-    instance = new Tilter();
-  }
-  return instance;
+Tilter& Tilter::getInstance(){
+	if(!hasInstance){
+		hasInstance = true;
+		instance = Tilter();
+	}
+	return instance;
 }
 
-void Tilter::stop(){
-  state = DOWN;
-}
-
-void Tilter::in(){}
-
-std::function<void()> Tilter::inAction(){
-  return [this]()->void{
-    in();
-  };
-}
+void Tilter::in(){};
 
 void Tilter::out(){
-  switch(state){
-    case DOWN:
-      tilterMotor.move_absolute(DOWN_ENC + offset, 127);
-      break;
-    case UP:
-		if(trayAngle.get() < 920){
-			if(trayAngle.get() > 700){
-				tilterMotor.move_absolute(UP_ENC + offset, 127 * 0.5);
-			}else{
-				tilterMotor.move_absolute(UP_ENC + offset, 127);
-			}
-			if(tilterMotor.get_position() < UP_ENC + offset + 100){
-				offsetForward();
-			}
+	switch(position){
+		case DOWN:{
+			tilter.moveAbsolute(DOWN_ENC + offset, 12000);
+			break;
 		}
-//		//macro
-//		if(tilterMotor.get_position() > MID_ENC){
-//				tilterMotor.move_absolute(UP_ENC + offset, 127 * 1);
-//		}else{
-//				tilterMotor.move_absolute(UP_ENC + offset, 127 * 0.5);
-//		}
-//		if(isAdjusting && tilterMotor.get_position() > UP_ENC + offset - 500){
-//				tilterMotor.move(adjustOutput);
-//		}
-      break;
-    default:
-      //do nothing
-      break;
-  }
-}
-
-std::function<void()> Tilter::outAction(){
-  return [this]()->void{
-    out();
-  };
-}
-
-//used in teleop
-void Tilter::shiftUp(){
-  switch(state){
-    case DOWN:
-      state = UP;
-      break;
-    default:
-      //TODO: rumble
-      break;
-  }
-}
-
-void Tilter::shiftDown(){
-  switch(state){
-    case UP:
-	  state = DOWN;
-    default:
-      //rumble
-      break;
-  }
-}
-
-//used in autonomous
-void Tilter::setMiddle(){
-		tilterMotor.move_absolute(UP_ENC + offset, 127 * 1);
-		state = UP;
-}
-void Tilter::setUp(){
-		//tilterMotor.move_absolute(UP_ENC + offset - 400, 127 * 0.4);
-		while(trayAngle.get() < 920){
-			if(trayAngle.get() > 700){
-				tilterMotor.move_absolute(UP_ENC + offset, 127 * 0.5);
-			}else{
-				tilterMotor.move_absolute(UP_ENC + offset, 127);
+		case UP:{
+			//if not already at the top position
+			if(trayAngle.get() < UP_POT){
+				//if close, slow down
+				if(trayAngle.get() > UP_POT * 0.75){
+					tilter.moveAbsolute(UP_ENC + offset, 12000 * 0.5);
+				}else{
+					//otherwise, continue at full speed
+					tilter.moveAbsolute(UP_ENC + offset, 12000);
+				}
+				//if close to encoder stop, offset the encoder stop to calibrate
+				if(tilter.getPosition() < (UP_ENC + offset) * 0.97){
+					offsetForward();
+				}
 			}
-			if(tilterMotor.get_position() < UP_ENC + offset + 100){
-				offsetForward();
-			}
+			break;
 		}
-		state = UP;
-}
-void Tilter::setDown(){
-		tilterMotor.move_absolute(DOWN_ENC + offset, 127);
-		state = DOWN;
+	}
 }
 
-Tilter::TilterState Tilter::getState(){
-  return state;
-}
-
-//used for adjusting in teleop
-void Tilter::adjustThrottle(double output){
-		if(output == 0){
-				isAdjusting = false;
-				return;
-		}
-		if(state == UP){
-				isAdjusting = true;
-				adjustOutput = output;
+void Tilter::autoUp(){
+	//while not already at the top position
+	while(trayAngle.get() < UP_POT){
+		//if close, slow down
+		if(trayAngle.get() > UP_POT * 0.75){
+			tilter.moveAbsolute(UP_ENC + offset, 12000 * 0.5);
 		}else{
-				isAdjusting = false;
+			//otherwise, continue at full speed
+			tilter.moveAbsolute(UP_ENC + offset, 12000);
 		}
+		//if close to encoder stop, offset the encoder stop to calibrate
+		if(tilter.getPosition() < (UP_ENC + offset) * 0.97){
+			offsetForward();
+		}
+	}
+	position = UP;
 }
 
-//used for offsetting for skipping
+void Tilter::autoDown(){
+	//set to the bottom position
+	tilter.moveAbsolute(DOWN_ENC + offset, 12000);
+	position = DOWN;
+}
+
+void Tilter::up(){
+	position = UP;
+}
+
+void Tilter::down(){
+	position = DOWN;
+}
+
 void Tilter::offsetForward(){
-		offset += OFFSET_INC;
+	offset += OFFSET_INC;
 }
 
 void Tilter::offsetBackward(){
-		offset -= OFFSET_INC;
+	offset -= OFFSET_INC;
 }
 
-Tilter::Tilter():trayAngle(7){
-  state = DOWN;
-  tilterMotor.tare_position();
-  offset = 0;
-  shiftUpAction = [this]()->void{shiftUp();};
-  shiftDownAction = [this]()->void{shiftDown();};
+int Tilter::getTrayAngle(){
+	return trayAngle.get();
 }
 
-//encoder values of the different positions
-const int Tilter::DOWN_ENC = 0;
-const int Tilter::UP_ENC = -4900;//tune
-const int Tilter::MID_ENC = UP_ENC * 0.75;//tune
-const int Tilter::OFFSET_INC = -50;//tune
+bool Tilter::hasInstance = false;
 Tilter Tilter::instance = Tilter::getInstance();
+
+Tilter::Tilter(): 
+	tilter(okapi::Motor(7)), 
+	trayAngle(okapi::Potentiometer(7)
+	){
+	offset = 0;
+	position = DOWN;
+}
+
+const int UP_ENC = -4900;
+const int DOWN_ENC = 0;
+const int OFFSET_INC = -50;
+const int UP_POT = 670;
