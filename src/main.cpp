@@ -245,6 +245,7 @@ void autonomous() {
 			driveToPoint({0_in, 1.5_tl});
 			model->setMaxVoltage(12000);
 
+			tilter.setMiddle();
 			//drive to zone
 			switch(alliance){
 				case AutonSelector::Color::BLUE:{
@@ -293,6 +294,95 @@ void autonomous() {
 			break;
 		}
 		case AutonSelector::Auton::SMALL_ZONE_6STACK:{
+			driveToPoint({0_in, 13_in});
+			//deploy tray
+			driveToPoint({0_in, 0_in});
+			rollerOuttake();
+			pros::delay(1200);
+
+			//slow intake
+			rollerOuttake(-1);
+			
+			//slowly pick up the line 
+			model->setMaxVoltage(6000);
+
+			driveToPoint({0_in, 1.6_tl});
+
+			model->setMaxVoltage(8000);
+
+			driveToPoint({0_in, 1.5_tl});
+			switch(alliance){
+				case AutonSelector::Color::BLUE:{
+					//grab 6th cube
+					driveToPoint({12_in, 1.5_tl}, 0_deg, 1, 3_in);
+					rollerOuttake(-0.75);
+					driveToPoint({12_in, 2.05_tl}, 0_deg, 1, 3_in);
+					pros::delay(600);
+					model->setMaxVoltage(12000);
+					//tilter.setMiddle();
+					
+					//slowly intake so as to keep the cubes from dropping
+					rollerOuttake(-0.3);
+
+					driveToPoint({-(10_in - 5_in), -1_in + 5_in}, -135_deg, 1.5, 3_in, 10_deg);
+
+					rollerOuttake(-0.2);
+
+					//line up to place
+					driveToPoint({-11.5_in, -1_in}, -135_deg, 1, 6_in, 10_deg);
+					break;
+				}
+				case AutonSelector::Color::RED:{
+					//grab 6th cube
+					driveToPoint({-10_in, 1.5_tl}, 0_deg, 1, 3_in);
+					rollerOuttake(-0.55);
+					driveToPoint({-10_in, 2.05_tl}, 0_deg, 1, 3_in);
+						driveToPoint({-10_in, 1.8_tl}, 0_deg, 1, 3_in);
+					pros::delay(600);
+					model->setMaxVoltage(12000);
+					//tilter.setMiddle();
+					
+					//slowly intake so as to keep the cubes from dropping
+					rollerOuttake(-0.3);
+
+					driveToPoint({10_in - 5_in, -1_in + 5_in}, 135_deg, 1.5, 3_in, 10_deg);
+
+					rollerOuttake(-0.2);
+
+					//line up to place
+					driveToPoint({9_in, -4.75_in}, 135_deg, 1, 6_in, 10_deg);
+					break;
+				}
+			}	
+
+			placeStack();
+				
+			//back up
+			model->setMaxVoltage(4000);
+			switch(alliance){
+				case AutonSelector::Color::BLUE:{
+					model->setMaxVoltage(6000);
+					driveToPoint({-(11.5_in - 15_in), -1_in + 15_in}, -135_deg, 1.5, 3_in, 10_deg);
+					model->setMaxVoltage(12000);
+					tilter.setDown();
+
+					driveToPoint({1_tl, 0.5_tl});
+					break;
+				}
+				case AutonSelector::Color::RED:{
+					model->setMaxVoltage(6000);
+					driveToPoint({9_in - 15_in, -4.75_in + 15_in}, 135_deg, 1.5, 3_in, 10_deg);
+					model->setMaxVoltage(12000);
+
+					tilter.setDown();
+
+					driveToPoint({-1_tl, 0.5_tl});
+					break;
+				}
+			}
+			break;
+		}
+		case AutonSelector::Auton::SMALL_ZONE_7STACK:{
 			driveToPoint({0_in, 14_in});
 			//deploy tray
 			driveToPoint({0_in, 1_in});
@@ -315,8 +405,12 @@ void autonomous() {
 					driveToPoint({8_in, 1.5_tl}, 0_deg, 1, 3_in);
 					driveToPoint({8_in, 2.05_tl}, 0_deg, 1, 3_in);
 
+					driveToPoint({13_in, 1.8_tl}, -45_deg, 1, 3_in);
+					driveToPoint({13_in, 2.1_tl}, -45_deg, 1, 3_in);
+
 					pros::delay(300);
 					model->setMaxVoltage(12000);
+					tilter.setMiddle();
 					
 					//slowly intake so as to keep the cubes from dropping
 					rollerOuttake(-0.7);
@@ -334,8 +428,12 @@ void autonomous() {
 					driveToPoint({-8_in, 1.5_tl}, 0_deg, 1, 3_in);
 					driveToPoint({-8_in, 2.05_tl}, 0_deg, 1, 3_in);
 
+					driveToPoint({-13_in, 1.8_tl}, 45_deg, 1, 3_in);
+					driveToPoint({-13_in, 2.1_tl}, 45_deg, 1, 3_in);
+
 					pros::delay(300);
 					model->setMaxVoltage(12000);
+					tilter.setMiddle();
 					
 					//slowly intake so as to keep the cubes from dropping
 					rollerOuttake(-0.7);
@@ -378,7 +476,84 @@ void autonomous() {
 			}
 			break;
 		}
-		case AutonSelector::Auton::SMALL_ZONE_7STACK:{
+		case AutonSelector::Auton::SMALL_ZONE_8STACK:{
+			driveToPoint({0_in, 14_in});
+			//deploy tray
+			driveToPoint({0_in, 1_in});
+			rollerOuttake();
+			pros::delay(2000);
+
+			//slow intake
+			rollerIntake();
+			
+			//slowly pick up the line 
+			model->setMaxVoltage(5500);
+
+			driveToPoint({0_in, 1.5_tl});
+
+			model->setMaxVoltage(12000);
+
+			switch(alliance){
+				case AutonSelector::Color::BLUE:{
+					driveToPoint({-1_tl, 0_in});
+					model->setMaxVoltage(5500);
+					driveToPoint({-1_tl, 1.5_tl});
+
+					tilter.setMiddle();
+					//slowly intake so as to keep the cubes from dropping
+					rollerOuttake(-0.7);
+
+					driveToPoint({-10_in + 5_in - 1_tl, -1_in + 5_in}, -135_deg, 1.5, 3_in, 10_deg);
+
+					rollerStop();
+
+					//line up to place
+					driveToPoint({-10_in - 1_tl, -1_in}, -135_deg, 1, 6_in, 10_deg);
+					break;
+				}
+				case AutonSelector::Color::RED:{
+					driveToPoint({1_tl, 0_in});
+					model->setMaxVoltage(5500);
+					driveToPoint({1_tl, 1.5_tl});
+
+					tilter.setMiddle();
+					//slowly intake so as to keep the cubes from dropping
+					rollerOuttake(-0.7);
+
+					driveToPoint({10_in - 5_in + 1_tl, -1_in + 5_in}, 135_deg, 1.5, 3_in, 10_deg);
+
+					rollerStop();
+
+					//line up to place
+					driveToPoint({10_in + 1_tl, -1_in}, 135_deg, 1, 6_in, 10_deg);
+					break;
+				}
+			}	
+
+			placeStack();
+				
+			//back up
+			model->setMaxVoltage(4000);
+			switch(alliance){
+				case AutonSelector::Color::BLUE:{
+					model->setMaxVoltage(6000);
+					driveToPoint({-10_in + 15_in - 1_tl, -1_in + 15_in}, -135_deg, 1.5, 3_in, 10_deg);
+					model->setMaxVoltage(12000);
+
+					tilter.setDown();
+
+					break;
+				}
+				case AutonSelector::Color::RED:{
+					model->setMaxVoltage(6000);
+					driveToPoint({10_in - 15_in + 1_tl, -1_in + 15_in}, 135_deg, 1.5, 3_in, 10_deg);
+					model->setMaxVoltage(12000);
+
+					tilter.setDown();
+
+					break;
+				}
+			}
 			break;
 		}
 		case AutonSelector::Auton::BIG_ZONE_3STACK:{
@@ -399,11 +574,11 @@ void autonomous() {
 			model->setMaxVoltage(10000);
 			switch(alliance){
 				case AutonSelector::Color::RED:{
-					driveToPoint({-12_in, 2_tl}, {-1_tl, 10_in}); 
+					driveToPoint({-6_in, 36_in}, -135_deg); 
 					break;
 				}
 				case AutonSelector::Color::BLUE:{
-					driveToPoint({12_in, 2_tl}, {1_tl, 10_in}); 
+					driveToPoint({6_in, 36_in}, 135_deg); 
 					break;
 				}
 			}
@@ -411,11 +586,11 @@ void autonomous() {
 			//definitely needs tuned
 			switch(alliance){
 				case AutonSelector::Color::RED:{
-					driveToPoint({-27_in, 20.5_in}, -135_deg); 
+					driveToPoint({-31_in, 8_in}, -135_deg); 
 					break;
 				}
 				case AutonSelector::Color::BLUE:{
-					driveToPoint({27_in, 20.5_in}, 135_deg); 
+					driveToPoint({30_in, 10_in}, 135_deg); 
 					break;
 				}
 			}
@@ -426,7 +601,7 @@ void autonomous() {
 			//back up
 			switch(alliance){
 				case AutonSelector::Color::RED:{
-					driveToPoint({-27_in + 15_in, 20.5_in + 15_in}, -135_deg); 
+					driveToPoint({-31_in + 15_in, 8_in + 15_in}, -135_deg); 
 					break;
 				}
 				case AutonSelector::Color::BLUE:{
@@ -444,64 +619,64 @@ void autonomous() {
 			rollerOuttake();
 			pros::delay(1700);
 			//intake
-			rollerOuttake(-0.7);
-			//drive forward, grab cube and stack
-			driveToPoint({0_in, 1_tl}); 
-			model->setMaxVoltage(5000);
-			driveToPoint({0_in, 1.3_tl}); 
-			//grab cube by tower
+			rollerIntake();
+			//drive forward, grab cube 
+			model->setMaxVoltage(10000);
+			driveToPoint({0_in, 1.5_tl}); 
+			driveToPoint({0_in, 1.4_tl}); 
+			model->setMaxVoltage(6000);
 			switch(alliance){
 				case AutonSelector::Color::RED:{
-					driveToPoint({-10_in, 1.5_tl}); 
-					model->setMaxVoltage(5000);
-					driveToPoint({-10_in, 2.05_tl}); 
+					driveToPoint({-14_in, 1.5_tl}, 0_deg, 1, 4_in);
+					rollerOuttake(-0.75);
+					driveToPoint({-14_in, 2_tl}, 0_deg, 1, 4_in);
 					break;
 				}
 				case AutonSelector::Color::BLUE:{
-					driveToPoint({10_in, 1.5_tl}); 
-					model->setMaxVoltage(5000);
-					driveToPoint({10_in, 2.05_tl}); 
+					driveToPoint({12_in, 1.5_tl}, 0_deg, 1, 4_in);
+					rollerOuttake(-0.75);
+					driveToPoint({12_in, 2_tl}, 0_deg, 1, 4_in);
 					break;
 				}
 			}
-			model->setMaxVoltage(12000);
 			//turn around and grab cube by zone
 			//slow intake
 			//may need to tune Y value
-			rollerOuttake(-1);
+			rollerOuttake(-0.3);
+
+			model->setMaxVoltage(8000);
 			switch(alliance){
 				case AutonSelector::Color::RED:{
-					driveToPoint({-5_in, 1.8_tl}, -135_deg); 
-					driveToPoint({-12_in, 36.2_in}, -135_deg); 
+					driveToPoint({-6_in + 10_in, 36_in + 10_in}, -135_deg); 
+
+					rollerIntake();
 					break;
 				}
 				case AutonSelector::Color::BLUE:{
-					driveToPoint({5_in, 1.8_tl}, 135_deg); 
-					driveToPoint({12_in, 36.2_in}, 135_deg); 
+					driveToPoint({6_in, 36_in}, 135_deg); 
 					break;
 				}
 			}
-			rollerIntake();
-			pros::delay(500);
 			//line up
 			//definitely needs tuned
 			switch(alliance){
 				case AutonSelector::Color::RED:{
-					driveToPoint({-27_in , 20.5_in}, -135_deg); 
+					driveToPoint({-28.25_in, 7.25_in}, -135_deg); 
 					break;
 				}
 				case AutonSelector::Color::BLUE:{
-					driveToPoint({27_in , 20.5_in}, 135_deg); 
+					driveToPoint({30_in, 10_in}, 135_deg); 
 					break;
 				}
 			}
+			rollerStop();
 			//place
 			placeStack();
-			//back up
 			model->setMaxVoltage(4000);
+			//back up
 			switch(alliance){
 				case AutonSelector::Color::RED:{
-					driveToPoint({-27_in + 15_in, 20.5_in + 15_in}, -135_deg); 
+					driveToPoint({-28_in + 15_in, 7.5_in + 15_in}, -135_deg); 
 					break;
 				}
 				case AutonSelector::Color::BLUE:{
@@ -509,8 +684,8 @@ void autonomous() {
 					break;
 				}
 			}
-			tilter.setDown();
 			break;
+			tilter.setDown();
 		}
 		case AutonSelector::Auton::BIG_ZONE_PUSH:{
 			//push cube into zone
@@ -589,12 +764,20 @@ void opcontrol() {
 		//control the rollers
 		if(controller.getDigital(ControllerDigital::left)){
 			stacker.slowOuttake();
+			stackerMotor1->setBrakeMode(AbstractMotor::brakeMode::coast);
+			stackerMotor2->setBrakeMode(AbstractMotor::brakeMode::coast);
 		}else if(controller.getDigital(ControllerDigital::R1)){
 			stacker.outtake();
+			stackerMotor1->setBrakeMode(AbstractMotor::brakeMode::coast);
+			stackerMotor2->setBrakeMode(AbstractMotor::brakeMode::coast);
 		}else if(controller.getDigital(ControllerDigital::R2)){
 			stacker.intake();
+			stackerMotor1->setBrakeMode(AbstractMotor::brakeMode::coast);
+			stackerMotor2->setBrakeMode(AbstractMotor::brakeMode::coast);
 		}else{
 			stacker.stop();
+			stackerMotor1->setBrakeMode(AbstractMotor::brakeMode::hold);
+			stackerMotor2->setBrakeMode(AbstractMotor::brakeMode::hold);
 		}
 
 		stacker.in();
@@ -612,6 +795,8 @@ void opcontrol() {
 		}
 		if(right.update(controller.getDigital(ControllerDigital::L1))){
 			tilter.shiftUp();
+			stackerMotor1->setBrakeMode(AbstractMotor::brakeMode::coast);
+			stackerMotor2->setBrakeMode(AbstractMotor::brakeMode::coast);
 		}else if(controller.getDigital(ControllerDigital::down)){
 			//adjusts once the tilter is up
 			tilter.adjustThrottle(-127 * 0.5);
