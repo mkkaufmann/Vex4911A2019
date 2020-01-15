@@ -3,12 +3,15 @@
 #include "constants.hpp"
 
 extern okapi::Motor armMotor; 
+extern const double encoderTicksPerDegree;
 
 void initializeArm();
 
-void setAngle(double potUnits);
+void setArmAngle(double potUnits);
 
-void setDown();
-void setAlliance();
-void setHighMiddle();
-void setLowMiddle();
+void setArmDown();
+void setArmAlliance();
+void setArmHighMiddle();
+void setArmLowMiddle();
+
+void setArmManualSpeed(double speed);
