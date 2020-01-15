@@ -1,12 +1,11 @@
 #ifndef STACKER_HPP
 #define STACKER_HPP
-#include "subsystem.hpp"
 #include "main.h"
 #include "constants.hpp"
 #include "util/latchedboolean.hpp"
 #include <functional>
 //stacker subsystem
-class Stacker : public Subsystem{
+class Stacker{
 public:
   //return singleton
   static Stacker* getInstance();

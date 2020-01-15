@@ -1,10 +1,9 @@
 #ifndef TILTER_HPP
 #define TILTER_HPP
-#include "subsystem.hpp"
 #include "constants.hpp"
 #include "main.h"
 #include <functional>
-class Tilter : public Subsystem{
+class Tilter{
 public:
   static Tilter* getInstance();
 
