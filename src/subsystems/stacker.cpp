@@ -53,23 +53,10 @@ void Stacker::stateChangeRequest(bool intakePressed, bool outtakePressed){
 
 void Stacker::in(){};
 
-std::function<void()> Stacker::inAction(){
-  return [this]()->void{
-    in();
-  };
-}
-
 void Stacker::out(){
-  stacker1Motor.move(output);
-  stacker2Motor.move(-output);
-  // std::cout << "stacker out" << std::endl;
+  stacker1Motor.moveVoltage(output);
+  stacker2Motor.moveVoltage(-output);
 };
-
-std::function<void()> Stacker::outAction(){
-  return [this]()->void{
-    out();
-  };
-}
 
 void Stacker::stop(){
   state = NEUTRAL;
@@ -101,20 +88,10 @@ int Stacker::getOutput(){
   return output;
 };
 
-std::function<void()> Stacker::getIntakeAction(){
-  return intakeAction;
-};
-
-std::function<void()> Stacker::getOuttakeAction(){
-  return outtakeAction;
-};
-
 Stacker::Stacker(){
   output = 0;
   intakeToggle = LatchedBoolean();
   outtakeToggle = LatchedBoolean();
-  intakeAction = [this]()->void{intake();};
-  outtakeAction = [this]()->void{outtake();};
   state = NEUTRAL; 
 };
 

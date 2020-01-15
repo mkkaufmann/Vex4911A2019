@@ -2,6 +2,7 @@
 #include "lib7842/api.hpp"
 #include "subsystems/stacker.hpp"
 #include "subsystems/tilter.hpp"
+#include "subsystems/arm.hpp"
 #include "util/util.hpp"
 #include "ui/autonselector.hpp"
 using namespace lib7842;
