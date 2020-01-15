@@ -14,12 +14,6 @@ void Tilter::stop(){
 
 void Tilter::in(){}
 
-std::function<void()> Tilter::inAction(){
-  return [this]()->void{
-    in();
-  };
-}
-
 void Tilter::out(){
   switch(state){
     case DOWN:
@@ -36,26 +30,11 @@ void Tilter::out(){
 				tilterMotor.move_absolute(UP_ENC + offset, 127 * 0.8);
 			}
 		}
-//		//macro
-//		if(tilterMotor.get_position() > MID_ENC){
-//				tilterMotor.move_absolute(UP_ENC + offset, 127 * 1);
-//		}else{
-//				tilterMotor.move_absolute(UP_ENC + offset, 127 * 0.5);
-//		}
-//		if(isAdjusting && tilterMotor.get_position() > UP_ENC + offset - 500){
-//				tilterMotor.move(adjustOutput);
-//		}
       break;
     default:
       //do nothing
       break;
   }
-}
-
-std::function<void()> Tilter::outAction(){
-  return [this]()->void{
-    out();
-  };
 }
 
 //used in teleop
@@ -138,8 +117,6 @@ Tilter::Tilter():trayAngle(7){
   state = DOWN;
   tilterMotor.tare_position();
   offset = 0;
-  shiftUpAction = [this]()->void{shiftUp();};
-  shiftDownAction = [this]()->void{shiftDown();};
 }
 
 //encoder values of the different positions

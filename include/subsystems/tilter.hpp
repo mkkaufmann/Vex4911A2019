@@ -12,15 +12,9 @@ public:
 
   void in();
 
-  std::function<void()> inAction();
-
   void out();
 
-  std::function<void()> outAction();
-
   void shiftUp();
-
-  std::function<void()> shiftUpAction;
 
   void shiftDown();
   
@@ -28,8 +22,6 @@ public:
 
   void setUp();
   void setDown();
-
-  std::function<void()> shiftDownAction;
 
   void adjustThrottle(double output);
 
