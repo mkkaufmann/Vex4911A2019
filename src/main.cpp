@@ -737,7 +737,42 @@ LatchedBoolean right{};
 LatchedBoolean offsetPressForward{};
 LatchedBoolean offsetPressBackward{};
 LatchedBoolean toggleSpeed{}; 
-
+/*
+ * Methods
+ * Drive *
+ * Turn * 
+ * Tilter up *
+ * Tilter down *
+ * Tilter middle? *
+ * Rollers in *
+ * Rollers out *
+ * Rollers slower?
+ * Arms manual up *
+ * Arms manual down *
+ * Arms down *
+ * Arms 1 *
+ * Arms 2 *
+ * Arms 3 *
+ *
+ * Controls
+ * L Bumper Arms manual up
+ * L Trigger All tilter
+ * R Bumper Rollers Outtake
+ * R Trigger Rollers Intake
+ * Joystick 1 Turn, flick up to deploy
+ * Joystick 2 Drive
+ * X Arms 3
+ * Y Arms 2
+ * A
+ * B
+ * up Arms manual down
+ * down Arms down
+ * left Arms 1
+ * right Arms at setting that works for 2 and 3
+ *
+ *
+ * set arms brake mode to hold
+ */
 void opcontrol() {
 	model->setMaxVoltage(12000);
   	while (true) {	
