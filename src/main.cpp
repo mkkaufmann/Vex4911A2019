@@ -733,10 +733,14 @@ Stacker stacker{*Stacker::getInstance()};
 
 //used for toggle presses
 LatchedBoolean left{};
+LatchedBoolean tilterOn{};
+LatchedBoolean tilterOff{};
 LatchedBoolean right{};
 LatchedBoolean offsetPressForward{};
 LatchedBoolean offsetPressBackward{};
 LatchedBoolean toggleSpeed{}; 
+bool tilterUp = false;
+ 
 /*
  * Methods
  * Drive *
@@ -794,11 +798,7 @@ void opcontrol() {
 		model->xArcade(xPower, yPower, turn);
 
 		//control the rollers
-		if(controller.getDigital(ControllerDigital::left)){
-			stacker.slowOuttake();
-			stackerMotor1->setBrakeMode(AbstractMotor::brakeMode::coast);
-			stackerMotor2->setBrakeMode(AbstractMotor::brakeMode::coast);
-		}else if(controller.getDigital(ControllerDigital::R1)){
+		if(controller.getDigital(ControllerDigital::R1)){
 			stacker.outtake();
 			stackerMotor1->setBrakeMode(AbstractMotor::brakeMode::coast);
 			stackerMotor2->setBrakeMode(AbstractMotor::brakeMode::coast);
@@ -821,29 +821,37 @@ void opcontrol() {
 		controller.setText(0, 0, std::to_string(tilter.getTrayAngle()));
 
 		
-		//control the tilter
-		if(left.update(controller.getDigital(ControllerDigital::L2))){
-			tilter.shiftDown();
+		bool tilterPress = tilterOn.update(controller.getDigital(ControllerDigital::L1));
+		bool tilterRelease = tilterOff.update(!controller.getDigital(ControllerDigital::L1));
+		if(tilterPress && !tilterUp){
+			//set middle
 		}
-		if(right.update(controller.getDigital(ControllerDigital::L1))){
-			tilter.shiftUp();
-			stackerMotor1->setBrakeMode(AbstractMotor::brakeMode::coast);
-			stackerMotor2->setBrakeMode(AbstractMotor::brakeMode::coast);
-		}else if(controller.getDigital(ControllerDigital::down)){
-			//adjusts once the tilter is up
-			tilter.adjustThrottle(-127 * 0.5);
-		}else{
-			tilter.adjustThrottle(0);
-		}
-
-		//used to offset the tilter in case of skipping
-		if(offsetPressForward.update(controller.getDigital(ControllerDigital::B))){
-			tilter.offsetForward();
-		}
-		if(offsetPressBackward.update(controller.getDigital(ControllerDigital::X))){
-			tilter.offsetBackward();
+		if(tilterRelease){
+			if(tilterUp){
+				//set down
+				tilter.shiftDown();
+				tilterUp = false;
+			}else{
+				//set up
+				tilter.shiftUp();
+				stackerMotor1->setBrakeMode(AbstractMotor::brakeMode::coast);
+				stackerMotor2->setBrakeMode(AbstractMotor::brakeMode::coast);
+				tilterUp = true;
+			}
 		}
 
+		if(controller.getDigital(ControllerDigital::L2)){
+			setArmManualSpeed(1);
+		}
+		else if(controller.getDigital(ControllerDigital::up)){
+			setArmManualSpeed(-1);
+		}
+		else if(controller.getDigital(ControllerDigital::down)){
+			setArmDown();
+		}
+		else if(controller.getDigital(ControllerDigital::down)){
+			setArmAlliance();
+		}
 		stackerMotor1->moveVoltage(stacker.getOutput());
 		stackerMotor2->moveVoltage(stacker.getOutput());
 
