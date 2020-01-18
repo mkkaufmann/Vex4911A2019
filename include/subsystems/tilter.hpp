@@ -46,7 +46,7 @@ private:
   bool isAdjusting;
   int adjustOutput;
 
-  pros::Motor tilterMotor = pros::Motor(Constants::TILTER_MOTOR_PORT);
+  okapi::Motor tilterMotor = okapi::Motor(Constants::TILTER_MOTOR_PORT);
   static Tilter* instance;
 
   TilterState state;

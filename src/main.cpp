@@ -1,10 +1,11 @@
 #include "main.h"
 #include "lib7842/api.hpp"
 #include "subsystems/stacker.hpp"
-#include "subsystems/tilter.hpp"
+#include "subsystems/tilter2.hpp"
 #include "subsystems/arm.hpp"
 #include "util/util.hpp"
 #include "ui/autonselector.hpp"
+
 using namespace lib7842;
 using namespace lib7842::units;
 using namespace okapi;
@@ -16,13 +17,13 @@ Controller controller{ControllerId::master};
 auto model {std::make_shared<ThreeEncoderXDriveModel>(
 	// motors
 	std::make_shared<Motor>(4), //topLeft
-    	std::make_shared<Motor>(-3), //topRight
-    	std::make_shared<Motor>(-1), //bottomRight
-    	std::make_shared<Motor>(2), //bottomLeft
+    	std::make_shared<Motor>(-5), //topRight
+    	std::make_shared<Motor>(-7), //bottomRight
+    	std::make_shared<Motor>(6), //bottomLeft
     	// sensors
-    	std::make_shared<ADIEncoder>(2, 1, false), // left
-    	std::make_shared<ADIEncoder>(3, 4), // right
-    	std::make_shared<ADIEncoder>(5, 6), // middle
+    	std::make_shared<ADIEncoder>(5, 6, true), // left
+    	std::make_shared<ADIEncoder>(1, 2, true), // right
+    	std::make_shared<ADIEncoder>(3, 4, true), // middle
     	// limits
     	200,//max Velocity
 	12000//max Voltage
@@ -33,8 +34,8 @@ auto odom {std::make_shared<CustomOdometry>(
 	model,
 	ChassisScales({
 		2.792_in,//Encoder wheel diameter
-		14.0006164_in,//Drive base width, assumes encoder wheels are the same distance from the center
-		6.50_in//Middle wheel distance, which doesn't matter to the math
+		10_in,//Drive base width, assumes encoder wheels are the same distance from the center
+		0.25_in//Middle wheel distance, which doesn't matter to the math
 	}, 360),//Encoder ticks per rotation
 	TimeUtilFactory().create()
 )};
@@ -64,11 +65,10 @@ auto odomController {std::make_shared<OdomXController>(
 	TimeUtilFactory().create()
 )};
 
-Tilter tilter {*Tilter::getInstance()};
 
 //replace with a motor group
-auto stackerMotor1 {std::make_shared<Motor>(6)};
-auto stackerMotor2 {std::make_shared<Motor>(-5)};
+auto stackerMotor1 {std::make_shared<Motor>(-10)};
+auto stackerMotor2 {std::make_shared<Motor>(9)};
 
 //Sets the rollers to full speed outward
 void rollerOuttake(){
@@ -108,7 +108,7 @@ void deployTray(){
 //Prevents code progression for 3.6 seconds
 void placeStack(){
 	rollerStop();
-     	tilter.setUp();
+     	setTilterUp();
 }
 
 //Constant distances used for autonomous plotting
@@ -129,6 +129,9 @@ const QLength barrierWidth {2_in};
 AutonSelector::Color alliance {AutonSelector::getColor()};
 AutonSelector::Auton currentAuton{AutonSelector::getAuton()};
 
+LatchedBoolean tilterOn{};
+LatchedBoolean tilterOff{};
+
 void initialize() {
 	pros::delay(200);
 
@@ -137,6 +140,11 @@ void initialize() {
 	scr.makePage<AutonSelector>();
 	scr.makePage<GUI::Odom>().attachOdom(odom);
 	scr.startTask("Screen");
+	initializeArm();
+	initializeTilter();
+	//prevent up at start
+	tilterOff.update(true);
+	tilterOn.update(true);
 }
 
 void disabled() {}
@@ -178,10 +186,42 @@ void autonomous() {
 	alliance = AutonSelector::getColor();
 	currentAuton = AutonSelector::getAuton(); 
 
-	tilter.setDown();
+	setTilterDown();
 	switch(currentAuton){
 		case AutonSelector::Auton::TEST:{
-			tilter.setUp();
+			//full speed to line
+			driveToPoint({0_in, 12_in},0_deg, 1, 7_in);
+			rollerIntake();
+			//first cube
+			model->setMaxVoltage(8000);
+			driveToPoint({0_in, 15_in},0_deg, 1, 7_in);
+			//second cube
+			model->setMaxVoltage(7000);
+			driveToPoint({0_in, 20_in},0_deg, 1, 7_in);
+			//third cube
+			model->setMaxVoltage(6000);
+			driveToPoint({0_in, 40_in},0_deg, 1, 7_in);
+			//rest of line
+			model->setMaxVoltage(5000);
+			driveToPoint({0_in, 50_in});
+			//tower cube
+			model->setMaxVoltage(12000);
+			driveToPoint({-15_in, 42_in});
+			model->setMaxVoltage(4000);
+			driveToPoint({-15_in, 54_in});
+			//tower cube 2
+//			model->setMaxVoltage(12000);
+//			driveToPoint({-5_in, 50_in});
+//			model->setMaxVoltage(4000);
+//			driveToPoint({-5_in, 57_in});
+			//line up
+			model->setMaxVoltage(12000);
+			driveToPoint({3_in, 9_in}, 135_deg);
+			setTilterMiddle();
+			driveToPoint({6_in, 6_in}, 135_deg, 1, 2_in);
+			setTilterUp();
+			pros::delay(1000);
+			driveToPoint({0_in, 12_in}, 135_deg);
 			break;
 		}
 		case AutonSelector::Auton::SMALL_ZONE_ONE_CUBE:{
@@ -242,7 +282,7 @@ void autonomous() {
 			driveToPoint({0_in, 1.5_tile});
 			model->setMaxVoltage(12000);
 
-			tilter.setMiddle();
+			setTilterMiddle();
 			//drive to zone
 			switch(alliance){
 				case AutonSelector::Color::BLUE:{
@@ -274,7 +314,7 @@ void autonomous() {
 				case AutonSelector::Color::BLUE:{
 					driveToPoint({6_in, 1_tile + 5_in}, -135_deg, 1, 3_in, 10_deg);
 					model->setMaxVoltage(12000);
-					tilter.setDown();
+					setTilterDown();
 					//drive to next location
 					driveToPoint({1_tile, 0.5_tile});
 					break;
@@ -282,7 +322,7 @@ void autonomous() {
 				case AutonSelector::Color::RED:{
 					driveToPoint({-6_in, 1_tile + 5_in}, 135_deg, 1, 3_in, 10_deg);
 					model->setMaxVoltage(12000);
-					tilter.setDown();
+					setTilterDown();
 					//drive to next location
 					driveToPoint({-1_tile, 0.5_tile});
 					break;
@@ -316,7 +356,7 @@ void autonomous() {
 					driveToPoint({12_in, 2.05_tile}, 0_deg, 1, 3_in);
 					pros::delay(600);
 					model->setMaxVoltage(12000);
-					//tilter.setMiddle();
+					//setTilterMiddle();
 					
 					//slowly intake so as to keep the cubes from dropping
 					rollerOuttake(-0.3);
@@ -337,7 +377,7 @@ void autonomous() {
 						driveToPoint({-10_in, 1.8_tile}, 0_deg, 1, 3_in);
 					pros::delay(600);
 					model->setMaxVoltage(12000);
-					//tilter.setMiddle();
+					//setTilterMiddle();
 					
 					//slowly intake so as to keep the cubes from dropping
 					rollerOuttake(-0.3);
@@ -361,7 +401,7 @@ void autonomous() {
 					model->setMaxVoltage(6000);
 					driveToPoint({-(11.5_in - 15_in), -1_in + 15_in}, -135_deg, 1.5, 3_in, 10_deg);
 					model->setMaxVoltage(12000);
-					tilter.setDown();
+					setTilterDown();
 
 					driveToPoint({1_tile, 0.5_tile});
 					break;
@@ -371,7 +411,7 @@ void autonomous() {
 					driveToPoint({9_in - 15_in, -4.75_in + 15_in}, 135_deg, 1.5, 3_in, 10_deg);
 					model->setMaxVoltage(12000);
 
-					tilter.setDown();
+					setTilterDown();
 
 					driveToPoint({-1_tile, 0.5_tile});
 					break;
@@ -407,7 +447,7 @@ void autonomous() {
 
 					pros::delay(300);
 					model->setMaxVoltage(12000);
-					tilter.setMiddle();
+					setTilterMiddle();
 					
 					//slowly intake so as to keep the cubes from dropping
 					rollerOuttake(-0.7);
@@ -430,7 +470,7 @@ void autonomous() {
 
 					pros::delay(300);
 					model->setMaxVoltage(12000);
-					tilter.setMiddle();
+					setTilterMiddle();
 					
 					//slowly intake so as to keep the cubes from dropping
 					rollerOuttake(-0.7);
@@ -455,7 +495,7 @@ void autonomous() {
 					driveToPoint({-10_in + 15_in, -1_in + 15_in}, -135_deg, 1.5, 3_in, 10_deg);
 					model->setMaxVoltage(12000);
 
-					tilter.setDown();
+					setTilterDown();
 
 					driveToPoint({1_tile, 0.5_tile});
 					break;
@@ -465,7 +505,7 @@ void autonomous() {
 					driveToPoint({10_in - 15_in, -1_in + 15_in}, 135_deg, 1.5, 3_in, 10_deg);
 					model->setMaxVoltage(12000);
 
-					tilter.setDown();
+					setTilterDown();
 
 					driveToPoint({-1_tile, 0.5_tile});
 					break;
@@ -496,7 +536,7 @@ void autonomous() {
 					model->setMaxVoltage(5500);
 					driveToPoint({-1_tile, 1.5_tile});
 
-					tilter.setMiddle();
+					setTilterMiddle();
 					//slowly intake so as to keep the cubes from dropping
 					rollerOuttake(-0.7);
 
@@ -513,7 +553,7 @@ void autonomous() {
 					model->setMaxVoltage(5500);
 					driveToPoint({1_tile, 1.5_tile});
 
-					tilter.setMiddle();
+					setTilterMiddle();
 					//slowly intake so as to keep the cubes from dropping
 					rollerOuttake(-0.7);
 
@@ -537,7 +577,7 @@ void autonomous() {
 					driveToPoint({-10_in + 15_in - 1_tile, -1_in + 15_in}, -135_deg, 1.5, 3_in, 10_deg);
 					model->setMaxVoltage(12000);
 
-					tilter.setDown();
+					setTilterDown();
 
 					break;
 				}
@@ -546,7 +586,7 @@ void autonomous() {
 					driveToPoint({10_in - 15_in + 1_tile, -1_in + 15_in}, 135_deg, 1.5, 3_in, 10_deg);
 					model->setMaxVoltage(12000);
 
-					tilter.setDown();
+					setTilterDown();
 
 					break;
 				}
@@ -607,7 +647,7 @@ void autonomous() {
 				}
 			}
 			break;
-			tilter.setDown();
+			setTilterDown();
 		}
 		case AutonSelector::Auton::BIG_ZONE_LARGESTACK:{
 			driveToPoint({0_in, 14_in});
@@ -682,7 +722,7 @@ void autonomous() {
 				}
 			}
 			break;
-			tilter.setDown();
+			setTilterDown();
 		}
 		case AutonSelector::Auton::BIG_ZONE_PUSH:{
 			//push cube into zone
@@ -733,8 +773,6 @@ Stacker stacker{*Stacker::getInstance()};
 
 //used for toggle presses
 LatchedBoolean left{};
-LatchedBoolean tilterOn{};
-LatchedBoolean tilterOff{};
 LatchedBoolean right{};
 LatchedBoolean offsetPressForward{};
 LatchedBoolean offsetPressBackward{};
@@ -815,25 +853,23 @@ void opcontrol() {
 		stacker.in();
 		stacker.out();
 		
-		tilter.in();
-		tilter.out();
 
-		controller.setText(0, 0, std::to_string(tilter.getTrayAngle()));
 
 		
 		bool tilterPress = tilterOn.update(controller.getDigital(ControllerDigital::L1));
 		bool tilterRelease = tilterOff.update(!controller.getDigital(ControllerDigital::L1));
 		if(tilterPress && !tilterUp){
 			//set middle
+			setTilterMiddle();
 		}
 		if(tilterRelease){
 			if(tilterUp){
 				//set down
-				tilter.shiftDown();
+				setTilterDown();
 				tilterUp = false;
 			}else{
 				//set up
-				tilter.shiftUp();
+				setTilterUp();
 				stackerMotor1->setBrakeMode(AbstractMotor::brakeMode::coast);
 				stackerMotor2->setBrakeMode(AbstractMotor::brakeMode::coast);
 				tilterUp = true;

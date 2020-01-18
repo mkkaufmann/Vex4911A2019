@@ -17,17 +17,17 @@ void Tilter::in(){}
 void Tilter::out(){
   switch(state){
     case DOWN:
-      tilterMotor.move_absolute(DOWN_ENC + offset, 127);
+      tilterMotor.moveAbsolute(DOWN_ENC + offset, 12000);
       break;
     case UP:
 		if(trayAngle.get() < 500){
 			if(trayAngle.get() > 400){
-				tilterMotor.move_absolute(UP_ENC + offset, 127 * 0.5);
-			if(tilterMotor.get_position() < UP_ENC + offset + 100){
+				tilterMotor.moveAbsolute(UP_ENC + offset, 12000 * 0.5);
+			if(tilterMotor.getPosition() < UP_ENC + offset + 100){
 				offsetForward();
 			}
 			}else{
-				tilterMotor.move_absolute(UP_ENC + offset, 127 * 0.8);
+				tilterMotor.moveAbsolute(UP_ENC + offset, 12000 * 0.8);
 			}
 		}
       break;
@@ -61,24 +61,24 @@ void Tilter::shiftDown(){
 
 //used in autonomous
 void Tilter::setMiddle(){
-		tilterMotor.move_absolute(UP_ENC * 0.3, 127);
+		tilterMotor.moveAbsolute(UP_ENC * 0.3, 12000);
 		state = UP;
 }
 void Tilter::setUp(){
 		while(trayAngle.get() < 700){
 			if(trayAngle.get() > 600){
-				tilterMotor.move_absolute(UP_ENC + offset, 127 * 0.35);
+				tilterMotor.moveAbsolute(UP_ENC + offset, 127 * 0.35);
 			}else{
-				tilterMotor.move_absolute(UP_ENC + offset, 127 * 0.8);
+				tilterMotor.moveAbsolute(UP_ENC + offset, 127 * 0.8);
 			}
-			if(tilterMotor.get_position() < UP_ENC + offset + 100){
+			if(tilterMotor.getPosition() < UP_ENC + offset + 100){
 				offsetForward();
 			}
 		}
 		state = UP;
 }
 void Tilter::setDown(){
-		tilterMotor.move_absolute(DOWN_ENC + offset, 127);
+		tilterMotor.moveAbsolute(DOWN_ENC + offset, 127);
 		state = DOWN;
 }
 
@@ -115,12 +115,12 @@ int Tilter::getTrayAngle(){
 
 Tilter::Tilter():trayAngle(7){
   state = DOWN;
-  tilterMotor.tare_position();
+  tilterMotor.tarePosition();
   offset = 0;
 }
 
 //encoder values of the different positions
 const int Tilter::DOWN_ENC = 0;
-const int Tilter::UP_ENC = -3800;//tune
+const int Tilter::UP_ENC = 3800;//tune
 const int Tilter::OFFSET_INC = -20;//tune
 Tilter* Tilter::instance = Tilter::getInstance();
