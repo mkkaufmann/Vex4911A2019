@@ -54,8 +54,6 @@ void Stacker::stateChangeRequest(bool intakePressed, bool outtakePressed){
 void Stacker::in(){};
 
 void Stacker::out(){
-  stacker1Motor.moveVoltage(output);
-  stacker2Motor.moveVoltage(-output);
 };
 
 void Stacker::stop(){

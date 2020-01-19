@@ -199,28 +199,34 @@ void autonomous() {
 			model->setMaxVoltage(7000);
 			driveToPoint({0_in, 20_in},0_deg, 1, 7_in);
 			//third cube
-			model->setMaxVoltage(6000);
+			model->setMaxVoltage(5300);
 			driveToPoint({0_in, 40_in},0_deg, 1, 7_in);
 			//rest of line
-			model->setMaxVoltage(5000);
-			driveToPoint({0_in, 50_in});
+			model->setMaxVoltage(4000);
+			driveToPoint({0_in, 52_in});
 			//tower cube
 			model->setMaxVoltage(12000);
-			driveToPoint({-15_in, 42_in});
-			model->setMaxVoltage(4000);
-			driveToPoint({-15_in, 54_in});
+			driveToPoint({-19_in, 43_in});
+			model->setMaxVoltage(7000);
+			driveToPoint({-19_in, 55_in});
+			driveToPoint({-19_in, 45_in});
 			//tower cube 2
 //			model->setMaxVoltage(12000);
-//			driveToPoint({-5_in, 50_in});
+//			driveToPoint({-5_in, 50_in}, 0_deg, 1, 4_in, 3_deg);
 //			model->setMaxVoltage(4000);
-//			driveToPoint({-5_in, 57_in});
+//			driveToPoint({-5_in, 59_in});
+//			pros::delay(400);
+//			model->setMaxVoltage(12000);
+//			driveToPoint({-5_in, 40_in});
+			stackerMotor1->moveRelative(800, 12000);
+			stackerMotor2->moveRelative(800, 12000);
 			//line up
 			model->setMaxVoltage(12000);
-			driveToPoint({3_in, 9_in}, 135_deg);
+			driveToPoint({3_in, 9_in}, 135_deg, 2);
 			setTilterMiddle();
 			driveToPoint({6_in, 6_in}, 135_deg, 1, 2_in);
 			setTilterUp();
-			pros::delay(1000);
+			pros::delay(3000);
 			driveToPoint({0_in, 12_in}, 135_deg);
 			break;
 		}
@@ -834,9 +840,15 @@ void opcontrol() {
 
 		//drives the bot
 		model->xArcade(xPower, yPower, turn);
+		stackerMotor1->moveVoltage(stacker.getOutput());
+		stackerMotor2->moveVoltage(stacker.getOutput());
 
 		//control the rollers
-		if(controller.getDigital(ControllerDigital::R1)){
+		if(controller.getDigital(ControllerDigital::R1) && controller.getDigital(ControllerDigital::R2)){
+			stackerMotor1->moveVoltage(8000);
+			stackerMotor2->moveVoltage(-8000);
+		}
+		else if(controller.getDigital(ControllerDigital::R1)){
 			stacker.outtake();
 			stackerMotor1->setBrakeMode(AbstractMotor::brakeMode::coast);
 			stackerMotor2->setBrakeMode(AbstractMotor::brakeMode::coast);
@@ -888,8 +900,6 @@ void opcontrol() {
 		else if(controller.getDigital(ControllerDigital::down)){
 			setArmAlliance();
 		}
-		stackerMotor1->moveVoltage(stacker.getOutput());
-		stackerMotor2->moveVoltage(stacker.getOutput());
 
 		//slow the speed of the drivetrain for moving stacks
 		if(toggleSpeed.update(controller.getDigital(ControllerDigital::Y))){

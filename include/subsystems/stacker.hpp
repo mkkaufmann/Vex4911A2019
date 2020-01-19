@@ -41,8 +41,6 @@ private:
 
   int output;
 
-  okapi::Motor stacker1Motor = okapi::Motor(Constants::STACKER_TREAD_1_MOTOR_PORT);
-  okapi::Motor stacker2Motor = okapi::Motor(Constants::STACKER_TREAD_2_MOTOR_PORT);
 
   Stacker();
 

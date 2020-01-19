@@ -4,12 +4,12 @@
 using namespace lib7842;
 
 okapi::Motor tilterMotor = okapi::Motor(Constants::TILTER_MOTOR_PORT);
-const double MIDDLE_HEIGHT {200};
-const double UP_HEIGHT {630};
+const double MIDDLE_HEIGHT {150};
+const double UP_HEIGHT {645};
 std::shared_ptr<okapi::AsyncPositionController<double, double>> tilterPID = 
 okapi::AsyncPosControllerBuilder()
 	.withMotor(tilterMotor)
-	.withGains(okapi::IterativePosPIDController::Gains{0.00075,0.000,0.00009})
+	.withGains(okapi::IterativePosPIDController::Gains{0.0006,0.0,0.00005})
 	.withGearset(okapi::AbstractMotor::GearsetRatioPair(okapi::AbstractMotor::gearset::red, 7))
 	.build();
 
