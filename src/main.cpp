@@ -179,6 +179,47 @@ void driveToPoint(
 	OdomController::makeSettler(settleDistance, settleAngle));
 }
 
+//six cube red
+// stack is off
+//			//full speed to line
+//			driveToPoint({0_in, 12_in},0_deg, 1, 7_in);
+//			rollerIntake();
+//			//first cube
+//			model->setMaxVoltage(8000);
+//			driveToPoint({0_in, 15_in},0_deg, 1, 7_in);
+//			//second cube
+//			model->setMaxVoltage(7000);
+//			driveToPoint({0_in, 20_in},0_deg, 1, 7_in);
+//			//third cube
+//			model->setMaxVoltage(5300);
+//			driveToPoint({0_in, 40_in},0_deg, 1, 7_in);
+//			//rest of line
+//			model->setMaxVoltage(4000);
+//			driveToPoint({0_in, 52_in});
+//			//tower cube
+//			model->setMaxVoltage(12000);
+//			driveToPoint({-19_in, 43_in});
+//			model->setMaxVoltage(7000);
+//			driveToPoint({-19_in, 55_in});
+//			driveToPoint({-19_in, 45_in});
+//			//tower cube 2
+////			model->setMaxVoltage(12000);
+////			driveToPoint({-5_in, 50_in}, 0_deg, 1, 4_in, 3_deg);
+////			model->setMaxVoltage(4000);
+////			driveToPoint({-5_in, 59_in});
+////			pros::delay(400);
+////			model->setMaxVoltage(12000);
+////			driveToPoint({-5_in, 40_in});
+//			stackerMotor1->moveRelative(800, 12000);
+//			stackerMotor2->moveRelative(800, 12000);
+//			//line up
+//			model->setMaxVoltage(12000);
+//			driveToPoint({3_in, 9_in}, 135_deg, 2);
+//			setTilterMiddle();
+//			driveToPoint({6_in, 6_in}, 135_deg, 1, 2_in);
+//			setTilterUp();
+//			pros::delay(3000);
+//			driveToPoint({0_in, 12_in}, 135_deg);
 void autonomous() {
 	odom->reset();
 	model->setMaxVoltage(12000);
@@ -189,45 +230,30 @@ void autonomous() {
 	setTilterDown();
 	switch(currentAuton){
 		case AutonSelector::Auton::TEST:{
-			//full speed to line
-			driveToPoint({0_in, 12_in},0_deg, 1, 7_in);
-			rollerIntake();
-			//first cube
+			model->setMaxVoltage(12000);
+			driveToPoint({0_in, 19_in});
+			rollerIntake();	
+			model->setMaxVoltage(7000);
+			driveToPoint({0_in, 30_in});
+			model->setMaxVoltage(6000);
+			driveToPoint({0_in, 40_in});
+			model->setMaxVoltage(12000);
+			driveToPoint({13_in, 40_in});
 			model->setMaxVoltage(8000);
-			driveToPoint({0_in, 15_in},0_deg, 1, 7_in);
-			//second cube
-			model->setMaxVoltage(7000);
-			driveToPoint({0_in, 20_in},0_deg, 1, 7_in);
-			//third cube
-			model->setMaxVoltage(5300);
-			driveToPoint({0_in, 40_in},0_deg, 1, 7_in);
-			//rest of line
+			driveToPoint({13_in, 55_in});
+			model->setMaxVoltage(8000);
+			driveToPoint({23.5_in, 55_in}, 90_deg);
+			model->setMaxVoltage(8000);
+			driveToPoint({23.5_in, 40_in}, 90_deg);
+			model->setMaxVoltage(12000);
+			driveToPoint({23.5_in, 50_in}, 180_deg);
+			model->setMaxVoltage(5500);
+			driveToPoint({23.5_in, 40_in}, 180_deg);
+			model->setMaxVoltage(5000);
+			driveToPoint({23.5_in, 20_in}, 180_deg);
 			model->setMaxVoltage(4000);
-			driveToPoint({0_in, 52_in});
-			//tower cube
-			model->setMaxVoltage(12000);
-			driveToPoint({-19_in, 43_in});
-			model->setMaxVoltage(7000);
-			driveToPoint({-19_in, 55_in});
-			driveToPoint({-19_in, 45_in});
-			//tower cube 2
-//			model->setMaxVoltage(12000);
-//			driveToPoint({-5_in, 50_in}, 0_deg, 1, 4_in, 3_deg);
-//			model->setMaxVoltage(4000);
-//			driveToPoint({-5_in, 59_in});
-//			pros::delay(400);
-//			model->setMaxVoltage(12000);
-//			driveToPoint({-5_in, 40_in});
-			stackerMotor1->moveRelative(800, 12000);
-			stackerMotor2->moveRelative(800, 12000);
-			//line up
-			model->setMaxVoltage(12000);
-			driveToPoint({3_in, 9_in}, 135_deg, 2);
-			setTilterMiddle();
-			driveToPoint({6_in, 6_in}, 135_deg, 1, 2_in);
-			setTilterUp();
-			pros::delay(3000);
-			driveToPoint({0_in, 12_in}, 135_deg);
+			driveToPoint({23.5_in, 10_in}, 180_deg);
+//			driveToPoint({23.5_in, 12_in}, 180_deg);
 			break;
 		}
 		case AutonSelector::Auton::SMALL_ZONE_ONE_CUBE:{
@@ -889,15 +915,19 @@ void opcontrol() {
 		}
 
 		if(controller.getDigital(ControllerDigital::L2)){
+			armPID->flipDisable(true);
 			setArmManualSpeed(1);
 		}
 		else if(controller.getDigital(ControllerDigital::up)){
+			armPID->flipDisable(true);
 			setArmManualSpeed(-1);
 		}
 		else if(controller.getDigital(ControllerDigital::down)){
+			armPID->flipDisable(false);
 			setArmDown();
 		}
 		else if(controller.getDigital(ControllerDigital::down)){
+			armPID->flipDisable(false);
 			setArmAlliance();
 		}
 

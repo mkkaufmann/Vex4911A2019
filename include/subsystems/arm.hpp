@@ -3,7 +3,7 @@
 #include "constants.hpp"
 
 extern okapi::Motor armMotor; 
-extern const double encoderTicksPerDegree;
+extern std::shared_ptr<okapi::AsyncPositionController<double, double>> armPID;
 
 void initializeArm();
 

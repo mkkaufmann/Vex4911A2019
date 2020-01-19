@@ -1,31 +1,35 @@
 #include "subsystems/arm.hpp"
 
 okapi::Motor armMotor = okapi::Motor(Constants::ARM_MOTOR_PORT);
-const double ENCODER_TICKS_PER_DEGREE = (900.0 * 7)/360;
+std::shared_ptr<okapi::AsyncPositionController<double, double>> armPID = 
+okapi::AsyncPosControllerBuilder()
+	.withMotor(armMotor)
+	.withGains(okapi::IterativePosPIDController::Gains{0.0,0.0,0.0})
+	.withGearset(okapi::AbstractMotor::GearsetRatioPair(okapi::AbstractMotor::gearset::green, 7))
+	.build();
 
 void initializeArm(){
-	armMotor.setPosPID(0.0, 0.0, 0.0, 0.0);	
-	armMotor.tarePosition();
+	armPID->tarePosition();
 };
 
-void setArmAngle(double angle){
-	armMotor.moveAbsolute(angle * ENCODER_TICKS_PER_DEGREE, 12000);
+void setArmPosition(double position){
+	armPID->setTarget(position);
 }
 
 void setArmDown(){
-	setArmAngle(0);
+	armPID->setTarget(0);
 }
 
 void setArmAlliance(){
-	setArmAngle(30);
+	armPID->setTarget(0);
 }
 
 void setArmHighMiddle(){
-	setArmAngle(50);
+	armPID->setTarget(0);
 }
 
 void setArmLowMiddle(){
-	setArmAngle(60);
+	armPID->setTarget(0);
 }
 
 void setArmManualSpeed(double speed){
