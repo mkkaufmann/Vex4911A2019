@@ -5,6 +5,8 @@ using namespace lib7842;
 
 okapi::Motor tilterMotor = okapi::Motor(Constants::TILTER_MOTOR_PORT);
 const double MIDDLE_HEIGHT {150};
+const double TOWER_HEIGHT {300};
+const double MANEUVER_HEIGHT {400};
 const double UP_HEIGHT {645};
 std::shared_ptr<okapi::AsyncPositionController<double, double>> tilterPID = 
 okapi::AsyncPosControllerBuilder()
@@ -18,13 +20,30 @@ void initializeTilter(){
 };
 
 void setTilterDown(){
+	tilterPID->flipDisable(false);
 	tilterPID->setTarget(0);
 }
 
 void setTilterUp(){
+	tilterPID->flipDisable(false);
 	tilterPID->setTarget(UP_HEIGHT);
 }
 
 void setTilterMiddle(){
+	tilterPID->flipDisable(false);
 	tilterPID->setTarget(MIDDLE_HEIGHT);
+}
+
+void setTilterTowers(){
+	tilterPID->flipDisable(false);
+	tilterPID->setTarget(TOWER_HEIGHT);
+}
+
+void setTilterManeuver(){
+	tilterPID->flipDisable(false);
+	tilterPID->setTarget(MANEUVER_HEIGHT);
+}
+
+void setTilterDisabled(){
+	tilterPID->flipDisable(true);
 }

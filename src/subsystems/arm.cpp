@@ -4,7 +4,7 @@ okapi::Motor armMotor = okapi::Motor(Constants::ARM_MOTOR_PORT);
 std::shared_ptr<okapi::AsyncPositionController<double, double>> armPID = 
 okapi::AsyncPosControllerBuilder()
 	.withMotor(armMotor)
-	.withGains(okapi::IterativePosPIDController::Gains{0.0,0.0,0.0})
+	.withGains(okapi::IterativePosPIDController::Gains{0.0002,0.0,0.0})
 	.withGearset(okapi::AbstractMotor::GearsetRatioPair(okapi::AbstractMotor::gearset::green, 7))
 	.build();
 

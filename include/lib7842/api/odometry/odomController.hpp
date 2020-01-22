@@ -16,7 +16,7 @@ class OdomController;
 using Settler = std::function<bool(const OdomController& odom)>;
 
 /**
- * Function that accepts a turning velocity and controls excecution to the chassis. Used to implement
+ * Function that accepts a turning velocity and controls execution to the chassis. Used to implement
  * a point or pivot turn.
  */
 using Turner = std::function<void(ChassisModel& model, double vel)>;
@@ -63,7 +63,7 @@ public:
                     const Settler& settler = defaultTurnSettler);
 
   /**
-   * Turn the chassis to face an absolue angle
+   * Turn the chassis to face an absolute angle
    *
    * @param angle   The angle
    * @param turner  The turner
@@ -101,7 +101,8 @@ public:
    * @param settler         The settler
    */
   virtual void moveDistanceAtAngle(const QLength& distance, const AngleCalculator& angleCalculator,
-                                   double turnScale, const Settler& settler = defaultDriveSettler);
+                                   double turnScale,
+                                   const Settler& settler = defaultDriveAngleSettler);
 
   /**
    * Drive a distance while maintaining starting angle
@@ -109,7 +110,8 @@ public:
    * @param distance The distance
    * @param settler  The settler
    */
-  virtual void moveDistance(const QLength& distance, const Settler& settler = defaultDriveSettler);
+  virtual void moveDistance(const QLength& distance,
+                            const Settler& settler = defaultDriveAngleSettler);
 
   /**
    * Drive to a point using custom point seeking
@@ -120,7 +122,7 @@ public:
    * @param settler     The settler
    */
   virtual void driveToPoint(const Vector& targetPoint, double turnScale = 1,
-                            const Settler& settler = defaultDriveSettler);
+                            const Settler& settler = defaultDriveAngleSettler);
 
   /**
    * Drive to a point using simple point seeking
@@ -131,7 +133,7 @@ public:
    * @param settler     The settler
    */
   virtual void driveToPoint2(const Vector& targetPoint, double turnScale = 1,
-                             const Settler& settler = defaultDriveSettler);
+                             const Settler& settler = defaultDriveAngleSettler);
 
   /**
    * A Settler that is used for turning which uses the turning pid's isSettled() method
@@ -149,36 +151,36 @@ public:
   static bool defaultDriveAngleSettler(const OdomController& odom);
 
   /**
-   * A Turner that excecutes a point turn which turns in place. Used as default for turn functions
+   * A Turner that executes a point turn which turns in place. Used as default for turn functions
    */
   static void pointTurn(ChassisModel& model, double vel);
 
   /**
-   * A Turner that excecutes a left pivot, meaning it only moves the left motors.
+   * A Turner that executes a left pivot, meaning it only moves the left motors.
    */
   static void leftPivot(ChassisModel& model, double vel);
 
   /**
-   * A Turner that excecutes a right pivot, meaning it only moves the right motors.
+   * A Turner that executes a right pivot, meaning it only moves the right motors.
    */
   static void rightPivot(ChassisModel& model, double vel);
 
   /**
    * Make a Settler that exits when angle error is within given range
-   * @param angle The angle error theshold
+   * @param angle The angle error threshold
    */
   static Settler makeSettler(const QAngle& angle);
 
   /**
    * Make a Settler that exits when distance error is within given range
-   * @param distance The distance error theshold
+   * @param distance The distance error threshold
    */
   static Settler makeSettler(const QLength& distance);
 
   /**
    * Make a Settler that exits when both angle and distance error is within given range.
-   * @param angle The angle error theshold
-   * @param distance The distance error theshold
+   * @param angle The angle error threshold
+   * @param distance The distance error threshold
    */
   static Settler makeSettler(const QLength& distance, const QAngle& angle);
 
@@ -197,9 +199,11 @@ public:
   static AngleCalculator makeAngleCalculator(const Vector& point);
 
   /**
-   * Make an AngleCaclulator that returns a constant error.
+   * Make an AngleCaclulator that returns a constant error. The default settler needs to be changed
+   * for a command using this calculator to settle.
    *
-   * @param error The error
+   * @param  error The error
+   * @return The angle calculator.
    */
   static AngleCalculator makeAngleCalculator(double error);
 

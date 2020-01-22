@@ -12,4 +12,7 @@ void initializeTilter();
 void setTilterUp();
 void setTilterDown();
 void setTilterMiddle();
+void setTilterTowers();
+void setTilterManeuver();
+void setTilterDisabled();
 

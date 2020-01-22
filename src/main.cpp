@@ -29,14 +29,20 @@ auto model {std::make_shared<ThreeEncoderXDriveModel>(
 	12000//max Voltage
 )};
 
+auto odomChassisScales = ChassisScales(
+		{2.792_in,//Encoder wheel diameter
+		10_in,//Drive base width, assumes encoder wheels are the same distance from the center
+		0.25_in},//Middle wheel distance, which doesn't matter to the math
+		360);//Encoder ticks per rotstion
+auto driveChassisScales = ChassisScales(
+		{4_in,//Encoder wheel diameter
+		9_in,//Drive base width, assumes encoder wheels are the same distance from the center
+		0_in},//Middle wheel distance, which doesn't matter to the math
+		imev5GreenTPR);//Encoder ticks per rotstion
 //keeps track of position and orientation based on bot measurements
 auto odom {std::make_shared<CustomOdometry>(
 	model,
-	ChassisScales({
-		2.792_in,//Encoder wheel diameter
-		10_in,//Drive base width, assumes encoder wheels are the same distance from the center
-		0.25_in//Middle wheel distance, which doesn't matter to the math
-	}, 360),//Encoder ticks per rotation
+	odomChassisScales,
 	TimeUtilFactory().create()
 )};
 
@@ -65,6 +71,10 @@ auto odomController {std::make_shared<OdomXController>(
 	TimeUtilFactory().create()
 )};
 
+PathFollower follower(model, odom, driveChassisScales, 1_ft, TimeUtilFactory().create());
+
+PursuitLimits fullSpeedLimits {0.2_mps, 1.1_mps2, 0.75_mps, 0.4_mps2, 0_mps, 40_mps};
+PursuitLimits halfSpeedLimits {0.2_mps, 1.1_mps2, 0.75_mps, 0.4_mps2, 0_mps, 40_mps};
 
 //replace with a motor group
 auto stackerMotor1 {std::make_shared<Motor>(-10)};
@@ -137,8 +147,8 @@ void initialize() {
 
 	//Start UI
 	odom->startTask("Odometry");
-	scr.makePage<AutonSelector>();
-	scr.makePage<GUI::Odom>().attachOdom(odom);
+	scr.makePage<AutonSelector>("Autonomous Selector");
+	scr.makePage<GUI::Odom>("Odometry").attachOdom(odom);
 	scr.startTask("Screen");
 	initializeArm();
 	initializeTilter();
@@ -179,47 +189,82 @@ void driveToPoint(
 	OdomController::makeSettler(settleDistance, settleAngle));
 }
 
-//six cube red
-// stack is off
-//			//full speed to line
-//			driveToPoint({0_in, 12_in},0_deg, 1, 7_in);
-//			rollerIntake();
-//			//first cube
-//			model->setMaxVoltage(8000);
-//			driveToPoint({0_in, 15_in},0_deg, 1, 7_in);
-//			//second cube
-//			model->setMaxVoltage(7000);
-//			driveToPoint({0_in, 20_in},0_deg, 1, 7_in);
-//			//third cube
-//			model->setMaxVoltage(5300);
-//			driveToPoint({0_in, 40_in},0_deg, 1, 7_in);
-//			//rest of line
+//incorrect stack position
+void sixCubeRed(){
+
+	//full speed to line
+	driveToPoint({0_in, 12_in},0_deg, 1, 7_in);
+	rollerIntake();
+	//first cube
+	model->setMaxVoltage(8000);
+	driveToPoint({0_in, 15_in},0_deg, 1, 7_in);
+	//second cube
+	model->setMaxVoltage(7000);
+	driveToPoint({0_in, 20_in},0_deg, 1, 7_in);
+	//third cube
+	model->setMaxVoltage(5300);
+	driveToPoint({0_in, 40_in},0_deg, 1, 7_in);
+	//rest of line
+	model->setMaxVoltage(4000);
+	driveToPoint({0_in, 52_in});
+	//tower cube
+	model->setMaxVoltage(12000);
+	driveToPoint({-19_in, 43_in});
+	model->setMaxVoltage(7000);
+	driveToPoint({-19_in, 55_in});
+	driveToPoint({-19_in, 45_in});
+	//tower cube 2
+//			model->setMaxVoltage(12000);
+//			driveToPoint({-5_in, 50_in}, 0_deg, 1, 4_in, 3_deg);
 //			model->setMaxVoltage(4000);
-//			driveToPoint({0_in, 52_in});
-//			//tower cube
+//			driveToPoint({-5_in, 59_in});
+//			pros::delay(400);
 //			model->setMaxVoltage(12000);
-//			driveToPoint({-19_in, 43_in});
-//			model->setMaxVoltage(7000);
-//			driveToPoint({-19_in, 55_in});
-//			driveToPoint({-19_in, 45_in});
-//			//tower cube 2
-////			model->setMaxVoltage(12000);
-////			driveToPoint({-5_in, 50_in}, 0_deg, 1, 4_in, 3_deg);
-////			model->setMaxVoltage(4000);
-////			driveToPoint({-5_in, 59_in});
-////			pros::delay(400);
-////			model->setMaxVoltage(12000);
-////			driveToPoint({-5_in, 40_in});
-//			stackerMotor1->moveRelative(800, 12000);
-//			stackerMotor2->moveRelative(800, 12000);
-//			//line up
-//			model->setMaxVoltage(12000);
-//			driveToPoint({3_in, 9_in}, 135_deg, 2);
-//			setTilterMiddle();
-//			driveToPoint({6_in, 6_in}, 135_deg, 1, 2_in);
-//			setTilterUp();
-//			pros::delay(3000);
-//			driveToPoint({0_in, 12_in}, 135_deg);
+//			driveToPoint({-5_in, 40_in});
+	stackerMotor1->moveRelative(800, 12000);
+	stackerMotor2->moveRelative(800, 12000);
+	//line up
+	model->setMaxVoltage(12000);
+	driveToPoint({3_in, 9_in}, 135_deg, 2);
+	setTilterMiddle();
+	driveToPoint({6_in, 6_in}, 135_deg, 1, 2_in);
+	setTilterUp();
+	pros::delay(3000);
+	driveToPoint({0_in, 12_in}, 135_deg);
+}
+
+void nineCubeRed(){
+	model->setMaxVoltage(12000);
+	driveToPoint({0_in, 19_in});
+	rollerIntake();	
+	model->setMaxVoltage(6000);
+	driveToPoint({0_in, 45_in});
+	model->setMaxVoltage(12000);
+	driveToPoint({13_in, 40_in});
+	model->setMaxVoltage(8000);
+	driveToPoint({13_in, 55_in});
+	model->setMaxVoltage(8000);
+	driveToPoint({25_in, 55_in}, 90_deg);
+	model->setMaxVoltage(8000);
+	driveToPoint({25_in, 40_in}, 90_deg, 2);
+	model->setMaxVoltage(12000);
+	driveToPoint({27_in, 50_in}, 180_deg, 0.5);
+	model->setMaxVoltage(4000);
+	driveToPoint({27_in, 10_in}, 180_deg);
+//			driveToPoint({23.5_in, 12_in}, 180_deg);
+}
+
+void ppTest(){
+	auto path = SimplePath({ odom->getState(), 
+			{0_ft, 0_ft}, 
+			{0_ft, 2_ft}, 
+			{2_ft, 2_ft}, 
+			{2_ft, 4_ft}})
+		.generate(1_cm)
+		.smoothen(.001, 1e-10 * meter);
+
+	follower.followPath(PathGenerator::generate(path, fullSpeedLimits));
+}
 void autonomous() {
 	odom->reset();
 	model->setMaxVoltage(12000);
@@ -227,33 +272,13 @@ void autonomous() {
 	alliance = AutonSelector::getColor();
 	currentAuton = AutonSelector::getAuton(); 
 
+	rollerOuttake(0.5);
+	pros::delay(200);
+	rollerStop();
 	setTilterDown();
 	switch(currentAuton){
 		case AutonSelector::Auton::TEST:{
-			model->setMaxVoltage(12000);
-			driveToPoint({0_in, 19_in});
-			rollerIntake();	
-			model->setMaxVoltage(7000);
-			driveToPoint({0_in, 30_in});
-			model->setMaxVoltage(6000);
-			driveToPoint({0_in, 40_in});
-			model->setMaxVoltage(12000);
-			driveToPoint({13_in, 40_in});
-			model->setMaxVoltage(8000);
-			driveToPoint({13_in, 55_in});
-			model->setMaxVoltage(8000);
-			driveToPoint({23.5_in, 55_in}, 90_deg);
-			model->setMaxVoltage(8000);
-			driveToPoint({23.5_in, 40_in}, 90_deg);
-			model->setMaxVoltage(12000);
-			driveToPoint({23.5_in, 50_in}, 180_deg);
-			model->setMaxVoltage(5500);
-			driveToPoint({23.5_in, 40_in}, 180_deg);
-			model->setMaxVoltage(5000);
-			driveToPoint({23.5_in, 20_in}, 180_deg);
-			model->setMaxVoltage(4000);
-			driveToPoint({23.5_in, 10_in}, 180_deg);
-//			driveToPoint({23.5_in, 12_in}, 180_deg);
+			sixCubeRed();
 			break;
 		}
 		case AutonSelector::Auton::SMALL_ZONE_ONE_CUBE:{
@@ -850,6 +875,7 @@ bool tilterUp = false;
 void opcontrol() {
 	model->setMaxVoltage(12000);
   	while (true) {	
+		
 		//maps the drive inputs into curves, making them easier to finely control
 		double turn = Util::map(Util::curveJoystick(
 		      			  false, 
@@ -891,9 +917,6 @@ void opcontrol() {
 		stacker.in();
 		stacker.out();
 		
-
-
-		
 		bool tilterPress = tilterOn.update(controller.getDigital(ControllerDigital::L1));
 		bool tilterRelease = tilterOff.update(!controller.getDigital(ControllerDigital::L1));
 		if(tilterPress && !tilterUp){
@@ -913,21 +936,28 @@ void opcontrol() {
 				tilterUp = true;
 			}
 		}
+		if(controller.getDigital(ControllerDigital::X)){
+			setTilterManeuver();
+		}
 
 		if(controller.getDigital(ControllerDigital::L2)){
 			armPID->flipDisable(true);
+			setTilterDisabled();
 			setArmManualSpeed(1);
 		}
 		else if(controller.getDigital(ControllerDigital::up)){
 			armPID->flipDisable(true);
+			setTilterDisabled();
 			setArmManualSpeed(-1);
 		}
 		else if(controller.getDigital(ControllerDigital::down)){
 			armPID->flipDisable(false);
+			setTilterDisabled();
 			setArmDown();
 		}
 		else if(controller.getDigital(ControllerDigital::down)){
 			armPID->flipDisable(false);
+			setTilterDisabled();
 			setArmAlliance();
 		}
 
