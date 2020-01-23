@@ -32,7 +32,7 @@ auto model {std::make_shared<ThreeEncoderXDriveModel>(
 auto odomChassisScales = ChassisScales(
 		{2.792_in,//Encoder wheel diameter
 		10_in,//Drive base width, assumes encoder wheels are the same distance from the center
-		0.25_in},//Middle wheel distance, which doesn't matter to the math
+		0.5_in},//Middle wheel distance, which doesn't matter to the math
 		360);//Encoder ticks per rotstion
 auto driveChassisScales = ChassisScales(
 		{4_in,//Encoder wheel diameter
@@ -53,7 +53,7 @@ auto odomController {std::make_shared<OdomXController>(
     	//Distance PID - To mm
 	//Used for strafing and driving
     	std::make_unique<IterativePosPIDController>(
-		0.008, 0.000, 0.0009, 0, 
+		0.0128, 0.000, 0.0009, 0, 
 		TimeUtilFactory::withSettledUtilParams(10, 10, 100_ms)
 	),
     	//Turn PID - To Degree
@@ -209,10 +209,12 @@ void sixCubeRed(){
 	driveToPoint({0_in, 52_in});
 	//tower cube
 	model->setMaxVoltage(12000);
-	driveToPoint({-19_in, 43_in});
+	driveToPoint({0_in, 38_in});
+	driveToPoint({-13_in, 38_in});
 	model->setMaxVoltage(7000);
-	driveToPoint({-19_in, 55_in});
-	driveToPoint({-19_in, 45_in});
+	driveToPoint({-13_in, 55_in});
+	pros::delay(400);
+	driveToPoint({-13_in, 45_in});
 	//tower cube 2
 //			model->setMaxVoltage(12000);
 //			driveToPoint({-5_in, 50_in}, 0_deg, 1, 4_in, 3_deg);
@@ -225,12 +227,12 @@ void sixCubeRed(){
 	stackerMotor2->moveRelative(800, 12000);
 	//line up
 	model->setMaxVoltage(12000);
-	driveToPoint({3_in, 9_in}, 135_deg, 2);
+	driveToPoint({13_in, 11_in}, 135_deg, 2);
 	setTilterMiddle();
-	driveToPoint({6_in, 6_in}, 135_deg, 1, 2_in);
+	driveToPoint({15_in, 8_in}, 135_deg, 1, 2_in);
 	setTilterUp();
-	pros::delay(3000);
-	driveToPoint({0_in, 12_in}, 135_deg);
+	pros::delay(2000);
+	driveToPoint({11_in, 13_in}, 135_deg, 2, 1_in, 2_deg);
 }
 
 void nineCubeRed(){
