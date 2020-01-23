@@ -273,10 +273,8 @@ void autonomous() {
 	//Get the chosen alliance and auton
 	alliance = AutonSelector::getColor();
 	currentAuton = AutonSelector::getAuton(); 
-
-	rollerOuttake(0.5);
-	pros::delay(200);
-	rollerStop();
+	stackerMotor1->moveRelative(500, 12000);
+	stackerMotor2->moveRelative(500, 12000);
 	setTilterDown();
 	switch(currentAuton){
 		case AutonSelector::Auton::TEST:{
