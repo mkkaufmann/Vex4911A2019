@@ -5,9 +5,9 @@ using namespace lib7842;
 
 okapi::Motor tilterMotor = okapi::Motor(Constants::TILTER_MOTOR_PORT);
 const double MIDDLE_HEIGHT {150};
-const double TOWER_HEIGHT {300};
+const double TOWER_HEIGHT {150};
 const double MANEUVER_HEIGHT {400};
-const double UP_HEIGHT {645};
+const double UP_HEIGHT {600};
 std::shared_ptr<okapi::AsyncPositionController<double, double>> tilterPID = 
 okapi::AsyncPosControllerBuilder()
 	.withMotor(tilterMotor)
