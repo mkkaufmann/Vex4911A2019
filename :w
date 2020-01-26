@@ -286,26 +286,18 @@ void eightCubeRed(){
 	driveToPoint({31_in -10_in, 7_in + 10_in}, 135_deg, 1, 2_in);
 	//programming skills
 	rollerIntake();
-	setTilterTowers();
 	driveToPoint({-15_in, 7_in}, -90_deg, 1, 2_in);
 	stackerMotor1->moveRelative(300, 12000);
 	stackerMotor2->moveRelative(300, 12000);
 	driveToPoint({-12_in, 7_in}, -90_deg, 1, 2_in);
 	setArmHighMiddle();
-	pros::delay(2000);
-	rollerOuttake();
-	pros::delay(1500);
-	setArmLowMiddle();
-	setTilterDown();
-	rollerIntake();
-	driveToPoint({15_in, 48_in},0_deg, 1, 7_in);
-	stackerMotor1->moveRelative(300, 12000);
-	stackerMotor2->moveRelative(300, 12000);
-	driveToPoint({15_in, 45_in},0_deg, 1, 7_in);
-	setArmHighMiddle();
 	setTilterTowers();
 	pros::delay(2000);
 	rollerOuttake();
+	pros::delay(1500);
+	rollerIntake();
+	driveToPoint({15_in, 48_in},0_deg, 1, 7_in);
+	driveToPoint({15_in, 45_in},0_deg, 1, 7_in);
 
 }
 void eightCubeBlue(){
@@ -447,7 +439,7 @@ void autonomous() {
 	//setArmLowMiddle();
 	switch(currentAuton){
 		case AutonSelector::Auton::TEST:{
-			eightCubeRed();			
+			eightCubeBlue();			
 //			switch(alliance){
 //				case AutonSelector::Color::RED:{
 //					sixCubeRed();
