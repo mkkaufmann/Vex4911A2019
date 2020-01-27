@@ -1,5 +1,6 @@
 /*
- * Based on the Arduino PID controller: https://github.com/br3ttb/Arduino-PID-Library
+ * Based on the Arduino PID controller:
+ * https://github.com/br3ttb/Arduino-PID-Library
  *
  * @author Ryan Benasutti, WPI
  *
@@ -19,8 +20,9 @@
 #include <memory>
 
 namespace okapi {
-class IterativePosPIDController : public IterativePositionController<double, double> {
-  public:
+class IterativePosPIDController
+    : public IterativePositionController<double, double> {
+public:
   struct Gains {
     double kP{0};
     double kI{0};
@@ -40,13 +42,11 @@ class IterativePosPIDController : public IterativePositionController<double, dou
    * @param ilogger The logger this instance will log to.
    */
   IterativePosPIDController(
-    double ikP,
-    double ikI,
-    double ikD,
-    double ikBias,
-    const TimeUtil &itimeUtil,
-    std::unique_ptr<Filter> iderivativeFilter = std::make_unique<PassthroughFilter>(),
-    std::shared_ptr<Logger> ilogger = Logger::getDefaultLogger());
+      double ikP, double ikI, double ikD, double ikBias,
+      const TimeUtil &itimeUtil,
+      std::unique_ptr<Filter> iderivativeFilter =
+          std::make_unique<PassthroughFilter>(),
+      std::shared_ptr<Logger> ilogger = Logger::getDefaultLogger());
 
   /**
    * Position PID controller.
@@ -56,14 +56,14 @@ class IterativePosPIDController : public IterativePositionController<double, dou
    * @param iderivativeFilter a filter for filtering the derivative term
    */
   IterativePosPIDController(
-    const Gains &igains,
-    const TimeUtil &itimeUtil,
-    std::unique_ptr<Filter> iderivativeFilter = std::make_unique<PassthroughFilter>(),
-    std::shared_ptr<Logger> ilogger = Logger::getDefaultLogger());
+      const Gains &igains, const TimeUtil &itimeUtil,
+      std::unique_ptr<Filter> iderivativeFilter =
+          std::make_unique<PassthroughFilter>(),
+      std::shared_ptr<Logger> ilogger = Logger::getDefaultLogger());
 
   /**
-   * Do one iteration of the controller. Returns the reading in the range [-1, 1] unless the
-   * bounds have been changed with setOutputLimits().
+   * Do one iteration of the controller. Returns the reading in the range [-1,
+   * 1] unless the bounds have been changed with setOutputLimits().
    *
    * @param inewReading new measurement
    * @return controller output
@@ -78,8 +78,9 @@ class IterativePosPIDController : public IterativePositionController<double, dou
   void setTarget(double itarget) override;
 
   /**
-   * Writes the value of the controller output. This method might be automatically called in another
-   * thread by the controller. The range of input values is expected to be [-1, 1].
+   * Writes the value of the controller output. This method might be
+   * automatically called in another thread by the controller. The range of
+   * input values is expected to be [-1, 1].
    *
    * @param ivalue the controller's output in the range [-1, 1]
    */
@@ -105,8 +106,8 @@ class IterativePosPIDController : public IterativePositionController<double, dou
   double getProcessValue() const override;
 
   /**
-   * Returns the last calculated output of the controller. Output is in the range [-1, 1]
-   * unless the bounds have been changed with setOutputLimits().
+   * Returns the last calculated output of the controller. Output is in the
+   * range [-1, 1] unless the bounds have been changed with setOutputLimits().
    */
   double getOutput() const override;
 
@@ -130,8 +131,8 @@ class IterativePosPIDController : public IterativePositionController<double, dou
   double getError() const override;
 
   /**
-   * Returns whether the controller has settled at the target. Determining what settling means is
-   * implementation-dependent.
+   * Returns whether the controller has settled at the target. Determining what
+   * settling means is implementation-dependent.
    *
    * If the controller is disabled, this method must return true.
    *
@@ -155,29 +156,33 @@ class IterativePosPIDController : public IterativePositionController<double, dou
   void setOutputLimits(double imax, double imin) override;
 
   /**
-   * Sets the (soft) limits for the target range that controllerSet() scales into. The target
-   * computed by controllerSet() is scaled into the range [-itargetMin, itargetMax].
+   * Sets the (soft) limits for the target range that controllerSet() scales
+   * into. The target computed by controllerSet() is scaled into the range
+   * [-itargetMin, itargetMax].
    *
    * @param itargetMax The new max target for controllerSet().
    * @param itargetMin The new min target for controllerSet().
    */
-  void setControllerSetTargetLimits(double itargetMax, double itargetMin) override;
+  void setControllerSetTargetLimits(double itargetMax,
+                                    double itargetMin) override;
 
   /**
-   * Resets the controller's internal state so it is similar to when it was first initialized, while
-   * keeping any user-configured information.
+   * Resets the controller's internal state so it is similar to when it was
+   * first initialized, while keeping any user-configured information.
    */
   void reset() override;
 
   /**
-   * Changes whether the controller is off or on. Turning the controller on after it was off will
-   * cause the controller to move to its last set target, unless it was reset in that time.
+   * Changes whether the controller is off or on. Turning the controller on
+   * after it was off will cause the controller to move to its last set target,
+   * unless it was reset in that time.
    */
   void flipDisable() override;
 
   /**
-   * Sets whether the controller is off or on. Turning the controller on after it was off will
-   * cause the controller to move to its last set target, unless it was reset in that time.
+   * Sets whether the controller is off or on. Turning the controller on after
+   * it was off will cause the controller to move to its last set target, unless
+   * it was reset in that time.
    *
    * @param iisDisabled whether the controller is disabled
    */
@@ -206,9 +211,10 @@ class IterativePosPIDController : public IterativePositionController<double, dou
   virtual void setIntegralLimits(double imax, double imin);
 
   /**
-   * Set the error sum bounds. Default bounds are [0, std::numeric_limits<double>::max()]. Error
-   * will only be added to the integral term when its absolute value is between these bounds of
-   * either side of the target.
+   * Set the error sum bounds. Default bounds are [0,
+   * std::numeric_limits<double>::max()]. Error will only be added to the
+   * integral term when its absolute value is between these bounds of either
+   * side of the target.
    *
    * @param imax max error value that will be summed
    * @param imin min error value that will be summed
@@ -236,7 +242,7 @@ class IterativePosPIDController : public IterativePositionController<double, dou
    */
   Gains getGains() const;
 
-  protected:
+protected:
   std::shared_ptr<Logger> logger;
   double kP, kI, kD, kBias;
   QTime sampleTime{10_ms};
@@ -251,7 +257,8 @@ class IterativePosPIDController : public IterativePositionController<double, dou
   double integralMax{1};
   double integralMin{-1};
 
-  // Error will only be added to the integral term within these bounds on either side of the target
+  // Error will only be added to the integral term within these bounds on either
+  // side of the target
   double errorSumMin{0};
   double errorSumMax{std::numeric_limits<double>::max()};
 

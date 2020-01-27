@@ -2,25 +2,26 @@
 #define ASYNC_ACTION_HPP
 #include "action.hpp"
 #include "actiontrigger.hpp"
-class AsyncAction{
+class AsyncAction {
 public:
-	//default constructor
-	AsyncAction();
+  // default constructor
+  AsyncAction();
 
-	//add trigger to action
-	AsyncAction* hasTrigger(ActionTrigger _trigger);
-	//add avtion
-	AsyncAction* hasAction(Action _action);
-	//tun yhr action once triggered
-	void run();
+  // add trigger to action
+  AsyncAction *hasTrigger(ActionTrigger _trigger);
+  // add avtion
+  AsyncAction *hasAction(Action _action);
+  // tun yhr action once triggered
+  void run();
 
-	bool isFinished();
+  bool isFinished();
+
 private:
-	//TODO: implement safeguards making sure tese are initialized
-	bool triggerInitialized;
-	bool actionInitialized;
+  // TODO: implement safeguards making sure tese are initialized
+  bool triggerInitialized;
+  bool actionInitialized;
 
-	ActionTrigger trigger;
-	Action action;
+  ActionTrigger trigger;
+  Action action;
 };
 #endif

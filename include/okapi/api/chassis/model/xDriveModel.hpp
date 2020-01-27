@@ -13,10 +13,10 @@
 
 namespace okapi {
 class XDriveModel : public ChassisModel {
-  public:
+public:
   /**
-   * Model for an x drive (wheels at 45 deg from a skid steer drive). When all motors are powered
-   * +100%, the robot should move forward in a straight line.
+   * Model for an x drive (wheels at 45 deg from a skid steer drive). When all
+   * motors are powered +100%, the robot should move forward in a straight line.
    *
    * @param itopLeftMotor The top left motor.
    * @param itopRightMotor The top right motor.
@@ -31,8 +31,7 @@ class XDriveModel : public ChassisModel {
               std::shared_ptr<AbstractMotor> ibottomLeftMotor,
               std::shared_ptr<ContinuousRotarySensor> ileftEnc,
               std::shared_ptr<ContinuousRotarySensor> irightEnc,
-              double imaxVelocity,
-              double imaxVoltage);
+              double imaxVelocity, double imaxVoltage);
 
   /**
    * Drive the robot forwards (using open-loop control). Uses velocity mode.
@@ -82,7 +81,8 @@ class XDriveModel : public ChassisModel {
    * @param irightSpeed right side speed
    * @param ithreshold deadband on joystick values
    */
-  void tank(double ileftSpeed, double irightSpeed, double ithreshold = 0) override;
+  void tank(double ileftSpeed, double irightSpeed,
+            double ithreshold = 0) override;
 
   /**
    * Drive the robot with an arcade drive layout. Uses voltage mode.
@@ -91,7 +91,8 @@ class XDriveModel : public ChassisModel {
    * @param iyaw speed around the vertical axis
    * @param ithreshold deadband on joystick values
    */
-  void arcade(double iforwardSpeed, double iyaw, double ithreshold = 0) override;
+  void arcade(double iforwardSpeed, double iyaw,
+              double ithreshold = 0) override;
 
   /**
    * Drive the robot with an arcade drive layout. Uses voltage mode.
@@ -101,8 +102,8 @@ class XDriveModel : public ChassisModel {
    * @param iyaw speed around the vertical axis
    * @param ithreshold deadband on joystick values
    */
-  virtual void
-  xArcade(double irightSpeed, double iforwardSpeed, double iyaw, double ithreshold = 0);
+  virtual void xArcade(double irightSpeed, double iforwardSpeed, double iyaw,
+                       double ithreshold = 0);
 
   /**
    * Power the left side motors. Uses velocity mode.
@@ -152,10 +153,11 @@ class XDriveModel : public ChassisModel {
   void setGearing(AbstractMotor::gearset gearset) override;
 
   /**
-   * Sets a new maximum velocity in RPM. The usable maximum depends on the maximum velocity of the
-   * currently installed gearset. If the configured maximum velocity is greater than the attainable
-   * maximum velocity from the currently installed gearset, the ChassisModel will still scale to
-   * that velocity.
+   * Sets a new maximum velocity in RPM. The usable maximum depends on the
+   * maximum velocity of the currently installed gearset. If the configured
+   * maximum velocity is greater than the attainable maximum velocity from the
+   * currently installed gearset, the ChassisModel will still scale to that
+   * velocity.
    *
    * @param imaxVelocity The new maximum velocity.
    */
@@ -206,7 +208,7 @@ class XDriveModel : public ChassisModel {
    */
   std::shared_ptr<AbstractMotor> getBottomLeftMotor() const;
 
-  protected:
+protected:
   double maxVelocity;
   double maxVoltage;
   std::shared_ptr<AbstractMotor> topLeftMotor;

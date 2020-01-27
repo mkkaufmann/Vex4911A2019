@@ -19,25 +19,17 @@
 
 namespace okapi {
 class PIDTuner {
-  public:
+public:
   struct Output {
     double kP, kI, kD;
   };
 
   PIDTuner(const std::shared_ptr<ControllerInput<double>> &iinput,
            const std::shared_ptr<ControllerOutput<double>> &ioutput,
-           const TimeUtil &itimeUtil,
-           QTime itimeout,
-           std::int32_t igoal,
-           double ikPMin,
-           double ikPMax,
-           double ikIMin,
-           double ikIMax,
-           double ikDMin,
-           double ikDMax,
-           std::size_t inumIterations = 5,
-           std::size_t inumParticles = 16,
-           double ikSettle = 1,
+           const TimeUtil &itimeUtil, QTime itimeout, std::int32_t igoal,
+           double ikPMin, double ikPMax, double ikIMin, double ikIMax,
+           double ikDMin, double ikDMax, std::size_t inumIterations = 5,
+           std::size_t inumParticles = 16, double ikSettle = 1,
            double ikITAE = 2,
            const std::shared_ptr<Logger> &ilogger = Logger::getDefaultLogger());
 
@@ -45,7 +37,7 @@ class PIDTuner {
 
   virtual Output autotune();
 
-  protected:
+protected:
   static constexpr double inertia = 0.5;   // Particle inertia
   static constexpr double confSelf = 1.1;  // Self confidence
   static constexpr double confSwarm = 1.2; // Particle swarm confidence

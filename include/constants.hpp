@@ -1,9 +1,9 @@
 #ifndef CONSTANTS_HPP
 #define CONSTANTS_HPP
-//robot constant values (e.g. ports and measurements)
-class Constants{
+// robot constant values (e.g. ports and measurements)
+class Constants {
 public:
-  //MOTOR PORTS
+  // MOTOR PORTS
   static int LEFT_FRONT_MOTOR_PORT;
   static int LEFT_REAR_MOTOR_PORT;
   static int RIGHT_FRONT_MOTOR_PORT;
@@ -13,7 +13,7 @@ public:
   static int TILTER_MOTOR_PORT;
   static int ARM_MOTOR_PORT;
 
-  //SENSOR PORTS
+  // SENSOR PORTS
   static int LEFT_TRACKING_ENCODER_TOP;
   static int LEFT_TRACKING_ENCODER_BOTTOM;
   static int RIGHT_TRACKING_ENCODER_TOP;
@@ -21,12 +21,12 @@ public:
   static int REAR_TRACKING_ENCODER_TOP;
   static int REAR_TRACKING_ENCODER_BOTTOM;
 
-  //ROBOT MEASUREMENTS (IN INCHES)
+  // ROBOT MEASUREMENTS (IN INCHES)
   static double LEFT_WHEEL_TO_TRACKING_CENTER;
   static double RIGHT_WHEEL_TO_TRACKING_CENTER;
   static double REAR_WHEEL_TO_TRACKING_CENTER;
 
-  //CONVERSION FACTORS
+  // CONVERSION FACTORS
   static int ENCODER_TICKS_PER_INCH;
 };
 #endif

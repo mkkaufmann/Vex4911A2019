@@ -20,22 +20,22 @@ namespace okapi {
  */
 template <typename InputType, typename FilterType>
 class FilteredControllerInput : public ControllerInput<double> {
-  public:
+public:
   /**
-   * A filtered controller input. Applies a filter to the controller input. Useful if you want to
-   * place a filter between a control input and a control loop.
+   * A filtered controller input. Applies a filter to the controller input.
+   * Useful if you want to place a filter between a control input and a control
+   * loop.
    *
    * @param iinput ControllerInput type
    * @param ifilter Filter type
    */
   FilteredControllerInput(std::unique_ptr<ControllerInput<InputType>> iinput,
                           std::unique_ptr<FilterType> ifilter)
-    : input(std::move(iinput)), filter(std::move(ifilter)) {
-  }
+      : input(std::move(iinput)), filter(std::move(ifilter)) {}
 
   /**
-   * Gets the sensor value for use in a control loop. This method might be automatically called in
-   * another thread by the controller.
+   * Gets the sensor value for use in a control loop. This method might be
+   * automatically called in another thread by the controller.
    *
    * @return the current filtered sensor value.
    */
@@ -43,7 +43,7 @@ class FilteredControllerInput : public ControllerInput<double> {
     return filter->filter(input->controllerGet());
   }
 
-  protected:
+protected:
   std::unique_ptr<ControllerInput<InputType>> input;
   std::unique_ptr<FilterType> filter;
 };

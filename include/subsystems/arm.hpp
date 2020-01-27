@@ -1,8 +1,8 @@
 #pragma once
-#include "main.h"
 #include "constants.hpp"
+#include "main.h"
 
-extern okapi::Motor armMotor; 
+extern okapi::Motor armMotor;
 extern std::shared_ptr<okapi::AsyncPositionController<double, double>> armPID;
 
 void initializeArm();

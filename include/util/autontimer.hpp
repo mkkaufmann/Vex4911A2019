@@ -2,7 +2,7 @@
 #define AUTON_TIMER_HPP
 #include "main.h"
 #include <functional>
-class AutonTimer{
+class AutonTimer {
 public:
   static void start();
 

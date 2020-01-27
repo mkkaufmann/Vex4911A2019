@@ -12,7 +12,7 @@
 
 namespace okapi {
 template <typename Input, typename Output> class ControllerRunnerFactory {
-  public:
+public:
   /**
    * A utility class that runs a closed-loop controller.
    *
@@ -21,7 +21,8 @@ template <typename Input, typename Output> class ControllerRunnerFactory {
    */
   static ControllerRunner<Input, Output>
   create(const std::shared_ptr<Logger> &ilogger = Logger::getDefaultLogger()) {
-    return ControllerRunner<Input, Output>(TimeUtilFactory::createDefault(), ilogger);
+    return ControllerRunner<Input, Output>(TimeUtilFactory::createDefault(),
+                                           ilogger);
   }
 };
 } // namespace okapi

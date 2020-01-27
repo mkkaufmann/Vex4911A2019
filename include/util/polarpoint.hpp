@@ -1,29 +1,30 @@
 #ifndef POLARPOINT_HPP
 #define POLARPOINT_HPP
-#include <math.h>
 #include "util.hpp"
-//model for a polar point
-class PolarPoint{
-  public:
-    //constructor
-    PolarPoint(double r, double theta);
+#include <math.h>
+// model for a polar point
+class PolarPoint {
+public:
+  // constructor
+  PolarPoint(double r, double theta);
 
-    //divide radius by a scalar
-    void divideBy(double num);
+  // divide radius by a scalar
+  void divideBy(double num);
 
-    //getter
-    double getRadius();
+  // getter
+  double getRadius();
 
-    //limits radius to 1 or less
-    void limitRadius();
+  // limits radius to 1 or less
+  void limitRadius();
 
-    //offsets angle
-    void rotateAngle(double theta);
+  // offsets angle
+  void rotateAngle(double theta);
 
-    //getter
-    double getAngle();
-  private:
-    double radius;
-    double angle;
+  // getter
+  double getAngle();
+
+private:
+  double radius;
+  double angle;
 };
 #endif

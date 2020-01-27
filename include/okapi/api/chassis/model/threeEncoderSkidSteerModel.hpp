@@ -11,15 +11,17 @@
 
 namespace okapi {
 class ThreeEncoderSkidSteerModel : public SkidSteerModel {
-  public:
+public:
   /**
-   * Model for a skid steer drive (wheels parallel with robot's direction of motion). When all
-   * motors are powered +127, the robot should move forward in a straight line.
+   * Model for a skid steer drive (wheels parallel with robot's direction of
+   * motion). When all motors are powered +127, the robot should move forward in
+   * a straight line.
    *
    * @param ileftSideMotor left side motor
    * @param irightSideMotor right side motor
    * @param ileftEnc left side encoder
-   * @param imiddleEnc middle encoder (mounted perpendicular to the left and right side encoders)
+   * @param imiddleEnc middle encoder (mounted perpendicular to the left and
+   * right side encoders)
    * @param irightEnc right side encoder
    */
   ThreeEncoderSkidSteerModel(std::shared_ptr<AbstractMotor> ileftSideMotor,
@@ -27,8 +29,7 @@ class ThreeEncoderSkidSteerModel : public SkidSteerModel {
                              std::shared_ptr<ContinuousRotarySensor> ileftEnc,
                              std::shared_ptr<ContinuousRotarySensor> irightEnc,
                              std::shared_ptr<ContinuousRotarySensor> imiddleEnc,
-                             double imaxVelocity,
-                             double imaxVoltage);
+                             double imaxVelocity, double imaxVoltage);
 
   /**
    * Read the sensors.
@@ -42,7 +43,7 @@ class ThreeEncoderSkidSteerModel : public SkidSteerModel {
    */
   void resetSensors() override;
 
-  protected:
+protected:
   std::shared_ptr<ContinuousRotarySensor> middleSensor;
 };
 } // namespace okapi

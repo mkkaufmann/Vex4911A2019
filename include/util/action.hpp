@@ -1,22 +1,23 @@
 #ifndef ACTION_HPP
 #define ACTION_HPP
 #include <functional>
-class Action{
+class Action {
 public:
-	//default constructior
-	Action();
+  // default constructior
+  Action();
 
-	Action(std::function<void()> _actionMethod, std::function<bool()> finished);
+  Action(std::function<void()> _actionMethod, std::function<bool()> finished);
 
-	//runs action if possible
-	void run();
+  // runs action if possible
+  void run();
 
-	bool isFinished();
+  bool isFinished();
+
 private:
-	//used for single run functions
-	bool firstRun;
-	bool hasFinished;
-	std::function<void()> actionMethod;
-	std::function<bool()> finishedMethod;
+  // used for single run functions
+  bool firstRun;
+  bool hasFinished;
+  std::function<void()> actionMethod;
+  std::function<bool()> finishedMethod;
 };
 #endif

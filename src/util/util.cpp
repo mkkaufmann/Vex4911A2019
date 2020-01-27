@@ -1,64 +1,58 @@
 #include "util.hpp"
-//see util.hpp
+// see util.hpp
 
-double Util::toRadians(double degrees){
-  return M_PI * degrees / 180;
-}
+double Util::toRadians(double degrees) { return M_PI * degrees / 180; }
 
-double Util::toDegrees(double radians){
-  return 180 * radians / M_PI;
-}
+double Util::toDegrees(double radians) { return 180 * radians / M_PI; }
 
-double Util::unit(double num){
-  if(num >= 0){
+double Util::unit(double num) {
+  if (num >= 0) {
     return 1;
-  }else{
+  } else {
     return -1;
   }
 }
 
-double Util::largest(double arr[], int len){
+double Util::largest(double arr[], int len) {
   double val = -1000000000;
-  for(int i = 0; i < len; i++){\
-    if(arr[i] > val){
+  for (int i = 0; i < len; i++) {
+    if (arr[i] > val) {
       val = arr[i];
     }
   }
   return val;
 };
 
-double Util::largestMagnitude(double arr[], int len){
+double Util::largestMagnitude(double arr[], int len) {
   double val = 0;
-  for(int i = 0; i < len; i++){
+  for (int i = 0; i < len; i++) {
     double positive = std::abs(arr[i]);
-    if(positive > val){
+    if (positive > val) {
       val = positive;
     }
   }
   return val;
 };
 
-double Util::safeDivide(double a, double b){
-  if (b == 0){
+double Util::safeDivide(double a, double b) {
+  if (b == 0) {
     return 0;
-  }else{
-    return a/b;
+  } else {
+    return a / b;
   }
 };
 
-double Util::map(double x, double pmin, double pmax, double min, double max){
-  return (x - pmin)*(max - min)/(pmax - pmin)+min;
+double Util::map(double x, double pmin, double pmax, double min, double max) {
+  return (x - pmin) * (max - min) / (pmax - pmin) + min;
 };
 
-int Util::convertToVoltage(double t){
+int Util::convertToVoltage(double t) {
   return std::floor(map(t, -1, 1, -127, 127));
 };
 
-double Util::convertToPercent(int t){
-  return map(t, -127, 127, -1, 1);
-};
+double Util::convertToPercent(int t) { return map(t, -127, 127, -1, 1); };
 
-bool Util::epsilonEquals(double a, double b, double epsilon){
+bool Util::epsilonEquals(double a, double b, double epsilon) {
   double absA = std::abs(a);
   double absB = std::abs(b);
   double diff = std::abs(a - b);
@@ -74,19 +68,21 @@ bool Util::epsilonEquals(double a, double b, double epsilon){
   }
 };
 
-//graph of red and blue lines from 5225A here
-//https://www.desmos.com/calculator/fatajfuuxu
-int Util::curveJoystick(bool red, int input, double t){
+// graph of red and blue lines from 5225A here
+// https://www.desmos.com/calculator/fatajfuuxu
+int Util::curveJoystick(bool red, int input, double t) {
   int val = 0;
-  if(red){
-    val = (std::exp(-t/10)+std::exp((std::abs(input)-127)/10)*(1-std::exp(-t/10))) * input;
-  }else{
-    //blue
-    val = std::exp(((std::abs(input)-127)*t)/1000) * input;
+  if (red) {
+    val = (std::exp(-t / 10) +
+           std::exp((std::abs(input) - 127) / 10) * (1 - std::exp(-t / 10))) *
+          input;
+  } else {
+    // blue
+    val = std::exp(((std::abs(input) - 127) * t) / 1000) * input;
   }
   return val;
 }
 
-double Util::rotateHalfway(double radians){
+double Util::rotateHalfway(double radians) {
   return std::fmod(radians + M_PI, M_2_PI);
 }

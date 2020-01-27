@@ -1,14 +1,14 @@
 #ifndef STACKER_HPP
 #define STACKER_HPP
-#include "main.h"
 #include "constants.hpp"
+#include "main.h"
 #include "util/latchedboolean.hpp"
 #include <functional>
-//stacker subsystem
-class Stacker{
+// stacker subsystem
+class Stacker {
 public:
-  //return singleton
-  static Stacker* getInstance();
+  // return singleton
+  static Stacker *getInstance();
 
   void intake();
 
@@ -30,27 +30,19 @@ public:
 
   int getOutput();
 
-  enum StackerState{
-    NEUTRAL,
-    MANUAL,
-    IN,
-    OUT
-  };
+  enum StackerState { NEUTRAL, MANUAL, IN, OUT };
 
 private:
-
   int output;
-
 
   Stacker();
 
-  static Stacker* instance;
+  static Stacker *instance;
 
   StackerState state = NEUTRAL;
 
   LatchedBoolean intakeToggle;
 
   LatchedBoolean outtakeToggle;
-
 };
 #endif

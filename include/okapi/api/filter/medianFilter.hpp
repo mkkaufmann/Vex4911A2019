@@ -1,5 +1,6 @@
 /*
- * Uses the median filter algorithm from N. Wirth’s book, implementation by N. Devillard.
+ * Uses the median filter algorithm from N. Wirth’s book, implementation by N.
+ * Devillard.
  *
  * @author Ryan Benasutti, WPI
  *
@@ -21,9 +22,8 @@ namespace okapi {
  * @tparam n number of taps in the filter
  */
 template <std::size_t n> class MedianFilter : public Filter {
-  public:
-  MedianFilter() : middleIndex((((n)&1) ? ((n) / 2) : (((n) / 2) - 1))) {
-  }
+public:
+  MedianFilter() : middleIndex((((n)&1) ? ((n) / 2) : (((n) / 2) - 1))) {}
 
   /**
    * Filters a value, like a sensor reading.
@@ -46,11 +46,9 @@ template <std::size_t n> class MedianFilter : public Filter {
    *
    * @return the previous output from filter
    */
-  double getOutput() const override {
-    return output;
-  }
+  double getOutput() const override { return output; }
 
-  protected:
+protected:
   std::array<double, n> data{0};
   std::size_t index = 0;
   double output = 0;

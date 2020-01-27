@@ -20,7 +20,7 @@ public:
    *
    * @param ipoint The point
    */
-  explicit DataPoint(const Vector& ipoint);
+  explicit DataPoint(const Vector &ipoint);
 
   /**
    * Set the point data.
@@ -28,7 +28,7 @@ public:
    * @param iid   The data name
    * @param idata The data
    */
-  void setData(const std::string& iid, const std::any& idata);
+  void setData(const std::string &iid, const std::any &idata);
 
   /**
    * Get the point data.
@@ -37,20 +37,21 @@ public:
    * @tparam T   The data type
    * @return The data
    */
-  template <typename T> T getData(const std::string& iid) const {
-    const std::any& idata = getID(iid);
+  template <typename T> T getData(const std::string &iid) const {
+    const std::any &idata = getID(iid);
     try {
       return std::any_cast<T>(idata);
-    } catch (const std::bad_any_cast& e) {
-      throw std::runtime_error("DataPoint::getData:: \"" + iid + "\" contains wrong type \"" +
+    } catch (const std::bad_any_cast &e) {
+      throw std::runtime_error("DataPoint::getData:: \"" + iid +
+                               "\" contains wrong type \"" +
                                idata.type().name() + "\"");
     }
   }
 
 protected:
-  std::map<std::string, std::any> data {};
+  std::map<std::string, std::any> data{};
 
 private:
-  const std::any& getID(const std::string& iid) const;
+  const std::any &getID(const std::string &iid) const;
 };
 } // namespace lib7842

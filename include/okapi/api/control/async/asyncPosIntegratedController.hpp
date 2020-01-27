@@ -14,15 +14,16 @@
 
 namespace okapi {
 /**
- * Closed-loop controller that uses the V5 motor's onboard control to move. Input units are whatever
- * units the motor is in.
+ * Closed-loop controller that uses the V5 motor's onboard control to move.
+ * Input units are whatever units the motor is in.
  */
-class AsyncPosIntegratedController : public AsyncPositionController<double, double> {
-  public:
+class AsyncPosIntegratedController
+    : public AsyncPositionController<double, double> {
+public:
   /**
-   * Closed-loop controller that uses the V5 motor's onboard control to move. Input units are
-   * whatever units the motor is in. Throws a std::invalid_argument exception if the gear ratio is
-   * zero.
+   * Closed-loop controller that uses the V5 motor's onboard control to move.
+   * Input units are whatever units the motor is in. Throws a
+   * std::invalid_argument exception if the gear ratio is zero.
    *
    * @param imotor The motor to control.
    * @param ipair The gearset.
@@ -30,11 +31,11 @@ class AsyncPosIntegratedController : public AsyncPositionController<double, doub
    * @param itimeUtil The TimeUtil.
    * @param ilogger The logger this instance will log to.
    */
-  AsyncPosIntegratedController(const std::shared_ptr<AbstractMotor> &imotor,
-                               const AbstractMotor::GearsetRatioPair &ipair,
-                               std::int32_t imaxVelocity,
-                               const TimeUtil &itimeUtil,
-                               const std::shared_ptr<Logger> &ilogger = Logger::getDefaultLogger());
+  AsyncPosIntegratedController(
+      const std::shared_ptr<AbstractMotor> &imotor,
+      const AbstractMotor::GearsetRatioPair &ipair, std::int32_t imaxVelocity,
+      const TimeUtil &itimeUtil,
+      const std::shared_ptr<Logger> &ilogger = Logger::getDefaultLogger());
 
   /**
    * Sets the target for the controller.
@@ -59,8 +60,8 @@ class AsyncPosIntegratedController : public AsyncPositionController<double, doub
   double getError() const override;
 
   /**
-   * Returns whether the controller has settled at the target. Determining what settling means is
-   * implementation-dependent.
+   * Returns whether the controller has settled at the target. Determining what
+   * settling means is implementation-dependent.
    *
    * If the controller is disabled, this method must return true.
    *
@@ -69,20 +70,22 @@ class AsyncPosIntegratedController : public AsyncPositionController<double, doub
   bool isSettled() override;
 
   /**
-   * Resets the controller's internal state so it is similar to when it was first initialized, while
-   * keeping any user-configured information.
+   * Resets the controller's internal state so it is similar to when it was
+   * first initialized, while keeping any user-configured information.
    */
   void reset() override;
 
   /**
-   * Changes whether the controller is off or on. Turning the controller on after it was off will
-   * cause the controller to move to its last set target, unless it was reset in that time.
+   * Changes whether the controller is off or on. Turning the controller on
+   * after it was off will cause the controller to move to its last set target,
+   * unless it was reset in that time.
    */
   void flipDisable() override;
 
   /**
-   * Sets whether the controller is off or on. Turning the controller on after it was off will
-   * cause the controller to move to its last set target, unless it was reset in that time.
+   * Sets whether the controller is off or on. Turning the controller on after
+   * it was off will cause the controller to move to its last set target, unless
+   * it was reset in that time.
    *
    * @param iisDisabled whether the controller is disabled
    */
@@ -96,14 +99,15 @@ class AsyncPosIntegratedController : public AsyncPositionController<double, doub
   bool isDisabled() const override;
 
   /**
-   * Blocks the current task until the controller has settled. Determining what settling means is
-   * implementation-dependent.
+   * Blocks the current task until the controller has settled. Determining what
+   * settling means is implementation-dependent.
    */
   void waitUntilSettled() override;
 
   /**
-   * Writes the value of the controller output. This method might be automatically called in another
-   * thread by the controller. The range of input values is expected to be [-1, 1].
+   * Writes the value of the controller output. This method might be
+   * automatically called in another thread by the controller. The range of
+   * input values is expected to be [-1, 1].
    *
    * @param ivalue the controller's output in the range [-1, 1]
    */
@@ -117,7 +121,8 @@ class AsyncPosIntegratedController : public AsyncPositionController<double, doub
   virtual void setMaxVelocity(std::int32_t imaxVelocity);
 
   /**
-   * Sets the "absolute" zero position of the controller to its current position.
+   * Sets the "absolute" zero position of the controller to its current
+   * position.
    */
   void tarePosition() override;
 
@@ -126,7 +131,7 @@ class AsyncPosIntegratedController : public AsyncPositionController<double, doub
    */
   virtual void stop();
 
-  protected:
+protected:
   std::shared_ptr<Logger> logger;
   TimeUtil timeUtil;
   std::shared_ptr<AbstractMotor> motor;
@@ -139,8 +144,8 @@ class AsyncPosIntegratedController : public AsyncPositionController<double, doub
   std::unique_ptr<SettledUtil> settledUtil;
 
   /**
-   * Resumes moving after the controller is reset. Should not cause movement if the controller is
-   * turned off, reset, and turned back on.
+   * Resumes moving after the controller is reset. Should not cause movement if
+   * the controller is turned off, reset, and turned back on.
    */
   virtual void resumeMovement();
 };

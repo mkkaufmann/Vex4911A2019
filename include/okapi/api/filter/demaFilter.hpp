@@ -12,7 +12,7 @@
 
 namespace okapi {
 class DemaFilter : public Filter {
-  public:
+public:
   /**
    * Double exponential moving average filter.
    *
@@ -44,7 +44,7 @@ class DemaFilter : public Filter {
    */
   virtual void setGains(double ialpha, double ibeta);
 
-  protected:
+protected:
   double alpha, beta;
   double outputS = 0;
   double lastOutputS = 0;

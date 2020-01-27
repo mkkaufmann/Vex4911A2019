@@ -1,8 +1,8 @@
 #ifndef PID_HPP
 #define PID_HPP
-#include "ui.hpp"
 #include "pros/apix.h"
-class PIDTuner{
+#include "ui.hpp"
+class PIDTuner {
 public:
   static void initialize();
 
@@ -18,7 +18,7 @@ private:
   static bool initialized;
   static bool visible;
 
-  static lv_obj_t * pid_container;
-  static lv_obj_t * pid_label;
+  static lv_obj_t *pid_container;
+  static lv_obj_t *pid_label;
 };
 #endif

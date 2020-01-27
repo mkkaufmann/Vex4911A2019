@@ -14,7 +14,7 @@
 
 namespace okapi {
 class Controller {
-  public:
+public:
   Controller(ControllerId iid = ControllerId::master);
 
   virtual ~Controller();
@@ -27,8 +27,8 @@ class Controller {
   virtual bool isConnected();
 
   /**
-   * Returns the current analog reading for the channel in the range [-1, 1]. Returns 0 if the
-   * controller is not connected.
+   * Returns the current analog reading for the channel in the range [-1, 1].
+   * Returns 0 if the controller is not connected.
    *
    * @param ichannel the channel to read
    * @return the value of that channel in the range [-1, 1]
@@ -36,11 +36,12 @@ class Controller {
   virtual float getAnalog(ControllerAnalog ichannel);
 
   /**
-   * Returns whether the digital button is currently pressed. Returns false if the controller is
-   * not connected.
+   * Returns whether the digital button is currently pressed. Returns false if
+   * the controller is not connected.
    *
    * @param ibutton the button to check
-   * @return true if the button is pressed, false if the controller is not connected
+   * @return true if the button is pressed, false if the controller is not
+   * connected
    */
   virtual bool getDigital(ControllerDigital ibutton);
 
@@ -55,12 +56,15 @@ class Controller {
   /**
    * Sets text to the controller LCD screen.
    *
-   * @param iline the line number in the range [0-2] at which the text will be displayed
-   * @param icol the column number in the range [0-14] at which the text will be displayed
+   * @param iline the line number in the range [0-2] at which the text will be
+   * displayed
+   * @param icol the column number in the range [0-14] at which the text will be
+   * displayed
    * @param itext the string to display
    * @return 1 if the operation was successful, PROS_ERR otherwise
    */
-  virtual std::int32_t setText(std::uint8_t iline, std::uint8_t icol, std::string itext);
+  virtual std::int32_t setText(std::uint8_t iline, std::uint8_t icol,
+                               std::string itext);
 
   /**
    * Clears all of the lines of the controller screen.
@@ -83,19 +87,21 @@ class Controller {
    * Controller rumble activation is currently in beta, so continuous, fast
    * updates will not work well.
    *
-   * @param irumblePattern A string consisting of the characters '.', '-', and ' ', where dots are
-   * short rumbles, dashes are long rumbles, and spaces are pauses. Maximum supported length is 8
-   * characters.
+   * @param irumblePattern A string consisting of the characters '.', '-', and '
+   * ', where dots are short rumbles, dashes are long rumbles, and spaces are
+   * pauses. Maximum supported length is 8 characters.
    *
-   * @return 1 if the operation was successful or PROS_ERR if the operation failed, setting errno.
+   * @return 1 if the operation was successful or PROS_ERR if the operation
+   * failed, setting errno.
    */
   virtual std::int32_t rumble(std::string irumblePattern);
 
   /**
    * Gets the battery capacity of the given controller.
    *
-   * This function uses the following values of errno when an error state is reached:
-   * EACCES - Another resource is currently trying to access the controller port.
+   * This function uses the following values of errno when an error state is
+   * reached: EACCES - Another resource is currently trying to access the
+   * controller port.
    *
    * @return the controller's battery capacity
    */
@@ -104,14 +110,15 @@ class Controller {
   /**
    * Gets the battery level of the given controller.
    *
-   * This function uses the following values of errno when an error state is reached:
-   * EACCES - Another resource is currently trying to access the controller port.
+   * This function uses the following values of errno when an error state is
+   * reached: EACCES - Another resource is currently trying to access the
+   * controller port.
    *
    * @return the controller's battery level
    */
   virtual std::int32_t getBatteryLevel();
 
-  protected:
+protected:
   ControllerId okapiId;
   pros::controller_id_e_t prosId;
   std::array<ControllerButton *, 12> buttonArray;

@@ -14,18 +14,18 @@ using SimplePath = DiscretePath<Vector>;
 class AbstractPath {
 public:
   AbstractPath() = default;
-  AbstractPath(const AbstractPath& ipath) = default;
-  AbstractPath(AbstractPath&& ipath) = default;
+  AbstractPath(const AbstractPath &ipath) = default;
+  AbstractPath(AbstractPath &&ipath) = default;
   virtual ~AbstractPath() = default;
 
-  AbstractPath& operator=(const AbstractPath& ipath) = default;
-  AbstractPath& operator=(AbstractPath&& ipath) = default;
+  AbstractPath &operator=(const AbstractPath &ipath) = default;
+  AbstractPath &operator=(AbstractPath &&ipath) = default;
 
   /**
    * Interpolate the path
    *
-   * @param  isteps how many points to interpolate per segment, from start (inclusive) to end
-   *                (exclusive) of segment.
+   * @param  isteps how many points to interpolate per segment, from start
+   * (inclusive) to end (exclusive) of segment.
    * @return generated path
    */
   virtual SimplePath generate(int isteps = 1) const = 0;

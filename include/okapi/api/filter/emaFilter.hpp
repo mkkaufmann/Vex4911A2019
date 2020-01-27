@@ -11,7 +11,7 @@
 
 namespace okapi {
 class EmaFilter : public Filter {
-  public:
+public:
   /**
    * Exponential moving average filter.
    *
@@ -41,7 +41,7 @@ class EmaFilter : public Filter {
    */
   virtual void setGains(double ialpha);
 
-  protected:
+protected:
   double alpha;
   double output = 0;
   double lastOutput = 0;

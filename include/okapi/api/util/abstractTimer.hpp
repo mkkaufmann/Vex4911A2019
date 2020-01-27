@@ -12,7 +12,7 @@
 
 namespace okapi {
 class AbstractTimer {
-  public:
+public:
   /**
    * A Timer base class which implements its methods in terms of millis().
    *
@@ -37,8 +37,8 @@ class AbstractTimer {
   virtual QTime getDt();
 
   /**
-   * Returns the time passed in ms since the previous call of getDt(). Does not change the time
-   * recorded by getDt().
+   * Returns the time passed in ms since the previous call of getDt(). Does not
+   * change the time recorded by getDt().
    *
    * @return The time passed in ms since the previous call of getDt()
    */
@@ -59,7 +59,8 @@ class AbstractTimer {
   virtual QTime getDtFromStart() const;
 
   /**
-   * Place a time marker. Placing another marker will overwrite the previous one.
+   * Place a time marker. Placing another marker will overwrite the previous
+   * one.
    */
   virtual void placeMark();
 
@@ -71,8 +72,8 @@ class AbstractTimer {
   virtual QTime clearMark();
 
   /**
-   * Place a hard time marker. Placing another hard marker will not overwrite the previous one;
-   * instead, call clearHardMark() and then place another.
+   * Place a hard time marker. Placing another hard marker will not overwrite
+   * the previous one; instead, call clearHardMark() and then place another.
    */
   virtual void placeHardMark();
 
@@ -91,33 +92,34 @@ class AbstractTimer {
   virtual QTime getDtFromMark() const;
 
   /**
-   * Returns the time since the hard time marker. Returns 0_ms if there is no hard marker set.
+   * Returns the time since the hard time marker. Returns 0_ms if there is no
+   * hard marker set.
    *
    * @return The time since the hard time marker
    */
   virtual QTime getDtFromHardMark() const;
 
   /**
-   * Returns true when the input time period has passed, then resets. Meant to be used in loops
-   * to run an action every time period without blocking.
+   * Returns true when the input time period has passed, then resets. Meant to
+   * be used in loops to run an action every time period without blocking.
    *
    * @param time time period
-   * @return true when the input time period has passed, false after reading true until the
-   *   period has passed again
+   * @return true when the input time period has passed, false after reading
+   * true until the period has passed again
    */
   virtual bool repeat(QTime time);
 
   /**
-   * Returns true when the input time period has passed, then resets. Meant to be used in loops
-   * to run an action every time period without blocking.
+   * Returns true when the input time period has passed, then resets. Meant to
+   * be used in loops to run an action every time period without blocking.
    *
    * @param frequency the repeat frequency
-   * @return true when the input time period has passed, false after reading true until the
-   *   period has passed again
+   * @return true when the input time period has passed, false after reading
+   * true until the period has passed again
    */
   virtual bool repeat(QFrequency frequency);
 
-  protected:
+protected:
   QTime firstCalled;
   QTime lastCalled;
   QTime mark;

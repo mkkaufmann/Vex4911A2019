@@ -9,10 +9,10 @@
 
 namespace okapi {
 template <typename T> class ControllerInput {
-  public:
+public:
   /**
-   * Get the sensor value for use in a control loop. This method might be automatically called in
-   * another thread by the controller.
+   * Get the sensor value for use in a control loop. This method might be
+   * automatically called in another thread by the controller.
    *
    * @return the current sensor value, or ``PROS_ERR`` on a failure.
    */

@@ -18,11 +18,12 @@ using DataPath = DiscretePath<DataPoint>;
 using StatePath = DiscretePath<State>;
 
 /**
- * A path that represents a collection of discrete points which are stored using shared pointers. To
- * have access to the underlying array, use `operator()`.
+ * A path that represents a collection of discrete points which are stored using
+ * shared pointers. To have access to the underlying array, use `operator()`.
  *
- * There are three types of discrete paths: SimplePath<Vector>, DataPath<DataPoint>, and
- * StatePath<State>>. The point type must be derived from Vector.
+ * There are three types of discrete paths: SimplePath<Vector>,
+ * DataPath<DataPoint>, and StatePath<State>>. The point type must be derived
+ * from Vector.
  *
  * @tparam T The point type.
  */
@@ -36,20 +37,23 @@ public:
   using array_t = std::vector<std::shared_ptr<T>>;
 
   /**
-   * Create a path using an array of points. The points will be reallocated as shared pointers.
+   * Create a path using an array of points. The points will be reallocated as
+   * shared pointers.
    *
    * @param ipath The array of points
    */
-  explicit DiscretePath(const std::vector<T>& ipath) {
+  explicit DiscretePath(const std::vector<T> &ipath) {
     path.reserve(ipath.size());
-    std::transform(ipath.begin(), ipath.end(), std::back_inserter(path),
-                   [](const auto& ipoint) { return std::make_shared<T>(ipoint); });
+    std::transform(
+        ipath.begin(), ipath.end(), std::back_inserter(path),
+        [](const auto &ipoint) { return std::make_shared<T>(ipoint); });
   }
 
-  explicit DiscretePath(std::vector<T>&& ipath) {
+  explicit DiscretePath(std::vector<T> &&ipath) {
     path.reserve(ipath.size());
-    std::transform(ipath.begin(), ipath.end(), std::back_inserter(path),
-                   [](auto&& ipoint) { return std::make_shared<T>(std::move(ipoint)); });
+    std::transform(
+        ipath.begin(), ipath.end(), std::back_inserter(path),
+        [](auto &&ipoint) { return std::make_shared<T>(std::move(ipoint)); });
   }
 
   /**
@@ -57,44 +61,38 @@ public:
    *
    * @param ipath The array of shared pointers
    */
-  explicit DiscretePath(const array_t& ipath) : path(ipath) {}
+  explicit DiscretePath(const array_t &ipath) : path(ipath) {}
 
   /**
-   * Construct a DiscretePath from any other type of DiscretePath. It will only convert if C is
-   * convertible to T, and it will avoid conversion to itself.
+   * Construct a DiscretePath from any other type of DiscretePath. It will only
+   * convert if C is convertible to T, and it will avoid conversion to itself.
    *
    * @param  ipath     The path
    * @tparam C         the type of point to be converted from
    */
   template <typename C,
-            typename = std::enable_if_t<std::is_constructible_v<T, C> && !std::is_same_v<T, C>>>
-  explicit DiscretePath(const DiscretePath<C>& ipath) {
+            typename = std::enable_if_t<std::is_constructible_v<T, C> &&
+                                        !std::is_same_v<T, C>>>
+  explicit DiscretePath(const DiscretePath<C> &ipath) {
     path.reserve(ipath().size());
-    std::transform(ipath().begin(), ipath().end(), std::back_inserter(path),
-                   [](const auto& ipoint) { return std::make_shared<T>(*ipoint); });
+    std::transform(
+        ipath().begin(), ipath().end(), std::back_inserter(path),
+        [](const auto &ipoint) { return std::make_shared<T>(*ipoint); });
   }
 
   /**
    * Get the underlying array.
    */
-  array_t& get() {
-    return path;
-  }
+  array_t &get() { return path; }
 
-  const array_t& get() const {
-    return path;
-  }
+  const array_t &get() const { return path; }
 
   /**
    * Get the underlying array using the () operator.
    */
-  array_t& operator()() {
-    return path;
-  }
+  array_t &operator()() { return path; }
 
-  const array_t& operator()() const {
-    return path;
-  }
+  const array_t &operator()() const { return path; }
 
   /**
    * Copy the entire path.
@@ -104,7 +102,7 @@ public:
   DiscretePath<T> copy() const {
     DiscretePath<T> temp;
     temp().reserve(path.size());
-    for (auto&& point : path) {
+    for (auto &&point : path) {
       temp().emplace_back(std::make_shared<T>(*point));
     }
     return temp;
@@ -116,7 +114,7 @@ public:
    * @param iweight    The smooth weight
    * @param itolerance The smooth tolerance
    */
-  DiscretePath<T>& smoothen(double iweight, const QLength& itolerance) {
+  DiscretePath<T> &smoothen(double iweight, const QLength &itolerance) {
     auto temp = copy();
     double smoothWeight = 1.0 - iweight;
     auto change = itolerance;
@@ -126,8 +124,8 @@ public:
         for (size_t j = 0; j < 2; j++) {
           auto aux = temp()[i]->at(j);
           auto dataFac = iweight * (path[i]->at(j) - aux);
-          auto smoothFac =
-            smoothWeight * (temp()[i - 1]->at(j) + temp()[i + 1]->at(j) - (2.0 * aux));
+          auto smoothFac = smoothWeight * (temp()[i - 1]->at(j) +
+                                           temp()[i + 1]->at(j) - (2.0 * aux));
           temp()[i]->at(j) += (dataFac + smoothFac);
           change = (aux - temp()[i]->at(j)).abs();
         }
@@ -143,15 +141,16 @@ public:
    * @param  iresolution The distance between each point
    * @return The generated path
    */
-  SimplePath generate(const QLength& iresolution) const {
+  SimplePath generate(const QLength &iresolution) const {
     SimplePath temp;
 
     for (size_t i = 0; i < path.size() - 1; i++) {
-      Vector& start = *path[i];
-      Vector& end = *path[i + 1];
+      Vector &start = *path[i];
+      Vector &end = *path[i + 1];
 
       Vector diff = end - start;
-      size_t steps = std::ceil(MathPoint::mag(diff) / iresolution.convert(meter));
+      size_t steps =
+          std::ceil(MathPoint::mag(diff) / iresolution.convert(meter));
       Vector step = diff / steps;
 
       temp().reserve(temp().size() + steps);
@@ -161,7 +160,8 @@ public:
     }
 
     // if path is more than 1 point - return last point
-    if (path.size() > 0) temp().emplace_back(std::make_shared<Vector>(*path.back()));
+    if (path.size() > 0)
+      temp().emplace_back(std::make_shared<Vector>(*path.back()));
 
     return temp;
   }
@@ -169,16 +169,18 @@ public:
   /**
    * Interpolate the path
    *
-   * @param  isteps The number of points to interpolate per segment. In the case of DiscretePath, a
-   *                segment is defined as the section between two control points, starting from the
-   *                first point.
+   * @param  isteps The number of points to interpolate per segment. In the case
+   * of DiscretePath, a segment is defined as the section between two control
+   * points, starting from the first point.
    * @return The generated path
    */
   SimplePath generate(const int isteps = 1) const override {
-    if (isteps < 1) throw std::runtime_error("SimplePath::generate: isteps is less than 1");
+    if (isteps < 1)
+      throw std::runtime_error("SimplePath::generate: isteps is less than 1");
 
     SimplePath temp;
-    if (path.size() > 0) temp().reserve((isteps * (path.size() - 1)) + 1);
+    if (path.size() > 0)
+      temp().reserve((isteps * (path.size() - 1)) + 1);
 
     // if path is more than 2 points - interpolation needed
     if (path.size() > 1) {
@@ -186,8 +188,8 @@ public:
       for (size_t i = 0; i < path.size() - 1; i++) {
         // if interpolation needed
         if (isteps > 1) {
-          Vector& start = *path[i];
-          Vector& end = *path[i + 1];
+          Vector &start = *path[i];
+          Vector &end = *path[i + 1];
 
           Vector diff = end - start;
           Vector step = diff / isteps;
@@ -204,7 +206,8 @@ public:
     }
 
     // if path is more than 1 point - return last point
-    if (path.size() > 0) temp().emplace_back(std::make_shared<Vector>(*path.back()));
+    if (path.size() > 0)
+      temp().emplace_back(std::make_shared<Vector>(*path.back()));
     return temp;
   }
 
@@ -220,6 +223,6 @@ public:
   }
 
 protected:
-  array_t path {};
+  array_t path{};
 };
 } // namespace lib7842

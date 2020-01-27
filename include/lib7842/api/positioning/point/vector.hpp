@@ -10,11 +10,11 @@ using namespace okapi;
  */
 class Vector {
 public:
-  QLength x {0_in};
-  QLength y {0_in};
+  QLength x{0_in};
+  QLength y{0_in};
 
   Vector() = default;
-  Vector(const Vector& ipoint) = default;
+  Vector(const Vector &ipoint) = default;
   virtual ~Vector() = default;
 
   /**
@@ -23,14 +23,14 @@ public:
    * @param ix The x
    * @param iy The y
    */
-  Vector(const QLength& ix, const QLength& iy);
+  Vector(const QLength &ix, const QLength &iy);
 
   /**
    * Convert a Point to a Vector
    *
    * @param ipoint The point
    */
-  explicit Vector(const Point& ipoint);
+  explicit Vector(const Point &ipoint);
 
   /**
    * Get the coordinate given an index. 0 is X, 1 is Y.
@@ -38,16 +38,16 @@ public:
    * @param  iindex The index
    * @return The coordinate
    */
-  QLength& at(size_t iindex);
-  const QLength& at(size_t iindex) const;
+  QLength &at(size_t iindex);
+  const QLength &at(size_t iindex) const;
 
   /**
    * Binary operators
    */
-  Vector operator+(const Vector& rhs) const;
-  Vector operator-(const Vector& rhs) const;
-  bool operator==(const Vector& rhs) const;
-  bool operator!=(const Vector& rhs) const;
+  Vector operator+(const Vector &rhs) const;
+  Vector operator-(const Vector &rhs) const;
+  bool operator==(const Vector &rhs) const;
+  bool operator!=(const Vector &rhs) const;
 
   /**
    * Scale operators
@@ -58,7 +58,7 @@ public:
   /**
    * Utility functions
    */
-  static QLength dist(const Vector& lhs, const Vector& rhs);
-  QLength distTo(const Vector& ipoint);
+  static QLength dist(const Vector &lhs, const Vector &rhs);
+  QLength distTo(const Vector &ipoint);
 };
 } // namespace lib7842

@@ -12,7 +12,7 @@
 
 namespace okapi {
 class Potentiometer : public RotarySensor {
-  public:
+public:
   Potentiometer(std::uint8_t iport);
 
   virtual ~Potentiometer();
@@ -25,14 +25,14 @@ class Potentiometer : public RotarySensor {
   virtual double get() const override;
 
   /**
-   * Get the sensor value for use in a control loop. This method might be automatically called in
-   * another thread by the controller.
+   * Get the sensor value for use in a control loop. This method might be
+   * automatically called in another thread by the controller.
    *
    * @return the current sensor value, or ``PROS_ERR`` on a failure.
    */
   virtual double controllerGet() override;
 
-  protected:
+protected:
   std::uint8_t port;
 };
 } // namespace okapi

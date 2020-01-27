@@ -12,15 +12,14 @@
 
 namespace okapi {
 class FlywheelSimulator {
-  public:
+public:
   /**
-   * A simulator for an inverted pendulum. The center of mass of the system changes as the link
-   * rotates (by default, you can set a new torque function with setExternalTorqueFunction()).
+   * A simulator for an inverted pendulum. The center of mass of the system
+   * changes as the link rotates (by default, you can set a new torque function
+   * with setExternalTorqueFunction()).
    */
-  explicit FlywheelSimulator(double imass = 0.01,
-                             double ilinkLen = 1,
-                             double imuStatic = 0.1,
-                             double imuDynamic = 0.9,
+  explicit FlywheelSimulator(double imass = 0.01, double ilinkLen = 1,
+                             double imuStatic = 0.1, double imuDynamic = 0.9,
                              double itimestep = 0.01);
 
   virtual ~FlywheelSimulator();
@@ -41,18 +40,21 @@ class FlywheelSimulator {
   double step(double itorque);
 
   /**
-   * Sets the torque function used to calculate the torque due to external forces. This torque gets
-   * summed with the input torque.
+   * Sets the torque function used to calculate the torque due to external
+   * forces. This torque gets summed with the input torque.
    *
-   * For example, the default torque function has the torque due to gravity vary as the link swings:
+   * For example, the default torque function has the torque due to gravity vary
+   * as the link swings:
    * [](double angle, double mass, double linkLength) {
    *   return (linkLength * std::cos(angle)) * (mass * -1 * gravity);
    * }
    *
-   * @param itorqueFunc the torque function. The return value is the torque due to external forces
+   * @param itorqueFunc the torque function. The return value is the torque due
+   * to external forces
    */
   void setExternalTorqueFunction(
-    std::function<double(double angle, double mass, double linkLength)> itorqueFunc);
+      std::function<double(double angle, double mass, double linkLength)>
+          itorqueFunc);
 
   /**
    * Sets the input torque. The input will be bounded by the max torque.
@@ -138,7 +140,7 @@ class FlywheelSimulator {
    */
   double getMaxTorque() const;
 
-  protected:
+protected:
   double inputTorque = 0;    // N*m
   double maxTorque = 0.5649; // N*m
   double angle = 0;          // rad

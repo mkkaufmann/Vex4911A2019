@@ -18,30 +18,34 @@
 
 namespace okapi {
 class ChassisControllerPID : public ChassisController {
-  public:
+public:
   /**
-   * ChassisController using PID control. Puts the motors into encoder count units. Throws a
-   * `std::invalid_argument` exception if the gear ratio is zero.
+   * ChassisController using PID control. Puts the motors into encoder count
+   * units. Throws a `std::invalid_argument` exception if the gear ratio is
+   * zero.
    *
    * @param itimeUtil The TimeUtil.
    * @param imodel The ChassisModel used to read from sensors/write to motors.
-   * @param idistanceController The PID controller that controls chassis distance for driving
-   * straight.
-   * @param iturnController The PID controller that controls chassis angle for turning.
-   * @param iangleController The PID controller that controls chassis angle for driving straight.
-   * @param igearset The internal gearset and external ratio used on the drive motors.
+   * @param idistanceController The PID controller that controls chassis
+   * distance for driving straight.
+   * @param iturnController The PID controller that controls chassis angle for
+   * turning.
+   * @param iangleController The PID controller that controls chassis angle for
+   * driving straight.
+   * @param igearset The internal gearset and external ratio used on the drive
+   * motors.
    * @param iscales The ChassisScales.
    * @param ilogger The logger this instance will log to.
    */
   ChassisControllerPID(
-    TimeUtil itimeUtil,
-    std::shared_ptr<ChassisModel> imodel,
-    std::unique_ptr<IterativePosPIDController> idistanceController,
-    std::unique_ptr<IterativePosPIDController> iturnController,
-    std::unique_ptr<IterativePosPIDController> iangleController,
-    const AbstractMotor::GearsetRatioPair &igearset = AbstractMotor::gearset::green,
-    const ChassisScales &iscales = ChassisScales({1, 1}, imev5GreenTPR),
-    std::shared_ptr<Logger> ilogger = Logger::getDefaultLogger());
+      TimeUtil itimeUtil, std::shared_ptr<ChassisModel> imodel,
+      std::unique_ptr<IterativePosPIDController> idistanceController,
+      std::unique_ptr<IterativePosPIDController> iturnController,
+      std::unique_ptr<IterativePosPIDController> iangleController,
+      const AbstractMotor::GearsetRatioPair &igearset =
+          AbstractMotor::gearset::green,
+      const ChassisScales &iscales = ChassisScales({1, 1}, imev5GreenTPR),
+      std::shared_ptr<Logger> ilogger = Logger::getDefaultLogger());
 
   ChassisControllerPID(const ChassisControllerPID &) = delete;
   ChassisControllerPID(ChassisControllerPID &&other) = delete;
@@ -78,14 +82,16 @@ class ChassisControllerPID : public ChassisController {
   void moveRaw(double itarget) override;
 
   /**
-   * Sets the target distance for the robot to drive straight (using closed-loop control).
+   * Sets the target distance for the robot to drive straight (using closed-loop
+   * control).
    *
    * @param itarget distance to travel
    */
   void moveDistanceAsync(QLength itarget) override;
 
   /**
-   * Sets the target distance for the robot to drive straight (using closed-loop control).
+   * Sets the target distance for the robot to drive straight (using closed-loop
+   * control).
    *
    * @param itarget distance to travel in motor degrees
    */
@@ -116,14 +122,16 @@ class ChassisControllerPID : public ChassisController {
   void turnRaw(double idegTarget) override;
 
   /**
-   * Sets the target angle for the robot to turn clockwise in place (using closed-loop control).
+   * Sets the target angle for the robot to turn clockwise in place (using
+   * closed-loop control).
    *
    * @param idegTarget angle to turn for
    */
   void turnAngleAsync(QAngle idegTarget) override;
 
   /**
-   * Sets the target angle for the robot to turn clockwise in place (using closed-loop control).
+   * Sets the target angle for the robot to turn clockwise in place (using
+   * closed-loop control).
    *
    * @param idegTarget angle to turn for in motor degrees
    */
@@ -159,12 +167,14 @@ class ChassisControllerPID : public ChassisController {
   AbstractMotor::GearsetRatioPair getGearsetRatioPair() const override;
 
   /**
-   * Sets the velocity mode flag. When the controller is in velocity mode, the control loop will
-   * set motor velocities. When the controller is in voltage mode (`ivelocityMode = false`), the
-   * control loop will set motor voltages. Additionally, when the controller is in voltage mode,
-   * it will not obey maximum velocity limits.
+   * Sets the velocity mode flag. When the controller is in velocity mode, the
+   * control loop will set motor velocities. When the controller is in voltage
+   * mode (`ivelocityMode = false`), the control loop will set motor voltages.
+   * Additionally, when the controller is in voltage mode, it will not obey
+   * maximum velocity limits.
    *
-   * @param ivelocityMode Whether the controller should be in velocity or voltage mode.
+   * @param ivelocityMode Whether the controller should be in velocity or
+   * voltage mode.
    */
   void setVelocityMode(bool ivelocityMode);
 
@@ -184,14 +194,13 @@ class ChassisControllerPID : public ChassisController {
    *
    * @return The current controller gains in the order: distance, turn, angle.
    */
-  std::tuple<IterativePosPIDController::Gains,
-             IterativePosPIDController::Gains,
+  std::tuple<IterativePosPIDController::Gains, IterativePosPIDController::Gains,
              IterativePosPIDController::Gains>
   getGains() const;
 
   /**
-   * Starts the internal thread. This method is called by the ChassisControllerBuilder when making a
-   * new instance of this class.
+   * Starts the internal thread. This method is called by the
+   * ChassisControllerBuilder when making a new instance of this class.
    */
   void startThread();
 
@@ -217,7 +226,7 @@ class ChassisControllerPID : public ChassisController {
    */
   ChassisModel &model() override;
 
-  protected:
+protected:
   std::shared_ptr<Logger> logger;
   bool normalTurns{true};
   std::shared_ptr<ChassisModel> chassisModel;

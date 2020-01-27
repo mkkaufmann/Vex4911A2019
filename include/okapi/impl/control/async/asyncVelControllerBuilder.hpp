@@ -19,7 +19,7 @@
 
 namespace okapi {
 class AsyncVelControllerBuilder {
-  public:
+public:
   /**
    * A builder that creates async velocity controllers. Use this to create an
    * AsyncVelIntegratedController or an AsyncVelPIDController.
@@ -27,7 +27,7 @@ class AsyncVelControllerBuilder {
    * @param ilogger The logger this instance will log to.
    */
   explicit AsyncVelControllerBuilder(
-    const std::shared_ptr<Logger> &ilogger = Logger::getDefaultLogger());
+      const std::shared_ptr<Logger> &ilogger = Logger::getDefaultLogger());
 
   /**
    * Sets the motor.
@@ -51,7 +51,8 @@ class AsyncVelControllerBuilder {
    * @param imotor The motor.
    * @return An ongoing builder.
    */
-  AsyncVelControllerBuilder &withMotor(const std::shared_ptr<AbstractMotor> &imotor);
+  AsyncVelControllerBuilder &
+  withMotor(const std::shared_ptr<AbstractMotor> &imotor);
 
   /**
    * Sets the sensor. The default sensor is the motor's integrated encoder.
@@ -75,20 +76,23 @@ class AsyncVelControllerBuilder {
    * @param isensor The sensor.
    * @return An ongoing builder.
    */
-  AsyncVelControllerBuilder &withSensor(const std::shared_ptr<RotarySensor> &isensor);
+  AsyncVelControllerBuilder &
+  withSensor(const std::shared_ptr<RotarySensor> &isensor);
 
   /**
-   * Sets the controller gains, causing the builder to generate an AsyncVelPIDController. This does
-   * not set the integrated control's gains.
+   * Sets the controller gains, causing the builder to generate an
+   * AsyncVelPIDController. This does not set the integrated control's gains.
    *
    * @param igains The gains.
    * @return An ongoing builder.
    */
-  AsyncVelControllerBuilder &withGains(const IterativeVelPIDController::Gains &igains);
+  AsyncVelControllerBuilder &
+  withGains(const IterativeVelPIDController::Gains &igains);
 
   /**
-   * Sets the VelMath which calculates and filters velocity. This is ignored when using integrated
-   * controller. If using a PID controller (by setting the gains), this is required.
+   * Sets the VelMath which calculates and filters velocity. This is ignored
+   * when using integrated controller. If using a PID controller (by setting the
+   * gains), this is required.
    *
    * @param ivelMath The VelMath.
    * @return An ongoing builder.
@@ -96,14 +100,15 @@ class AsyncVelControllerBuilder {
   AsyncVelControllerBuilder &withVelMath(std::unique_ptr<VelMath> ivelMath);
 
   /**
-   * Sets the derivative filter which filters the derivative term before it is scaled by kD. The
-   * filter is ignored when using integrated control. The default derivative filter is a
-   * PassthroughFilter.
+   * Sets the derivative filter which filters the derivative term before it is
+   * scaled by kD. The filter is ignored when using integrated control. The
+   * default derivative filter is a PassthroughFilter.
    *
    * @param iderivativeFilter The derivative filter.
    * @return An ongoing builder.
    */
-  AsyncVelControllerBuilder &withDerivativeFilter(std::unique_ptr<Filter> iderivativeFilter);
+  AsyncVelControllerBuilder &
+  withDerivativeFilter(std::unique_ptr<Filter> iderivativeFilter);
 
   /**
    * Sets the gearset. The default gearset is derived from the motor's.
@@ -111,11 +116,13 @@ class AsyncVelControllerBuilder {
    * @param igearset The gearset.
    * @return An ongoing builder.
    */
-  AsyncVelControllerBuilder &withGearset(const AbstractMotor::GearsetRatioPair &igearset);
+  AsyncVelControllerBuilder &
+  withGearset(const AbstractMotor::GearsetRatioPair &igearset);
 
   /**
-   * Sets the maximum velocity. The default maximum velocity is derived from the motor's gearset.
-   * This parameter is ignored when using an AsyncVelPIDController.
+   * Sets the maximum velocity. The default maximum velocity is derived from the
+   * motor's gearset. This parameter is ignored when using an
+   * AsyncVelPIDController.
    *
    * @param imaxVelocity The maximum velocity.
    * @return An ongoing builder.
@@ -123,13 +130,14 @@ class AsyncVelControllerBuilder {
   AsyncVelControllerBuilder &withMaxVelocity(double imaxVelocity);
 
   /**
-   * Sets the TimeUtilFactory used when building the controller. The default is the static
-   * TimeUtilFactory.
+   * Sets the TimeUtilFactory used when building the controller. The default is
+   * the static TimeUtilFactory.
    *
    * @param itimeUtilFactory The TimeUtilFactory.
    * @return An ongoing builder.
    */
-  AsyncVelControllerBuilder &withTimeUtilFactory(const TimeUtilFactory &itimeUtilFactory);
+  AsyncVelControllerBuilder &
+  withTimeUtilFactory(const TimeUtilFactory &itimeUtilFactory);
 
   /**
    * Sets the logger.
@@ -140,9 +148,10 @@ class AsyncVelControllerBuilder {
   AsyncVelControllerBuilder &withLogger(const std::shared_ptr<Logger> &ilogger);
 
   /**
-   * Parents the internal tasks started by this builder to the current task, meaning they will be
-   * deleted once the current task is deleted. The `initialize` and `competition_initialize` tasks
-   * are never parented to. This is the default behavior.
+   * Parents the internal tasks started by this builder to the current task,
+   * meaning they will be deleted once the current task is deleted. The
+   * `initialize` and `competition_initialize` tasks are never parented to. This
+   * is the default behavior.
    *
    * Read more about this in the [builders and tasks tutorial]
    * (docs/tutorials/concepts/builders-and-tasks.md).
@@ -152,9 +161,10 @@ class AsyncVelControllerBuilder {
   AsyncVelControllerBuilder &parentedToCurrentTask();
 
   /**
-   * Prevents parenting the internal tasks started by this builder to the current task, meaning they
-   * will not be deleted once the current task is deleted. This can cause runaway tasks, but is
-   * sometimes the desired behavior (e.x., if you want to use this builder once in `autonomous` and
+   * Prevents parenting the internal tasks started by this builder to the
+   * current task, meaning they will not be deleted once the current task is
+   * deleted. This can cause runaway tasks, but is sometimes the desired
+   * behavior (e.x., if you want to use this builder once in `autonomous` and
    * then again in `opcontrol`).
    *
    * Read more about this in the [builders and tasks tutorial]
@@ -165,30 +175,35 @@ class AsyncVelControllerBuilder {
   AsyncVelControllerBuilder &notParentedToCurrentTask();
 
   /**
-   * Builds the AsyncVelocityController. Throws a std::runtime_exception is no motors were set.
+   * Builds the AsyncVelocityController. Throws a std::runtime_exception is no
+   * motors were set.
    *
    * @return A fully built AsyncVelocityController.
    */
   std::shared_ptr<AsyncVelocityController<double, double>> build();
 
-  private:
+private:
   std::shared_ptr<Logger> logger;
 
   bool hasMotors{false}; // Used to verify motors were passed
   std::shared_ptr<AbstractMotor> motor;
 
-  bool sensorsSetByUser{false}; // Used so motors don't overwrite sensors set manually
+  bool sensorsSetByUser{
+      false}; // Used so motors don't overwrite sensors set manually
   std::shared_ptr<RotarySensor> sensor;
 
-  bool hasGains{false}; // Whether gains were passed, no gains means integrated control
+  bool hasGains{
+      false}; // Whether gains were passed, no gains means integrated control
   IterativeVelPIDController::Gains gains;
 
   bool hasVelMath{false}; // Used to verify velMath was passed
   std::unique_ptr<VelMath> velMath;
 
-  std::unique_ptr<Filter> derivativeFilter = std::make_unique<PassthroughFilter>();
+  std::unique_ptr<Filter> derivativeFilter =
+      std::make_unique<PassthroughFilter>();
 
-  bool gearsetSetByUser{false}; // Used so motor's don't overwrite a gearset set manually
+  bool gearsetSetByUser{
+      false}; // Used so motor's don't overwrite a gearset set manually
   AbstractMotor::GearsetRatioPair pair{AbstractMotor::gearset::invalid};
 
   bool maxVelSetByUser{false}; // Used so motors don't overwrite maxVelocity

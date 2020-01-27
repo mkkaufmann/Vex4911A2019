@@ -18,7 +18,7 @@
 namespace okapi {
 class AsyncVelPIDController : public AsyncWrapper<double, double>,
                               public AsyncVelocityController<double, double> {
-  public:
+public:
   /**
    * An async velocity PID controller.
    *
@@ -34,16 +34,12 @@ class AsyncVelPIDController : public AsyncWrapper<double, double>,
    * @param iderivativeFilter The derivative filter.
    */
   AsyncVelPIDController(
-    const std::shared_ptr<ControllerInput<double>> &iinput,
-    const std::shared_ptr<ControllerOutput<double>> &ioutput,
-    const TimeUtil &itimeUtil,
-    double ikP,
-    double ikD,
-    double ikF,
-    double ikSF,
-    std::unique_ptr<VelMath> ivelMath,
-    double iratio = 1,
-    std::unique_ptr<Filter> iderivativeFilter = std::make_unique<PassthroughFilter>(),
-    const std::shared_ptr<Logger> &ilogger = Logger::getDefaultLogger());
+      const std::shared_ptr<ControllerInput<double>> &iinput,
+      const std::shared_ptr<ControllerOutput<double>> &ioutput,
+      const TimeUtil &itimeUtil, double ikP, double ikD, double ikF,
+      double ikSF, std::unique_ptr<VelMath> ivelMath, double iratio = 1,
+      std::unique_ptr<Filter> iderivativeFilter =
+          std::make_unique<PassthroughFilter>(),
+      const std::shared_ptr<Logger> &ilogger = Logger::getDefaultLogger());
 };
 } // namespace okapi

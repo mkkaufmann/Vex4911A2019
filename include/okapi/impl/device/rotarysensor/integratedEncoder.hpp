@@ -13,7 +13,7 @@
 
 namespace okapi {
 class IntegratedEncoder : public ContinuousRotarySensor {
-  public:
+public:
   /**
    * Integrated motor encoder. Uses the encoder inside the V5 motor.
    *
@@ -44,14 +44,14 @@ class IntegratedEncoder : public ContinuousRotarySensor {
   virtual std::int32_t reset() override;
 
   /**
-   * Get the sensor value for use in a control loop. This method might be automatically called in
-   * another thread by the controller.
+   * Get the sensor value for use in a control loop. This method might be
+   * automatically called in another thread by the controller.
    *
    * @return the current sensor value, or ``PROS_ERR`` on a failure.
    */
   virtual double controllerGet() override;
 
-  protected:
+protected:
   std::uint8_t port;
   std::int8_t reversed{1};
 };

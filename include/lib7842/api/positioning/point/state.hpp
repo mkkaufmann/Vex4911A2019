@@ -11,10 +11,10 @@ namespace lib7842 {
  */
 class State : public Vector {
 public:
-  QAngle theta {0_rad};
+  QAngle theta{0_rad};
 
   using Vector::Vector;
-  State(const State& istate) = default;
+  State(const State &istate) = default;
   virtual ~State() = default;
 
   /**
@@ -24,14 +24,14 @@ public:
    * @param iy The y
    * @param itheta The theta
    */
-  State(const QLength& ix, const QLength& iy, const QAngle& itheta);
+  State(const QLength &ix, const QLength &iy, const QAngle &itheta);
 
   /**
    * Convert a Vector to a State
    *
    * @param ipoint The point
    */
-  explicit State(const Vector& ipoint);
+  explicit State(const Vector &ipoint);
 
   /**
    * Convert a Vector to a State with an angle
@@ -39,28 +39,28 @@ public:
    * @param ipoint The point
    * @param itheta The angle
    */
-  State(const Vector& ipoint, const QAngle& itheta);
+  State(const Vector &ipoint, const QAngle &itheta);
 
   /**
    * Convert a OdomState to a State
    *
    * @param ipoint The point
    */
-  explicit State(const OdomState& ipoint);
+  explicit State(const OdomState &ipoint);
 
   /**
    * Binary operators
    */
-  State operator+(const State& rhs) const;
-  State operator-(const State& rhs) const;
-  bool operator==(const State& rhs) const;
-  bool operator!=(const State& rhs) const;
+  State operator+(const State &rhs) const;
+  State operator-(const State &rhs) const;
+  bool operator==(const State &rhs) const;
+  bool operator!=(const State &rhs) const;
 
   /**
    * Calculate angle from the state to a point
    *
    * @param  ipoint The point
    */
-  QAngle angleTo(const Vector& ipoint) const;
+  QAngle angleTo(const Vector &ipoint) const;
 };
 } // namespace lib7842

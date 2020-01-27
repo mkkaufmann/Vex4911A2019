@@ -23,11 +23,12 @@ extern "C" {
 }
 
 namespace okapi {
-class AsyncMotionProfileController : public AsyncPositionController<std::string, PathfinderPoint> {
-  public:
+class AsyncMotionProfileController
+    : public AsyncPositionController<std::string, PathfinderPoint> {
+public:
   /**
-   * An Async Controller which generates and follows 2D motion profiles. Throws a
-   * `std::invalid_argument` exception if the gear ratio is zero.
+   * An Async Controller which generates and follows 2D motion profiles. Throws
+   * a `std::invalid_argument` exception if the gear ratio is zero.
    *
    * @param itimeUtil The TimeUtil.
    * @param ilimits The default limits.
@@ -36,39 +37,42 @@ class AsyncMotionProfileController : public AsyncPositionController<std::string,
    * @param ipair The gearset.
    * @param ilogger The logger this instance will log to.
    */
-  AsyncMotionProfileController(const TimeUtil &itimeUtil,
-                               const PathfinderLimits &ilimits,
-                               const std::shared_ptr<ChassisModel> &imodel,
-                               const ChassisScales &iscales,
-                               const AbstractMotor::GearsetRatioPair &ipair,
-                               const std::shared_ptr<Logger> &ilogger = Logger::getDefaultLogger());
+  AsyncMotionProfileController(
+      const TimeUtil &itimeUtil, const PathfinderLimits &ilimits,
+      const std::shared_ptr<ChassisModel> &imodel, const ChassisScales &iscales,
+      const AbstractMotor::GearsetRatioPair &ipair,
+      const std::shared_ptr<Logger> &ilogger = Logger::getDefaultLogger());
 
   AsyncMotionProfileController(AsyncMotionProfileController &&other) = delete;
 
-  AsyncMotionProfileController &operator=(AsyncMotionProfileController &&other) = delete;
+  AsyncMotionProfileController &
+  operator=(AsyncMotionProfileController &&other) = delete;
 
   ~AsyncMotionProfileController() override;
 
   /**
-   * Generates a path which intersects the given waypoints and saves it internally with a key of
-   * pathId. Call `executePath()` with the same pathId to run it.
+   * Generates a path which intersects the given waypoints and saves it
+   * internally with a key of pathId. Call `executePath()` with the same pathId
+   * to run it.
    *
    * If the waypoints form a path which is impossible to achieve, an instance of
-   * `std::runtime_error` is thrown (and an error is logged) which describes the waypoints. If there
-   * are no waypoints, no path is generated.
+   * `std::runtime_error` is thrown (and an error is logged) which describes the
+   * waypoints. If there are no waypoints, no path is generated.
    *
    * @param iwaypoints The waypoints to hit on the path.
    * @param ipathId A unique identifier to save the path with.
    */
-  void generatePath(std::initializer_list<PathfinderPoint> iwaypoints, const std::string &ipathId);
+  void generatePath(std::initializer_list<PathfinderPoint> iwaypoints,
+                    const std::string &ipathId);
 
   /**
-   * Generates a path which intersects the given waypoints and saves it internally with a key of
-   * pathId. Call `executePath()` with the same pathId to run it.
+   * Generates a path which intersects the given waypoints and saves it
+   * internally with a key of pathId. Call `executePath()` with the same pathId
+   * to run it.
    *
    * If the waypoints form a path which is impossible to achieve, an instance of
-   * `std::runtime_error` is thrown (and an error is logged) which describes the waypoints. If there
-   * are no waypoints, no path is generated.
+   * `std::runtime_error` is thrown (and an error is logged) which describes the
+   * waypoints. If there are no waypoints, no path is generated.
    *
    * @param iwaypoints The waypoints to hit on the path.
    * @param ipathId A unique identifier to save the path with.
@@ -79,43 +83,50 @@ class AsyncMotionProfileController : public AsyncPositionController<std::string,
                     const PathfinderLimits &ilimits);
 
   /**
-   * Removes a path and frees the memory it used. This function returns true if the path was either
-   * deleted or didn't exist in the first place. It returns false if the path could not be removed
-   * because it is running.
+   * Removes a path and frees the memory it used. This function returns true if
+   * the path was either deleted or didn't exist in the first place. It returns
+   * false if the path could not be removed because it is running.
    *
-   * @param ipathId A unique identifier for the path, previously passed to `generatePath()`
+   * @param ipathId A unique identifier for the path, previously passed to
+   * `generatePath()`
    * @return True if the path no longer exists
    */
   bool removePath(const std::string &ipathId);
 
   /**
-   * Gets the identifiers of all paths saved in this `AsyncMotionProfileController`.
+   * Gets the identifiers of all paths saved in this
+   * `AsyncMotionProfileController`.
    *
    * @return The identifiers of all paths
    */
   std::vector<std::string> getPaths();
 
   /**
-   * Executes a path with the given ID. If there is no path matching the ID, the method will
-   * return. Any targets set while a path is being followed will be ignored.
+   * Executes a path with the given ID. If there is no path matching the ID, the
+   * method will return. Any targets set while a path is being followed will be
+   * ignored.
    *
-   * @param ipathId A unique identifier for the path, previously passed to `generatePath()`.
+   * @param ipathId A unique identifier for the path, previously passed to
+   * `generatePath()`.
    */
   void setTarget(std::string ipathId) override;
 
   /**
-   * Executes a path with the given ID. If there is no path matching the ID, the method will
-   * return. Any targets set while a path is being followed will be ignored.
+   * Executes a path with the given ID. If there is no path matching the ID, the
+   * method will return. Any targets set while a path is being followed will be
+   * ignored.
    *
-   * @param ipathId A unique identifier for the path, previously passed to `generatePath()`.
+   * @param ipathId A unique identifier for the path, previously passed to
+   * `generatePath()`.
    * @param ibackwards Whether to follow the profile backwards.
    * @param imirrored Whether to follow the profile mirrored.
    */
   void setTarget(std::string ipathId, bool ibackwards, bool imirrored = false);
 
   /**
-   * Writes the value of the controller output. This method might be automatically called in another
-   * thread by the controller. This just calls `setTarget()`.
+   * Writes the value of the controller output. This method might be
+   * automatically called in another thread by the controller. This just calls
+   * `setTarget()`.
    */
   void controllerSet(std::string ivalue) override;
 
@@ -134,26 +145,28 @@ class AsyncMotionProfileController : public AsyncPositionController<std::string,
   std::string getProcessValue() const override;
 
   /**
-   * Blocks the current task until the controller has settled. This controller is settled when
-   * it has finished following a path. If no path is being followed, it is settled.
+   * Blocks the current task until the controller has settled. This controller
+   * is settled when it has finished following a path. If no path is being
+   * followed, it is settled.
    */
   void waitUntilSettled() override;
 
   /**
-   * Generates a new path from the position (typically the current position) to the target and
-   * blocks until the controller has settled. Does not save the path which was generated.
+   * Generates a new path from the position (typically the current position) to
+   * the target and blocks until the controller has settled. Does not save the
+   * path which was generated.
    *
    * @param iwaypoints The waypoints to hit on the path.
    * @param ibackwards Whether to follow the profile backwards.
    * @param imirrored Whether to follow the profile mirrored.
    */
   void moveTo(std::initializer_list<PathfinderPoint> iwaypoints,
-              bool ibackwards = false,
-              bool imirrored = false);
+              bool ibackwards = false, bool imirrored = false);
 
   /**
-   * Generates a new path from the position (typically the current position) to the target and
-   * blocks until the controller has settled. Does not save the path which was generated.
+   * Generates a new path from the position (typically the current position) to
+   * the target and blocks until the controller has settled. Does not save the
+   * path which was generated.
    *
    * @param iwaypoints The waypoints to hit on the path.
    * @param ilimits The limits to use for this path only.
@@ -161,22 +174,22 @@ class AsyncMotionProfileController : public AsyncPositionController<std::string,
    * @param imirrored Whether to follow the profile mirrored.
    */
   void moveTo(std::initializer_list<PathfinderPoint> iwaypoints,
-              const PathfinderLimits &ilimits,
-              bool ibackwards = false,
+              const PathfinderLimits &ilimits, bool ibackwards = false,
               bool imirrored = false);
 
   /**
-   * Returns the last error of the controller. Does not update when disabled. This implementation
-   * always returns zero since the robot is assumed to perfectly follow the path. Subclasses can
-   * override this to be more accurate using odometry information.
+   * Returns the last error of the controller. Does not update when disabled.
+   * This implementation always returns zero since the robot is assumed to
+   * perfectly follow the path. Subclasses can override this to be more accurate
+   * using odometry information.
    *
    * @return the last error
    */
   PathfinderPoint getError() const override;
 
   /**
-   * Returns whether the controller has settled at the target. Determining what settling means is
-   * implementation-dependent.
+   * Returns whether the controller has settled at the target. Determining what
+   * settling means is implementation-dependent.
    *
    * If the controller is disabled, this method must return true.
    *
@@ -185,20 +198,22 @@ class AsyncMotionProfileController : public AsyncPositionController<std::string,
   bool isSettled() override;
 
   /**
-   * Resets the controller so it can start from 0 again properly. Keeps configuration from
-   * before. This implementation also stops movement.
+   * Resets the controller so it can start from 0 again properly. Keeps
+   * configuration from before. This implementation also stops movement.
    */
   void reset() override;
 
   /**
-   * Changes whether the controller is off or on. Turning the controller on after it was off will
-   * NOT cause the controller to move to its last set target.
+   * Changes whether the controller is off or on. Turning the controller on
+   * after it was off will NOT cause the controller to move to its last set
+   * target.
    */
   void flipDisable() override;
 
   /**
-   * Sets whether the controller is off or on. Turning the controller on after it was off will
-   * NOT cause the controller to move to its last set target, unless it was reset in that time.
+   * Sets whether the controller is off or on. Turning the controller on after
+   * it was off will NOT cause the controller to move to its last set target,
+   * unless it was reset in that time.
    *
    * @param iisDisabled whether the controller is disabled
    */
@@ -212,16 +227,18 @@ class AsyncMotionProfileController : public AsyncPositionController<std::string,
   bool isDisabled() const override;
 
   /**
-   * Sets the "absolute" zero position of the controller to its current position.
+   * Sets the "absolute" zero position of the controller to its current
+   * position.
    *
-   * This implementation does nothing because the API always requires the starting position to be
-   * specified.
+   * This implementation does nothing because the API always requires the
+   * starting position to be specified.
    */
   void tarePosition() override;
 
   /**
-   * Starts the internal thread. This should not be called by normal users. This method is called
-   * by the `AsyncMotionProfileControllerBuilder` when making a new instance of this class.
+   * Starts the internal thread. This should not be called by normal users. This
+   * method is called by the `AsyncMotionProfileControllerBuilder` when making a
+   * new instance of this class.
    */
   void startThread();
 
@@ -231,8 +248,9 @@ class AsyncMotionProfileController : public AsyncPositionController<std::string,
   CrossplatformThread *getThread() const;
 
   /**
-   * Saves a generated path to files. Paths are stored as `<ipathId>.<left/right>.csv`. An SD card
-   * must be inserted into the brain and the directory must exist. `idirectory` can be prefixed with
+   * Saves a generated path to files. Paths are stored as
+   * `<ipathId>.<left/right>.csv`. An SD card must be inserted into the brain
+   * and the directory must exist. `idirectory` can be prefixed with
    * `/usd/`, but it this is not required.
    *
    * @param idirectory The directory to store the path files in
@@ -241,24 +259,26 @@ class AsyncMotionProfileController : public AsyncPositionController<std::string,
   void storePath(const std::string &idirectory, const std::string &ipathId);
 
   /**
-   * Loads a path from a directory on the SD card containing path CSV files. `/usd/` is
-   * automatically prepended to `idirectory` if it is not specified.
+   * Loads a path from a directory on the SD card containing path CSV files.
+   * `/usd/` is automatically prepended to `idirectory` if it is not specified.
    *
    * @param idirectory The directory that the path files are stored in
-   * @param ipathId The path ID that the paths are stored under (and will be loaded into)
+   * @param ipathId The path ID that the paths are stored under (and will be
+   * loaded into)
    */
   void loadPath(const std::string &idirectory, const std::string &ipathId);
 
   /**
-   * Attempts to remove a path without stopping execution. If that fails, disables the controller
-   * and removes the path.
+   * Attempts to remove a path without stopping execution. If that fails,
+   * disables the controller and removes the path.
    *
    * @param ipathId The path ID that will be removed
    */
   void forceRemovePath(const std::string &ipathId);
 
-  protected:
-  using TrajectoryPtr = std::unique_ptr<TrajectoryCandidate, void (*)(TrajectoryCandidate *)>;
+protected:
+  using TrajectoryPtr =
+      std::unique_ptr<TrajectoryCandidate, void (*)(TrajectoryCandidate *)>;
   using SegmentPtr = std::unique_ptr<Segment, void (*)(void *)>;
 
   struct TrajectoryPair {
@@ -292,7 +312,8 @@ class AsyncMotionProfileController : public AsyncPositionController<std::string,
   /**
    * Follow the supplied path. Must follow the disabled lifecycle.
    */
-  virtual void executeSinglePath(const TrajectoryPair &path, std::unique_ptr<AbstractRate> rate);
+  virtual void executeSinglePath(const TrajectoryPair &path,
+                                 std::unique_ptr<AbstractRate> rate);
 
   /**
    * Converts linear chassis speed to rotational motor speed.
@@ -302,21 +323,24 @@ class AsyncMotionProfileController : public AsyncPositionController<std::string,
    */
   QAngularSpeed convertLinearToRotational(QSpeed linear) const;
 
-  std::string
-  getPathErrorMessage(const std::vector<Waypoint> &points, const std::string &ipathId, int length);
+  std::string getPathErrorMessage(const std::vector<Waypoint> &points,
+                                  const std::string &ipathId, int length);
 
   /**
    * Joins and escapes a directory and file name
    *
-   * @param directory The directory path, separated by forward slashes (/) and with or without a
-   * trailing slash
+   * @param directory The directory path, separated by forward slashes (/) and
+   * with or without a trailing slash
    * @param filename The file name in the directory
    * @return the fully qualified and legal path name
    */
-  static std::string makeFilePath(const std::string &directory, const std::string &filename);
+  static std::string makeFilePath(const std::string &directory,
+                                  const std::string &filename);
 
-  void internalStorePath(FILE *leftPathFile, FILE *rightPathFile, const std::string &ipathId);
-  void internalLoadPath(FILE *leftPathFile, FILE *rightPathFile, const std::string &ipathId);
+  void internalStorePath(FILE *leftPathFile, FILE *rightPathFile,
+                         const std::string &ipathId);
+  void internalLoadPath(FILE *leftPathFile, FILE *rightPathFile,
+                        const std::string &ipathId);
 
   /**
    * Reads the length of the path in a thread-safe manner.

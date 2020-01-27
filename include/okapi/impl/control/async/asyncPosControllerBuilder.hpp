@@ -19,7 +19,7 @@
 
 namespace okapi {
 class AsyncPosControllerBuilder {
-  public:
+public:
   /**
    * A builder that creates async position controllers. Use this to create an
    * AsyncPosIntegratedController or an AsyncPosPIDController.
@@ -27,7 +27,7 @@ class AsyncPosControllerBuilder {
    * @param ilogger The logger this instance will log to.
    */
   explicit AsyncPosControllerBuilder(
-    const std::shared_ptr<Logger> &ilogger = Logger::getDefaultLogger());
+      const std::shared_ptr<Logger> &ilogger = Logger::getDefaultLogger());
 
   /**
    * Sets the motor.
@@ -51,7 +51,8 @@ class AsyncPosControllerBuilder {
    * @param imotor The motor.
    * @return An ongoing builder.
    */
-  AsyncPosControllerBuilder &withMotor(const std::shared_ptr<AbstractMotor> &imotor);
+  AsyncPosControllerBuilder &
+  withMotor(const std::shared_ptr<AbstractMotor> &imotor);
 
   /**
    * Sets the sensor. The default sensor is the motor's integrated encoder.
@@ -75,26 +76,29 @@ class AsyncPosControllerBuilder {
    * @param isensor The sensor.
    * @return An ongoing builder.
    */
-  AsyncPosControllerBuilder &withSensor(const std::shared_ptr<RotarySensor> &isensor);
+  AsyncPosControllerBuilder &
+  withSensor(const std::shared_ptr<RotarySensor> &isensor);
 
   /**
-   * Sets the controller gains, causing the builder to generate an AsyncPosPIDController. This does
-   * not set the integrated control's gains.
+   * Sets the controller gains, causing the builder to generate an
+   * AsyncPosPIDController. This does not set the integrated control's gains.
    *
    * @param igains The gains.
    * @return An ongoing builder.
    */
-  AsyncPosControllerBuilder &withGains(const IterativePosPIDController::Gains &igains);
+  AsyncPosControllerBuilder &
+  withGains(const IterativePosPIDController::Gains &igains);
 
   /**
-   * Sets the derivative filter which filters the derivative term before it is scaled by kD. The
-   * filter is ignored when using integrated control. The default derivative filter is a
-   * PassthroughFilter.
+   * Sets the derivative filter which filters the derivative term before it is
+   * scaled by kD. The filter is ignored when using integrated control. The
+   * default derivative filter is a PassthroughFilter.
    *
    * @param iderivativeFilter The derivative filter.
    * @return An ongoing builder.
    */
-  AsyncPosControllerBuilder &withDerivativeFilter(std::unique_ptr<Filter> iderivativeFilter);
+  AsyncPosControllerBuilder &
+  withDerivativeFilter(std::unique_ptr<Filter> iderivativeFilter);
 
   /**
    * Sets the gearset. The default gearset is derived from the motor's.
@@ -102,11 +106,13 @@ class AsyncPosControllerBuilder {
    * @param igearset The gearset.
    * @return An ongoing builder.
    */
-  AsyncPosControllerBuilder &withGearset(const AbstractMotor::GearsetRatioPair &igearset);
+  AsyncPosControllerBuilder &
+  withGearset(const AbstractMotor::GearsetRatioPair &igearset);
 
   /**
-   * Sets the maximum velocity. The default maximum velocity is derived from the motor's gearset.
-   * This parameter is ignored when using an AsyncPosPIDController.
+   * Sets the maximum velocity. The default maximum velocity is derived from the
+   * motor's gearset. This parameter is ignored when using an
+   * AsyncPosPIDController.
    *
    * @param imaxVelocity The maximum velocity.
    * @return An ongoing builder.
@@ -114,13 +120,14 @@ class AsyncPosControllerBuilder {
   AsyncPosControllerBuilder &withMaxVelocity(double imaxVelocity);
 
   /**
-   * Sets the TimeUtilFactory used when building the controller. The default is the static
-   * TimeUtilFactory.
+   * Sets the TimeUtilFactory used when building the controller. The default is
+   * the static TimeUtilFactory.
    *
    * @param itimeUtilFactory The TimeUtilFactory.
    * @return An ongoing builder.
    */
-  AsyncPosControllerBuilder &withTimeUtilFactory(const TimeUtilFactory &itimeUtilFactory);
+  AsyncPosControllerBuilder &
+  withTimeUtilFactory(const TimeUtilFactory &itimeUtilFactory);
 
   /**
    * Sets the logger.
@@ -131,9 +138,10 @@ class AsyncPosControllerBuilder {
   AsyncPosControllerBuilder &withLogger(const std::shared_ptr<Logger> &ilogger);
 
   /**
-   * Parents the internal tasks started by this builder to the current task, meaning they will be
-   * deleted once the current task is deleted. The `initialize` and `competition_initialize` tasks
-   * are never parented to. This is the default behavior.
+   * Parents the internal tasks started by this builder to the current task,
+   * meaning they will be deleted once the current task is deleted. The
+   * `initialize` and `competition_initialize` tasks are never parented to. This
+   * is the default behavior.
    *
    * Read more about this in the [builders and tasks tutorial]
    * (docs/tutorials/concepts/builders-and-tasks.md).
@@ -143,9 +151,10 @@ class AsyncPosControllerBuilder {
   AsyncPosControllerBuilder &parentedToCurrentTask();
 
   /**
-   * Prevents parenting the internal tasks started by this builder to the current task, meaning they
-   * will not be deleted once the current task is deleted. This can cause runaway tasks, but is
-   * sometimes the desired behavior (e.x., if you want to use this builder once in `autonomous` and
+   * Prevents parenting the internal tasks started by this builder to the
+   * current task, meaning they will not be deleted once the current task is
+   * deleted. This can cause runaway tasks, but is sometimes the desired
+   * behavior (e.x., if you want to use this builder once in `autonomous` and
    * then again in `opcontrol`).
    *
    * Read more about this in the [builders and tasks tutorial]
@@ -156,26 +165,31 @@ class AsyncPosControllerBuilder {
   AsyncPosControllerBuilder &notParentedToCurrentTask();
 
   /**
-   * Builds the AsyncPositionController. Throws a std::runtime_exception is no motors were set.
+   * Builds the AsyncPositionController. Throws a std::runtime_exception is no
+   * motors were set.
    *
    * @return A fully built AsyncPositionController.
    */
   std::shared_ptr<AsyncPositionController<double, double>> build();
 
-  private:
+private:
   std::shared_ptr<Logger> logger;
 
   bool hasMotors{false}; // Used to verify motors were passed
   std::shared_ptr<AbstractMotor> motor;
 
-  bool sensorsSetByUser{false}; // Used so motors don't overwrite sensors set manually
+  bool sensorsSetByUser{
+      false}; // Used so motors don't overwrite sensors set manually
   std::shared_ptr<RotarySensor> sensor;
 
-  bool hasGains{false}; // Whether gains were passed, no gains means integrated control
+  bool hasGains{
+      false}; // Whether gains were passed, no gains means integrated control
   IterativePosPIDController::Gains gains;
-  std::unique_ptr<Filter> derivativeFilter = std::make_unique<PassthroughFilter>();
+  std::unique_ptr<Filter> derivativeFilter =
+      std::make_unique<PassthroughFilter>();
 
-  bool gearsetSetByUser{false}; // Used so motor's don't overwrite a gearset set manually
+  bool gearsetSetByUser{
+      false}; // Used so motor's don't overwrite a gearset set manually
   AbstractMotor::GearsetRatioPair pair{AbstractMotor::gearset::invalid};
 
   bool maxVelSetByUser{false}; // Used so motors don't overwrite maxVelocity
