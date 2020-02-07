@@ -11,6 +11,7 @@ using namespace lib7842::units;
 using namespace okapi;
 
 Controller controller{ControllerId::master};
+Controller partner{ControllerId::partner};
 
 // This is the model of the robot chassis
 // It keeps track of the motors, encoder wheels, max Velocity (in RPM), and max
@@ -75,8 +76,9 @@ PursuitLimits halfSpeedLimits{0.2_mps,  1.1_mps2, 0.75_mps,
                               0.4_mps2, 0_mps,    40_mps};
 
 // replace with a motor group
-auto stackerMotor1{std::make_shared<Motor>(-10)};
-auto stackerMotor2{std::make_shared<Motor>(9)};
+auto stackerMotor1{std::make_shared<Motor>(Constants::STACKER_TREAD_1_MOTOR_PORT)};
+auto stackerMotor2{std::make_shared<Motor>(Constants::STACKER_TREAD_2_MOTOR_PORT
+    )};
 
 // Sets the rollers to full speed outward
 void rollerOuttake() {
@@ -882,7 +884,9 @@ LatchedBoolean right{};
 LatchedBoolean offsetPressForward{};
 LatchedBoolean offsetPressBackward{};
 LatchedBoolean toggleSpeed{};
+LatchedBoolean resetArms = LatchedBoolean();
 bool tilterUp = false;
+bool reset = true;
 
 /*
  * Methods
@@ -986,6 +990,7 @@ void opcontrol() {
       if (tilterUp) {
         // set down
         setTilterDown();
+        reset = false;
         tilterUp = false;
       } else {
         // set up
@@ -998,6 +1003,10 @@ void opcontrol() {
     }
     if (controller.getDigital(ControllerDigital::X)) {
       setTilterManeuver();
+    }
+
+    if(resetArms.update(partner.getDigital(ControllerDigital::R2))){
+      reset = true;
     }
 
     if (controller.getDigital(ControllerDigital::left)) {
@@ -1022,7 +1031,7 @@ void opcontrol() {
       setTilterTowers();
       setArmHighMiddle();
       tilterUp = true;
-    } else if (!tilterUp) {
+    } else if (reset) {
       armPID->flipDisable(false);
       setArmLowMiddle();
     }
