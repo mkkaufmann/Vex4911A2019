@@ -5,6 +5,7 @@
 #include "subsystems/tilter2.hpp"
 #include "ui/autonselector.hpp"
 #include "util/util.hpp"
+#include "util/timedelayedboolean.hpp"
 
 using namespace lib7842;
 using namespace lib7842::units;
@@ -13,15 +14,19 @@ using namespace okapi;
 Controller controller{ControllerId::master};
 Controller partner{ControllerId::partner};
 
+ auto topLeft = std::make_shared<Motor>(4);
+ auto topRight = std::make_shared<Motor>(-5);
+ auto bottomRight = std::make_shared<Motor>(-7);
+ auto bottomLeft = std::make_shared<Motor>(6);
 // This is the model of the robot chassis
 // It keeps track of the motors, encoder wheels, max Velocity (in RPM), and max
 // Voltage
 auto model{std::make_shared<ThreeEncoderXDriveModel>(
     // motors
-    std::make_shared<Motor>(4),  // topLeft
-    std::make_shared<Motor>(-5), // topRight
-    std::make_shared<Motor>(-7), // bottomRight
-    std::make_shared<Motor>(6),  // bottomLeft
+    topLeft,  // topLeft
+    topRight, // topRight
+    bottomRight, // bottomRight
+    bottomLeft,  // bottomLeft
     // sensors
     std::make_shared<ADIEncoder>(5, 6, true), // left
     std::make_shared<ADIEncoder>(1, 2, true), // right
@@ -345,6 +350,17 @@ void eightCubeBlue() {
   rollerOuttake(0.5);
   driveToPoint({-(31_in - 10_in), 7_in + 10_in}, -135_deg, 1, 2_in);
 }
+void oneCube() {
+  topLeft->moveRelative(900/(4.0*3.1415)*8, 8000);
+  topRight->moveRelative(900/(4.0*3.1415)*8, 8000);
+  bottomLeft->moveRelative(900/(4.0*3.1415)*8, 8000);
+  bottomRight->moveRelative(900/(4.0*3.1415)*9, 8000);
+  pros::delay(3000);
+  topLeft->moveRelative(900/(4.0*3.1415)*-8, 8000);
+  topRight->moveRelative(900/(4.0*3.1415)*-8, 8000);
+  bottomLeft->moveRelative(900/(4.0*3.1415)*-8, 8000);
+  bottomRight->moveRelative(900/(4.0*3.1415)*-8, 8000);
+}
 void sixCubeBlue() {
 
   // full speed to line
@@ -436,7 +452,7 @@ void autonomous() {
   // setArmLowMiddle();
   switch (currentAuton) {
   case AutonSelector::Auton::TEST: {
-    eightCubeRed();
+      oneCube();
     //			switch(alliance){
     //				case AutonSelector::Color::RED:{
     //					sixCubeRed();
@@ -884,7 +900,8 @@ LatchedBoolean right{};
 LatchedBoolean offsetPressForward{};
 LatchedBoolean offsetPressBackward{};
 LatchedBoolean toggleSpeed{};
-LatchedBoolean resetArms = LatchedBoolean();
+//LatchedBoolean resetArms = LatchedBoolean();
+DelayedBoolean resetArms = DelayedBoolean(pros::millis(), 1000);
 bool tilterUp = false;
 bool reset = true;
 
@@ -1005,9 +1022,7 @@ void opcontrol() {
       setTilterManeuver();
     }
 
-    if(resetArms.update(partner.getDigital(ControllerDigital::R2))){
-      reset = true;
-    }
+    reset = resetArms.update(pros::millis(), !tilterUp);
 
     if (controller.getDigital(ControllerDigital::left)) {
       armPID->flipDisable(true);
