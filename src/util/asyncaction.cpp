@@ -180,9 +180,8 @@ private:
 // *AsyncActionFactory::makeAsyncAction()->hasTrigger(ActionTrigger(test2.reachedAmount))->hasAction(Action([&](){std::cout<<test2.count<<std::endl;},
 // [](){return true;})); 	AsyncAction action5 =
 // *AsyncActionFactory::makeAsyncAction()->hasTrigger(ActionTrigger(test2.getCustomAmountTrigger(500)))->hasAction(Action([&](){std::cout<<test2.count<<std::endl;},
-// test2.getCustomAmountTrigger(520))); 	std::vector<AsyncAction> actions;
-// 	actions.push_back(action1);
-// 	actions.push_back(action2);
+// test2.getCustomAmountTrigger(520))); 	std::vector<AsyncAction>
+// actions; 	actions.push_back(action1); 	actions.push_back(action2);
 // 	actions.push_back(action3);
 // 	actions.push_back(action4);
 // 	actions.push_back(action5);

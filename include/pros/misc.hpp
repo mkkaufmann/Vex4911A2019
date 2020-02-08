@@ -225,8 +225,8 @@ public:
    * port.
    *
    * \param rumble_pattern
-   *				A string consisting of the characters '.', '-', and ' ',
-   *where dots are short rumbles, dashes are long rumbles, and spaces are
+   *				A string consisting of the characters '.', '-', and '
+   *', where dots are short rumbles, dashes are long rumbles, and spaces are
    *pauses. Maximum supported length is 8 characters.
    *
    * \return 1 if the operation was successful or PROS_ERR if the operation

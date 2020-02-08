@@ -4,8 +4,8 @@
 #include "subsystems/stacker.hpp"
 #include "subsystems/tilter2.hpp"
 #include "ui/autonselector.hpp"
-#include "util/util.hpp"
 #include "util/timedelayedboolean.hpp"
+#include "util/util.hpp"
 
 using namespace lib7842;
 using namespace lib7842::units;
@@ -14,17 +14,17 @@ using namespace okapi;
 Controller controller{ControllerId::master};
 Controller partner{ControllerId::partner};
 
- auto topLeft = std::make_shared<Motor>(4);
- auto topRight = std::make_shared<Motor>(-5);
- auto bottomRight = std::make_shared<Motor>(-7);
- auto bottomLeft = std::make_shared<Motor>(6);
+auto topLeft = std::make_shared<Motor>(4);
+auto topRight = std::make_shared<Motor>(-5);
+auto bottomRight = std::make_shared<Motor>(-7);
+auto bottomLeft = std::make_shared<Motor>(6);
 // This is the model of the robot chassis
 // It keeps track of the motors, encoder wheels, max Velocity (in RPM), and max
 // Voltage
 auto model{std::make_shared<ThreeEncoderXDriveModel>(
     // motors
-    topLeft,  // topLeft
-    topRight, // topRight
+    topLeft,     // topLeft
+    topRight,    // topRight
     bottomRight, // bottomRight
     bottomLeft,  // bottomLeft
     // sensors
@@ -39,14 +39,14 @@ auto model{std::make_shared<ThreeEncoderXDriveModel>(
 auto odomChassisScales = ChassisScales(
     {2.792_in, // Encoder wheel diameter
      10_in,    // Drive base width, assumes encoder wheels are the same distance
-            // from the center
-     0.5_in}, // Middle wheel distance, which doesn't matter to the math
-    360);     // Encoder ticks per rotstion
+               // from the center
+     0.5_in},  // Middle wheel distance, which doesn't matter to the math
+    360);      // Encoder ticks per rotstion
 auto driveChassisScales = ChassisScales(
-    {4_in, // Encoder wheel diameter
-     9_in, // Drive base width, assumes encoder wheels are the same distance
-           // from the center
-     0_in},         // Middle wheel distance, which doesn't matter to the math
+    {4_in,  // Encoder wheel diameter
+     9_in,  // Drive base width, assumes encoder wheels are the same distance
+            // from the center
+     0_in}, // Middle wheel distance, which doesn't matter to the math
     imev5GreenTPR); // Encoder ticks per rotstion
 // keeps track of position and orientation based on bot measurements
 auto odom{std::make_shared<CustomOdometry>(model, odomChassisScales,
@@ -81,9 +81,10 @@ PursuitLimits halfSpeedLimits{0.2_mps,  1.1_mps2, 0.75_mps,
                               0.4_mps2, 0_mps,    40_mps};
 
 // replace with a motor group
-auto stackerMotor1{std::make_shared<Motor>(Constants::STACKER_TREAD_1_MOTOR_PORT)};
-auto stackerMotor2{std::make_shared<Motor>(Constants::STACKER_TREAD_2_MOTOR_PORT
-    )};
+auto stackerMotor1{
+    std::make_shared<Motor>(Constants::STACKER_TREAD_1_MOTOR_PORT)};
+auto stackerMotor2{
+    std::make_shared<Motor>(Constants::STACKER_TREAD_2_MOTOR_PORT)};
 
 // Sets the rollers to full speed outward
 void rollerOuttake() {
@@ -351,15 +352,15 @@ void eightCubeBlue() {
   driveToPoint({-(31_in - 10_in), 7_in + 10_in}, -135_deg, 1, 2_in);
 }
 void oneCube() {
-  topLeft->moveRelative(900/(4.0*3.1415)*8, 8000);
-  topRight->moveRelative(900/(4.0*3.1415)*8, 8000);
-  bottomLeft->moveRelative(900/(4.0*3.1415)*8, 8000);
-  bottomRight->moveRelative(900/(4.0*3.1415)*8, 8000);
+  topLeft->moveRelative(900 / (4.0 * 3.1415) * 8, 8000);
+  topRight->moveRelative(900 / (4.0 * 3.1415) * 8, 8000);
+  bottomLeft->moveRelative(900 / (4.0 * 3.1415) * 8, 8000);
+  bottomRight->moveRelative(900 / (4.0 * 3.1415) * 8, 8000);
   pros::delay(3000);
-  topLeft->moveRelative(900/(4.0*3.1415)*-8, 8000);
-  topRight->moveRelative(900/(4.0*3.1415)*-8, 8000);
-  bottomLeft->moveRelative(900/(4.0*3.1415)*-8, 8000);
-  bottomRight->moveRelative(900/(4.0*3.1415)*-8, 8000);
+  topLeft->moveRelative(900 / (4.0 * 3.1415) * -8, 8000);
+  topRight->moveRelative(900 / (4.0 * 3.1415) * -8, 8000);
+  bottomLeft->moveRelative(900 / (4.0 * 3.1415) * -8, 8000);
+  bottomRight->moveRelative(900 / (4.0 * 3.1415) * -8, 8000);
 }
 void sixCubeBlue() {
 
@@ -452,7 +453,7 @@ void autonomous() {
   // setArmLowMiddle();
   switch (currentAuton) {
   case AutonSelector::Auton::TEST: {
-      oneCube();
+    oneCube();
     //			switch(alliance){
     //				case AutonSelector::Color::RED:{
     //					sixCubeRed();
@@ -900,7 +901,7 @@ LatchedBoolean right{};
 LatchedBoolean offsetPressForward{};
 LatchedBoolean offsetPressBackward{};
 LatchedBoolean toggleSpeed{};
-//LatchedBoolean resetArms = LatchedBoolean();
+// LatchedBoolean resetArms = LatchedBoolean();
 DelayedBoolean resetArms = DelayedBoolean(pros::millis(), 1000);
 bool tilterUp = false;
 bool reset = true;
