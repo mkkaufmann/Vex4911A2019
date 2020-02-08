@@ -354,7 +354,7 @@ void oneCube() {
   topLeft->moveRelative(900/(4.0*3.1415)*8, 8000);
   topRight->moveRelative(900/(4.0*3.1415)*8, 8000);
   bottomLeft->moveRelative(900/(4.0*3.1415)*8, 8000);
-  bottomRight->moveRelative(900/(4.0*3.1415)*9, 8000);
+  bottomRight->moveRelative(900/(4.0*3.1415)*8, 8000);
   pros::delay(3000);
   topLeft->moveRelative(900/(4.0*3.1415)*-8, 8000);
   topRight->moveRelative(900/(4.0*3.1415)*-8, 8000);
