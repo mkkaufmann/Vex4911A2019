@@ -368,17 +368,17 @@ void sixCubeBlue() {
   driveToPoint({0_in, 12_in}, 0_deg, 1, 7_in);
   rollerIntake();
   // first cube
-  model->setMaxVoltage(8000);
+  model->setMaxVoltage(7000);
   driveToPoint({0_in, 15_in}, 0_deg, 1, 7_in);
   // second cube
-  model->setMaxVoltage(7000);
+  model->setMaxVoltage(6000);
   driveToPoint({0_in, 20_in}, 0_deg, 1, 7_in);
   // third cube
   model->setMaxVoltage(5300);
   driveToPoint({0_in, 40_in}, 0_deg, 1, 7_in);
   // rest of line
-  model->setMaxVoltage(4000);
-  driveToPoint({0_in, 48_in});
+  model->setMaxVoltage(6000);
+  driveToPoint({0_in, 44_in}, 0_deg, 1, 5_in, 30_deg);
   // pros::delay(400);
   // tower cube
   //	model->setMaxVoltage(12000);
@@ -396,10 +396,11 @@ void sixCubeBlue() {
   //			pros::delay(400);
   //			model->setMaxVoltage(12000);
   //			driveToPoint({-5_in, 40_in});
-  stackerMotor1->moveRelative(600, 12000);
-  stackerMotor2->moveRelative(600, 12000);
   // line up
   model->setMaxVoltage(12000);
+  driveToPoint({-10_in, 9_in}, -135_deg, 2);
+  stackerMotor1->moveRelative(600, 12000);
+  stackerMotor2->moveRelative(600, 12000);
   driveToPoint({-12_in, 7_in}, -135_deg, 2);
   setTilterMiddle();
   driveToPoint({-14_in, 5_in}, -135_deg, 1, 2_in);
@@ -453,7 +454,7 @@ void autonomous() {
   // setArmLowMiddle();
   switch (currentAuton) {
   case AutonSelector::Auton::TEST: {
-    oneCube();
+    sixCubeBlue();
     //			switch(alliance){
     //				case AutonSelector::Color::RED:{
     //					sixCubeRed();
