@@ -112,21 +112,6 @@ void rollerStop() {
   stackerMotor2->moveVoltage(0);
 }
 
-// Macro for deploying the tray
-// It prevents code progression for 1.5 seconds, try using a task maybe?
-void deployTray() {
-  rollerOuttake();
-  pros::delay(1500);
-  rollerStop();
-}
-
-// Macro for placing a stack
-// Prevents code progression for 3.6 seconds
-void placeStack() {
-  rollerStop();
-  setTilterUp();
-}
-
 // Constant distances used for autonomous plotting
 const QLength botWidth{17.5_in};
 const QLength botLength{17.5_in};
@@ -167,13 +152,6 @@ void competition_initialize() {}
 
 // Wraps the odomController calls for easier autonomous programming
 // Takes a target position and orientation
-void driveToPoint(Vector target, QAngle targetAngle = 0_deg,
-                  double turnPriority = 1, QLength settleDistance = 4_in,
-                  QAngle settleAngle = 5_deg) {
-  odomController->strafeToPoint(
-      target, OdomController::makeAngleCalculator(targetAngle), turnPriority,
-      Settler().distanceErr(settleDistance).angleErr(settleAngle));
-}
 
 void driveToPoint(Vector target, QAngle targetAngle = 0_deg,
                   double turnPriority = 1, Settler&& settler = Settler().distanceErr(4_in).angleErr(5_deg)){
@@ -196,168 +174,100 @@ void driveToPoint(Vector target, Vector pointToFace, double turnPriority = 1,
 void sixCubeRed() {
 
   // full speed to line
-  driveToPoint({0_in, 12_in}, 0_deg, 1, 7_in);
+  driveToPoint({0_in, 12_in}, 0_deg, 1, Settler().distanceErr(7_in).angleErr(5_deg));
   rollerIntake();
   // first cube
   model->setMaxVoltage(8000);
-  driveToPoint({0_in, 15_in}, 0_deg, 1, 7_in);
+  driveToPoint({0_in, 15_in}, 0_deg, 1, Settler().distanceErr(7_in).angleErr(5_deg));
   // second cube
   model->setMaxVoltage(7000);
-  driveToPoint({0_in, 20_in}, 0_deg, 1, 7_in);
+  driveToPoint({0_in, 20_in}, 0_deg, 1, Settler().distanceErr(7_in).angleErr(5_deg));
   // third cube
   model->setMaxVoltage(5300);
-  driveToPoint({0_in, 40_in}, 0_deg, 1, 7_in);
+  driveToPoint({0_in, 40_in}, 0_deg, 1, Settler().distanceErr(7_in).angleErr(5_deg));
   // rest of line
   model->setMaxVoltage(4000);
-  driveToPoint({0_in, 48_in});
-  // pros::delay(400);
-  // tower cube
-  //	model->setMaxVoltage(12000);
-  //	driveToPoint({0_in, 38_in});
-  //	driveToPoint({-13_in, 44_in});
-  //	model->setMaxVoltage(7000);
-  //	driveToPoint({-13_in, 55_in});
-  //	pros::delay(400);
-  //	driveToPoint({-13_in, 45_in});
-  // tower cube 2
-  //			model->setMaxVoltage(12000);
-  //			driveToPoint({-5_in, 50_in}, 0_deg, 1, 4_in, 3_deg);
-  //			model->setMaxVoltage(4000);
-  //			driveToPoint({-5_in, 59_in});
-  //			pros::delay(400);
-  //			model->setMaxVoltage(12000);
-  //			driveToPoint({-5_in, 40_in});
+  driveToPoint({0_in, 48_in}, 0_deg);
+
   stackerMotor1->moveRelative(800, 12000);
   stackerMotor2->moveRelative(800, 12000);
   // line up
   model->setMaxVoltage(12000);
   driveToPoint({15_in, 12_in}, 135_deg, 2);
   setTilterMiddle();
-  driveToPoint({16_in, 9_in}, 135_deg, 1, 2_in);
+  driveToPoint({16_in, 9_in}, 135_deg, 1, Settler().distanceErr(2_in).angleErr(5_deg));
   setTilterUp();
   pros::delay(2000);
   rollerOuttake(0.5);
-  driveToPoint({0_in, 21_in}, 135_deg, 2, 1_in, 2_deg);
+  driveToPoint({0_in, 21_in}, 135_deg, 2, Settler().distanceErr(1_in).angleErr(2_deg));
 }
 
 void eightCubeRed() {
 
   setArmLowMiddle();
   // full speed to line
-  driveToPoint({0_in, 13_in}, 0_deg, 1, 7_in);
+  driveToPoint({0_in, 13_in}, 0_deg, 1, Settler().distanceErr(7_in).angleErr(5_deg));
   rollerIntake();
   // first cube
   model->setMaxVoltage(5000);
-  driveToPoint({0_in, 48_in}, 0_deg, 1, 7_in);
+  driveToPoint({0_in, 48_in}, 0_deg, 1, Settler().distanceErr(7_in).angleErr(5_deg));
   // second cube
   model->setMaxVoltage(12000);
-  driveToPoint({20_in, 9_in}, -30_deg, 1.5, 7_in);
-  driveToPoint({20_in, 9_in}, 0_deg, 1.5, 7_in);
+  driveToPoint({20_in, 9_in}, -30_deg, 1.5, Settler().distanceErr(7_in).angleErr(5_deg));
+  driveToPoint({20_in, 9_in}, 0_deg, 1.5, Settler().distanceErr(7_in).angleErr(5_deg));
   // third cube
   model->setMaxVoltage(6000);
-  driveToPoint({20_in, 30_in}, 0_deg, 1, 7_in);
+  driveToPoint({20_in, 30_in}, 0_deg, 1, Settler().distanceErr(7_in).angleErr(5_deg));
   model->setMaxVoltage(4000);
-  driveToPoint({20_in, 48_in}, 0_deg, 1, 7_in);
+  driveToPoint({20_in, 48_in}, 0_deg, 1, Settler().distanceErr(7_in).angleErr(5_deg));
   pros::delay(350);
-  // tower cube
-  //	model->setMaxVoltage(12000);
-  //	driveToPoint({0_in, 44_in});
-  //	driveToPoint({5_in, 44_in});
-  //	model->setMaxVoltage(7000);
-  //	driveToPoint({5_in, 55_in});
-  //	pros::delay(400);
-  //	driveToPoint({5_in, 45_in});
-  // tower cube 2
-  //			model->setMaxVoltage(12000);
-  //			driveToPoint({-5_in, 50_in}, 0_deg, 1, 4_in, 3_deg);
-  //			model->setMaxVoltage(4000);
-  //			driveToPoint({-5_in, 59_in});
-  //			pros::delay(400);
-  //			model->setMaxVoltage(12000);
-  //			driveToPoint({-5_in, 40_in});
   stackerMotor1->moveRelative(300, 12000);
   stackerMotor2->moveRelative(300, 12000);
   // line up
   model->setMaxVoltage(12000);
   driveToPoint({21_in, 17_in}, 135_deg, 1);
   driveToPoint({27_in, 15_in}, 135_deg, 1);
-  driveToPoint({31_in, 7_in}, 135_deg, 1, 6_in, 90_deg);
+  driveToPoint({31_in, 7_in}, 135_deg, 1, Settler().distanceErr(6_in).angleErr(90_deg));
   setArmDown();
   setTilterUp();
   pros::delay(2200);
   rollerOuttake(0.5);
-  driveToPoint({31_in - 10_in, 7_in + 10_in}, 135_deg, 1, 2_in);
-  // programming skills
-  rollerIntake();
-  setTilterTowers();
-  driveToPoint({-15_in, 7_in}, -90_deg, 1, 2_in);
-  stackerMotor1->moveRelative(300, 12000);
-  stackerMotor2->moveRelative(300, 12000);
-  driveToPoint({-12_in, 7_in}, -90_deg, 1, 2_in);
-  setArmHighMiddle();
-  pros::delay(2000);
-  rollerOuttake();
-  pros::delay(1500);
-  setArmLowMiddle();
-  setTilterDown();
-  rollerIntake();
-  driveToPoint({15_in, 48_in}, 0_deg, 1, 7_in);
-  stackerMotor1->moveRelative(300, 12000);
-  stackerMotor2->moveRelative(300, 12000);
-  driveToPoint({15_in, 45_in}, 0_deg, 1, 7_in);
-  setArmHighMiddle();
-  setTilterTowers();
-  pros::delay(2000);
-  rollerOuttake();
+  driveToPoint({31_in - 10_in, 7_in + 10_in}, 135_deg, 1, Settler().distanceErr(2_in).angleErr(5_deg));
 }
+
 void eightCubeBlue() {
 
   setArmLowMiddle();
   // full speed to line
-  driveToPoint({0_in, 13_in}, 0_deg, 1, 7_in);
+  driveToPoint({0_in, 13_in}, 0_deg, 1, Settler().distanceErr(7_in).angleErr(5_deg));
   rollerIntake();
   // first cube
   model->setMaxVoltage(5000);
-  driveToPoint({0_in, 48_in}, 0_deg, 1, 7_in);
+  driveToPoint({0_in, 48_in}, 0_deg, 1, Settler().distanceErr(7_in).angleErr(5_deg));
   // second cube
   model->setMaxVoltage(12000);
-  driveToPoint({-20_in, 9_in}, 30_deg, 1.5, 7_in);
-  driveToPoint({-20_in, 9_in}, 0_deg, 1.5, 7_in);
+  driveToPoint({-20_in, 9_in}, 30_deg, 1.5, Settler().distanceErr(7_in).angleErr(5_deg));
+  driveToPoint({-20_in, 9_in}, 0_deg, 1.5, Settler().distanceErr(7_in).angleErr(5_deg));
   // third cube
   model->setMaxVoltage(6000);
-  driveToPoint({-20_in, 30_in}, 0_deg, 1, 7_in);
+  driveToPoint({-20_in, 30_in}, 0_deg, 1, Settler().distanceErr(7_in).angleErr(5_deg));
   model->setMaxVoltage(4000);
-  driveToPoint({-20_in, 48_in}, 0_deg, 1, 7_in);
+  driveToPoint({-20_in, 48_in}, 0_deg, 1, Settler().distanceErr(7_in).angleErr(5_deg));
   pros::delay(350);
-  // tower cube
-  //	model->setMaxVoltage(12000);
-  //	driveToPoint({0_in, 44_in});
-  //	driveToPoint({5_in, 44_in});
-  //	model->setMaxVoltage(7000);
-  //	driveToPoint({5_in, 55_in});
-  //	pros::delay(400);
-  //	driveToPoint({5_in, 45_in});
-  // tower cube 2
-  //			model->setMaxVoltage(12000);
-  //			driveToPoint({-5_in, 50_in}, 0_deg, 1, 4_in, 3_deg);
-  //			model->setMaxVoltage(4000);
-  //			driveToPoint({-5_in, 59_in});
-  //			pros::delay(400);
-  //			model->setMaxVoltage(12000);
-  //			driveToPoint({-5_in, 40_in});
   stackerMotor1->moveRelative(300, 12000);
   stackerMotor2->moveRelative(300, 12000);
   // line up
   model->setMaxVoltage(12000);
   driveToPoint({-21_in, 17_in}, -135_deg, 1);
   driveToPoint({-27_in, 15_in}, -135_deg, 1);
-  driveToPoint({-31_in, 7_in}, -135_deg, 1, 6_in, 90_deg);
+  driveToPoint({-31_in, 7_in}, -135_deg, 1, Settler().distanceErr(6_in).angleErr(90_deg));
   setArmDown();
   setTilterUp();
   pros::delay(2200);
   rollerOuttake(0.5);
-  driveToPoint({-(31_in - 10_in), 7_in + 10_in}, -135_deg, 1, 2_in);
+  driveToPoint({-(31_in - 10_in), 7_in + 10_in}, -135_deg, 1, Settler().distanceErr(2_in).angleErr(5_deg));
 }
+
 void oneCube() {
   topLeft->moveRelative(900 / (4.0 * 3.1415) * 8, 8000);
   topRight->moveRelative(900 / (4.0 * 3.1415) * 8, 8000);
@@ -369,51 +279,35 @@ void oneCube() {
   bottomLeft->moveRelative(900 / (4.0 * 3.1415) * -8, 8000);
   bottomRight->moveRelative(900 / (4.0 * 3.1415) * -8, 8000);
 }
+
 void sixCubeBlue() {
 
   // full speed to line
-  driveToPoint({0_in, 12_in}, 0_deg, 1, 7_in);
+  driveToPoint({0_in, 12_in}, 0_deg, 1, Settler().distanceErr(7_in).angleErr(5_deg));
   rollerIntake();
   // first cube
   model->setMaxVoltage(7000);
-  driveToPoint({0_in, 15_in}, 0_deg, 1, 7_in);
+  driveToPoint({0_in, 15_in}, 0_deg, 1, Settler().distanceErr(7_in).angleErr(5_deg));
   // second cube
   model->setMaxVoltage(6000);
-  driveToPoint({0_in, 20_in}, 0_deg, 1, 7_in);
+  driveToPoint({0_in, 20_in}, 0_deg, 1, Settler().distanceErr(7_in).angleErr(5_deg));
   // third cube
   model->setMaxVoltage(5300);
-  driveToPoint({0_in, 40_in}, 0_deg, 1, 7_in);
+  driveToPoint({0_in, 40_in}, 0_deg, 1, Settler().distanceErr(7_in).angleErr(5_deg));
   // rest of line
   model->setMaxVoltage(6000);
-  driveToPoint({0_in, 44_in}, 0_deg, 1, 5_in, 30_deg);
-  // pros::delay(400);
-  // tower cube
-  //	model->setMaxVoltage(12000);
-  //	driveToPoint({0_in, 44_in});
-  //	driveToPoint({5_in, 44_in});
-  //	model->setMaxVoltage(7000);
-  //	driveToPoint({5_in, 55_in});
-  //	pros::delay(400);
-  //	driveToPoint({5_in, 45_in});
-  // tower cube 2
-  //			model->setMaxVoltage(12000);
-  //			driveToPoint({-5_in, 50_in}, 0_deg, 1, 4_in, 3_deg);
-  //			model->setMaxVoltage(4000);
-  //			driveToPoint({-5_in, 59_in});
-  //			pros::delay(400);
-  //			model->setMaxVoltage(12000);
-  //			driveToPoint({-5_in, 40_in});
+  driveToPoint({0_in, 44_in}, 0_deg, 1, Settler().distanceErr(5_in).angleErr(30_deg));
   // line up
   model->setMaxVoltage(12000);
   driveToPoint({-12_in, 7_in}, -135_deg, 2);
   setTilterMiddle();
   stackerMotor1->moveRelative(600, 12000);
   stackerMotor2->moveRelative(600, 12000);
-  driveToPoint({-14_in, 5_in}, -135_deg, 1, 2_in);
+  driveToPoint({-14_in, 5_in}, -135_deg, 1, Settler().distanceErr(2_in).angleErr(5_deg));
   setTilterUp();
   pros::delay(2000);
   rollerOuttake(0.5);
-  driveToPoint({0_in, 21_in}, -135_deg, 2, 1_in, 2_deg);
+  driveToPoint({0_in, 21_in}, -135_deg, 2, Settler().distanceErr(1_in).angleErr(2_deg));
 }
 void nineCubeRed() {
   model->setMaxVoltage(12000);
@@ -472,108 +366,13 @@ void autonomous() {
     break;
   }
   case AutonSelector::Auton::SMALL_ZONE_ONE_CUBE: {
-    switch (alliance) {
-    case AutonSelector::Color::RED: {
-      // push cube into zone
-      driveToPoint({cubeWidth + barrierWidth + 7_in, 0_in});
-      // drive away from zone
-      driveToPoint({0_in, 0_in});
-      break;
-    }
-    case AutonSelector::Color::BLUE: {
-      // push cube into zone
-      driveToPoint({-(cubeWidth + barrierWidth + 7_in), 0_in});
-      // drive away from zone
-      driveToPoint({0_in, 0_in});
-      break;
-    }
-    }
-    // deploy the tray for teleop
-    deployTray();
     break;
   }
   case AutonSelector::Auton::BIG_ZONE_ONE_CUBE: {
-    switch (alliance) {
-    case AutonSelector::Color::BLUE: {
-      // push cube into zone
-      driveToPoint({cubeWidth + barrierWidth + 7_in, 0_in});
-      // drive away from zone
-      driveToPoint({0_in, 0_in});
-      break;
-    }
-    case AutonSelector::Color::RED: {
-      // push cube into zone
-      driveToPoint({-(cubeWidth + barrierWidth + 7_in), 0_in});
-      // drive away from zone
-      driveToPoint({0_in, 0_in});
-      break;
-    }
-    }
-    // deploy the tray for teleop
-    deployTray();
     break;
   }
   case AutonSelector::Auton::SMALL_ZONE_5STACK: {
 
-    // push preload
-    driveToPoint({0_in, 10_in}, 0_deg, 1, 2_in);
-
-    // deploy after driving backwards
-    rollerOuttake();
-    driveToPoint({0_in, 0_in}, 0_deg, 1, 2_in);
-    pros::delay(1500);
-    rollerIntake();
-
-    // slowly pick up the line of cubes
-    model->setMaxVoltage(4000);
-    driveToPoint({0_in, 1.5_tile});
-    model->setMaxVoltage(12000);
-
-    setTilterMiddle();
-    // drive to zone
-    switch (alliance) {
-    case AutonSelector::Color::BLUE: {
-      driveToPoint({0_in, 1_tile - 6_in}, -135_deg, 3, 3_in, 10_deg);
-
-      // stop the rollers at the end of the line rollerStop();
-
-      driveToPoint({-4.5_in, 1_tile / 2 + 1_in}, -135_deg, 1, 3_in);
-      break;
-    }
-    case AutonSelector::Color::RED: {
-      driveToPoint({0_in, 1_tile - 6_in}, 135_deg, 3, 3_in, 10_deg);
-
-      // stop the rollers at the end of the line
-      rollerStop();
-
-      driveToPoint({6_in, 1_tile / 2 + 1_in}, 135_deg, 1, 3_in);
-      break;
-    }
-    }
-
-    placeStack();
-
-    // slow so as to not knock over the stack
-    model->setMaxVoltage(4000);
-    // back up
-    switch (alliance) {
-    case AutonSelector::Color::BLUE: {
-      driveToPoint({6_in, 1_tile + 5_in}, -135_deg, 1, 3_in, 10_deg);
-      model->setMaxVoltage(12000);
-      setTilterDown();
-      // drive to next location
-      driveToPoint({1_tile, 0.5_tile});
-      break;
-    }
-    case AutonSelector::Color::RED: {
-      driveToPoint({-6_in, 1_tile + 5_in}, 135_deg, 1, 3_in, 10_deg);
-      model->setMaxVoltage(12000);
-      setTilterDown();
-      // drive to next location
-      driveToPoint({-1_tile, 0.5_tile});
-      break;
-    }
-    }
     break;
   }
   case AutonSelector::Auton::SMALL_ZONE_6STACK: {
@@ -588,182 +387,9 @@ void autonomous() {
     break;
   }
   case AutonSelector::Auton::SMALL_ZONE_7STACK: {
-    driveToPoint({0_in, 14_in});
-    // deploy tray
-    driveToPoint({0_in, 1_in});
-    rollerOuttake();
-    pros::delay(2000);
-
-    // slow intake
-    rollerIntake();
-
-    // slowly pick up the line
-    model->setMaxVoltage(5500);
-
-    driveToPoint({0_in, 1.5_tile});
-
-    model->setMaxVoltage(5500);
-
-    switch (alliance) {
-    case AutonSelector::Color::BLUE: {
-      // grab 6th cube
-      driveToPoint({8_in, 1.5_tile}, 0_deg, 1, 3_in);
-      driveToPoint({8_in, 2.05_tile}, 0_deg, 1, 3_in);
-
-      driveToPoint({13_in, 1.8_tile}, -45_deg, 1, 3_in);
-      driveToPoint({13_in, 2.1_tile}, -45_deg, 1, 3_in);
-
-      pros::delay(300);
-      model->setMaxVoltage(12000);
-      setTilterMiddle();
-
-      // slowly intake so as to keep the cubes from dropping
-      rollerOuttake(-0.7);
-
-      driveToPoint({-10_in + 5_in, -1_in + 5_in}, -135_deg, 1.5, 3_in, 10_deg);
-
-      rollerStop();
-
-      // line up to place
-      driveToPoint({-10_in, -1_in}, -135_deg, 1, 6_in, 10_deg);
-      break;
-    }
-    case AutonSelector::Color::RED: {
-      // grab 6th cube
-      driveToPoint({-8_in, 1.5_tile}, 0_deg, 1, 3_in);
-      driveToPoint({-8_in, 2.05_tile}, 0_deg, 1, 3_in);
-
-      driveToPoint({-13_in, 1.8_tile}, 45_deg, 1, 3_in);
-      driveToPoint({-13_in, 2.1_tile}, 45_deg, 1, 3_in);
-
-      pros::delay(300);
-      model->setMaxVoltage(12000);
-      setTilterMiddle();
-
-      // slowly intake so as to keep the cubes from dropping
-      rollerOuttake(-0.7);
-
-      driveToPoint({10_in - 5_in, -1_in + 5_in}, 135_deg, 1.5, 3_in, 10_deg);
-
-      rollerStop();
-
-      // line up to place
-      driveToPoint({10_in, -1_in}, 135_deg, 1, 6_in, 10_deg);
-      break;
-    }
-    }
-
-    placeStack();
-
-    // back up
-    model->setMaxVoltage(4000);
-    switch (alliance) {
-    case AutonSelector::Color::BLUE: {
-      model->setMaxVoltage(6000);
-      driveToPoint({-10_in + 15_in, -1_in + 15_in}, -135_deg, 1.5, 3_in,
-                   10_deg);
-      model->setMaxVoltage(12000);
-
-      setTilterDown();
-
-      driveToPoint({1_tile, 0.5_tile});
-      break;
-    }
-    case AutonSelector::Color::RED: {
-      model->setMaxVoltage(6000);
-      driveToPoint({10_in - 15_in, -1_in + 15_in}, 135_deg, 1.5, 3_in, 10_deg);
-      model->setMaxVoltage(12000);
-
-      setTilterDown();
-
-      driveToPoint({-1_tile, 0.5_tile});
-      break;
-    }
-    }
     break;
   }
   case AutonSelector::Auton::SMALL_ZONE_8STACK: {
-    driveToPoint({0_in, 14_in});
-    // deploy tray
-    driveToPoint({0_in, 1_in});
-    rollerOuttake();
-    pros::delay(2000);
-
-    // slow intake
-    rollerIntake();
-
-    // slowly pick up the line
-    model->setMaxVoltage(5500);
-
-    driveToPoint({0_in, 1.5_tile});
-
-    model->setMaxVoltage(12000);
-
-    switch (alliance) {
-    case AutonSelector::Color::BLUE: {
-      driveToPoint({-1_tile, 0_in});
-      model->setMaxVoltage(5500);
-      driveToPoint({-1_tile, 1.5_tile});
-
-      setTilterMiddle();
-      // slowly intake so as to keep the cubes from dropping
-      rollerOuttake(-0.7);
-
-      driveToPoint({-10_in + 5_in - 1_tile, -1_in + 5_in}, -135_deg, 1.5, 3_in,
-                   10_deg);
-
-      rollerStop();
-
-      // line up to place
-      driveToPoint({-10_in - 1_tile, -1_in}, -135_deg, 1, 6_in, 10_deg);
-      break;
-    }
-    case AutonSelector::Color::RED: {
-      driveToPoint({1_tile, 0_in});
-      model->setMaxVoltage(5500);
-      driveToPoint({1_tile, 1.5_tile});
-
-      setTilterMiddle();
-      // slowly intake so as to keep the cubes from dropping
-      rollerOuttake(-0.7);
-
-      driveToPoint({10_in - 5_in + 1_tile, -1_in + 5_in}, 135_deg, 1.5, 3_in,
-                   10_deg);
-
-      rollerStop();
-
-      // line up to place
-      driveToPoint({10_in + 1_tile, -1_in}, 135_deg, 1, 6_in, 10_deg);
-      break;
-    }
-    }
-
-    placeStack();
-
-    // back up
-    model->setMaxVoltage(4000);
-    switch (alliance) {
-    case AutonSelector::Color::BLUE: {
-      model->setMaxVoltage(6000);
-      driveToPoint({-10_in + 15_in - 1_tile, -1_in + 15_in}, -135_deg, 1.5,
-                   3_in, 10_deg);
-      model->setMaxVoltage(12000);
-
-      setTilterDown();
-
-      break;
-    }
-    case AutonSelector::Color::RED: {
-      model->setMaxVoltage(6000);
-      driveToPoint({10_in - 15_in + 1_tile, -1_in + 15_in}, 135_deg, 1.5, 3_in,
-                   10_deg);
-      model->setMaxVoltage(12000);
-
-      setTilterDown();
-
-      break;
-    }
-    }
     break;
   }
   case AutonSelector::Auton::BIG_ZONE_3STACK: {
@@ -832,15 +458,15 @@ void autonomous() {
     model->setMaxVoltage(6000);
     switch (alliance) {
     case AutonSelector::Color::RED: {
-      driveToPoint({-14_in, 1.5_tile}, 0_deg, 1, 4_in);
+      driveToPoint({-14_in, 1.5_tile}, 0_deg, 1);
       rollerOuttake(-0.75);
-      driveToPoint({-14_in, 2_tile}, 0_deg, 1, 4_in);
+      driveToPoint({-14_in, 2_tile}, 0_deg, 1);
       break;
     }
     case AutonSelector::Color::BLUE: {
-      driveToPoint({12_in, 1.5_tile}, 0_deg, 1, 4_in);
+      driveToPoint({12_in, 1.5_tile}, 0_deg, 1);
       rollerOuttake(-0.75);
-      driveToPoint({12_in, 2_tile}, 0_deg, 1, 4_in);
+      driveToPoint({12_in, 2_tile}, 0_deg, 1);
       break;
     }
     }
@@ -876,7 +502,8 @@ void autonomous() {
     }
     rollerStop();
     // place
-    placeStack();
+    setTilterUp();
+    pros::delay(2000);
     model->setMaxVoltage(4000);
     // back up
     switch (alliance) {
@@ -996,24 +623,24 @@ void opcontrol() {
 
     reset = resetArms.update(pros::millis(), !tilterUp);
 
-    if (controller.getDigital(ControllerDigital::left)) {
+    if (partner.getDigital(ControllerDigital::left)) {
       armPID->flipDisable(true);
       setTilterDisabled();
       setArmManualSpeed(1);
-    } else if (controller.getDigital(ControllerDigital::up)) {
+    } else if (partner.getDigital(ControllerDigital::up)) {
       armPID->flipDisable(true);
       setTilterDisabled();
       setArmManualSpeed(-1);
-    } else if (controller.getDigital(ControllerDigital::down)) {
+    } else if (partner.getDigital(ControllerDigital::down)) {
       armPID->flipDisable(false);
       setTilterDisabled();
       setArmDown();
-    } else if (controller.getDigital(ControllerDigital::L2)) {
+    } else if (partner.getDigital(ControllerDigital::L2)) {
       armPID->flipDisable(false);
       setTilterTowers();
       setArmAlliance();
       tilterUp = true;
-    } else if (controller.getDigital(ControllerDigital::right)) {
+    } else if (partner.getDigital(ControllerDigital::right)) {
       armPID->flipDisable(false);
       setTilterTowers();
       setArmHighMiddle();
