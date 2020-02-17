@@ -1,3 +1,5 @@
+.ccls-cache
+
 # Compiled Object files
 *.o
 *.obj
