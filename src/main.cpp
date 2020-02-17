@@ -83,6 +83,7 @@ void autonomous() {
     break;
   }
   case AutonSelector::Auton::one: {
+    oneCube();
     break;
   }
   case AutonSelector::Auton::five: {
@@ -108,9 +109,25 @@ void autonomous() {
     break;
   }
   case AutonSelector::Auton::seven: {
+    switch (alliance) {
+    case AutonSelector::Color::RED: {
+      sevenCubeRed();
+    }
+    case AutonSelector::Color::BLUE: {
+      sevenCubeBlue();
+    }
+    }
     break;
   }
   case AutonSelector::Auton::nine: {
+    switch (alliance) {
+    case AutonSelector::Color::RED: {
+      nineCubeRed();
+    }
+    case AutonSelector::Color::BLUE: {
+      nineCubeBlue();
+    }
+    }
     break;
   }
   case AutonSelector::Auton::THREE: {

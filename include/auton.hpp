@@ -35,6 +35,7 @@ void driveToPoint(
 void driveToPoint(Vector target, Vector pointToFace, double turnPriority = 1,
                   QLength settleDistance = 4_in, QAngle settleAngle = 5_deg);
 
+void oneCube();
 void fiveCubeRed();
 void fiveCubeBlue();
 void sixCubeRed();
@@ -45,3 +46,5 @@ void nineCubeRed();
 void nineCubeBlue();
 void threeCubeBigRed();
 void threeCubeBigBlue();
+void fourCubeBigRed();
+void fourCubeBigBlue();

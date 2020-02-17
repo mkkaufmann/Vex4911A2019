@@ -129,8 +129,19 @@ void rollerStop() {
   stackerMotor2->moveVoltage(0);
 }
 
-// incorrect stack position
-void sixCubeRed() {
+void oneCube() {
+  topLeft->moveRelative(900 / (4.0 * 3.1415) * 8, 8000);
+  topRight->moveRelative(900 / (4.0 * 3.1415) * 8, 8000);
+  bottomLeft->moveRelative(900 / (4.0 * 3.1415) * 8, 8000);
+  bottomRight->moveRelative(900 / (4.0 * 3.1415) * 8, 8000);
+  pros::delay(3000);
+  topLeft->moveRelative(900 / (4.0 * 3.1415) * -8, 8000);
+  topRight->moveRelative(900 / (4.0 * 3.1415) * -8, 8000);
+  bottomLeft->moveRelative(900 / (4.0 * 3.1415) * -8, 8000);
+  bottomRight->moveRelative(900 / (4.0 * 3.1415) * -8, 8000);
+}
+
+void fiveCubeRed() {
 
   // full speed to line
   driveToPoint({0_in, 12_in}, 0_deg, 1,
@@ -167,7 +178,47 @@ void sixCubeRed() {
                Settler().distanceErr(1_in).angleErr(2_deg));
 }
 
-void eightCubeRed() {
+void fiveCubeBlue() {
+
+  // full speed to line
+  driveToPoint({0_in, 12_in}, 0_deg, 1,
+               Settler().distanceErr(7_in).angleErr(5_deg));
+  rollerIntake();
+  // first cube
+  model->setMaxVoltage(7000);
+  driveToPoint({0_in, 15_in}, 0_deg, 1,
+               Settler().distanceErr(7_in).angleErr(5_deg));
+  // second cube
+  model->setMaxVoltage(6000);
+  driveToPoint({0_in, 20_in}, 0_deg, 1,
+               Settler().distanceErr(7_in).angleErr(5_deg));
+  // third cube
+  model->setMaxVoltage(5300);
+  driveToPoint({0_in, 40_in}, 0_deg, 1,
+               Settler().distanceErr(7_in).angleErr(5_deg));
+  // rest of line
+  model->setMaxVoltage(6000);
+  driveToPoint({0_in, 44_in}, 0_deg, 1,
+               Settler().distanceErr(5_in).angleErr(30_deg));
+  // line up
+  model->setMaxVoltage(12000);
+  driveToPoint({-12_in, 7_in}, -135_deg, 2);
+  setTilterMiddle();
+  stackerMotor1->moveRelative(600, 12000);
+  stackerMotor2->moveRelative(600, 12000);
+  driveToPoint({-14_in, 5_in}, -135_deg, 1,
+               Settler().distanceErr(2_in).angleErr(5_deg));
+  setTilterUp();
+  pros::delay(2000);
+  rollerOuttake(0.5);
+  driveToPoint({0_in, 21_in}, -135_deg, 2,
+               Settler().distanceErr(1_in).angleErr(2_deg));
+}
+
+void sixCubeRed() {}
+void sixCubeBlue() {}
+
+void sevenCubeRed() {
 
   setArmLowMiddle();
   // full speed to line
@@ -208,7 +259,7 @@ void eightCubeRed() {
                Settler().distanceErr(2_in).angleErr(5_deg));
 }
 
-void eightCubeBlue() {
+void sevenCubeBlue() {
 
   setArmLowMiddle();
   // full speed to line
@@ -249,71 +300,10 @@ void eightCubeBlue() {
                Settler().distanceErr(2_in).angleErr(5_deg));
 }
 
-void oneCube() {
-  topLeft->moveRelative(900 / (4.0 * 3.1415) * 8, 8000);
-  topRight->moveRelative(900 / (4.0 * 3.1415) * 8, 8000);
-  bottomLeft->moveRelative(900 / (4.0 * 3.1415) * 8, 8000);
-  bottomRight->moveRelative(900 / (4.0 * 3.1415) * 8, 8000);
-  pros::delay(3000);
-  topLeft->moveRelative(900 / (4.0 * 3.1415) * -8, 8000);
-  topRight->moveRelative(900 / (4.0 * 3.1415) * -8, 8000);
-  bottomLeft->moveRelative(900 / (4.0 * 3.1415) * -8, 8000);
-  bottomRight->moveRelative(900 / (4.0 * 3.1415) * -8, 8000);
-}
 
-void sixCubeBlue() {
-
-  // full speed to line
-  driveToPoint({0_in, 12_in}, 0_deg, 1,
-               Settler().distanceErr(7_in).angleErr(5_deg));
-  rollerIntake();
-  // first cube
-  model->setMaxVoltage(7000);
-  driveToPoint({0_in, 15_in}, 0_deg, 1,
-               Settler().distanceErr(7_in).angleErr(5_deg));
-  // second cube
-  model->setMaxVoltage(6000);
-  driveToPoint({0_in, 20_in}, 0_deg, 1,
-               Settler().distanceErr(7_in).angleErr(5_deg));
-  // third cube
-  model->setMaxVoltage(5300);
-  driveToPoint({0_in, 40_in}, 0_deg, 1,
-               Settler().distanceErr(7_in).angleErr(5_deg));
-  // rest of line
-  model->setMaxVoltage(6000);
-  driveToPoint({0_in, 44_in}, 0_deg, 1,
-               Settler().distanceErr(5_in).angleErr(30_deg));
-  // line up
-  model->setMaxVoltage(12000);
-  driveToPoint({-12_in, 7_in}, -135_deg, 2);
-  setTilterMiddle();
-  stackerMotor1->moveRelative(600, 12000);
-  stackerMotor2->moveRelative(600, 12000);
-  driveToPoint({-14_in, 5_in}, -135_deg, 1,
-               Settler().distanceErr(2_in).angleErr(5_deg));
-  setTilterUp();
-  pros::delay(2000);
-  rollerOuttake(0.5);
-  driveToPoint({0_in, 21_in}, -135_deg, 2,
-               Settler().distanceErr(1_in).angleErr(2_deg));
-}
-void nineCubeRed() {
-  model->setMaxVoltage(12000);
-  driveToPoint({0_in, 19_in});
-  rollerIntake();
-  model->setMaxVoltage(6000);
-  driveToPoint({0_in, 45_in});
-  model->setMaxVoltage(12000);
-  driveToPoint({13_in, 40_in});
-  model->setMaxVoltage(8000);
-  driveToPoint({13_in, 55_in});
-  model->setMaxVoltage(8000);
-  driveToPoint({25_in, 55_in}, 90_deg);
-  model->setMaxVoltage(8000);
-  driveToPoint({25_in, 40_in}, 90_deg, 2);
-  model->setMaxVoltage(12000);
-  driveToPoint({27_in, 50_in}, 180_deg, 0.5);
-  model->setMaxVoltage(4000);
-  driveToPoint({27_in, 10_in}, 180_deg);
-  //			driveToPoint({23.5_in, 12_in}, 180_deg);
-}
+void nineCubeRed() {}
+void nineCubeBlue() {}
+void threeCubeBigRed() {}
+void threeCubeBigBlue() {}
+void fourCubeBigRed() {}
+void fourCubeBigBlue() {}
