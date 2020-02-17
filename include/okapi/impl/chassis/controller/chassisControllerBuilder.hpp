@@ -23,14 +23,15 @@
 
 namespace okapi {
 class ChassisControllerBuilder {
-  public:
+public:
   /**
-   * A builder that creates ChassisControllers. Use this to create your ChassisController.
+   * A builder that creates ChassisControllers. Use this to create your
+   * ChassisController.
    *
    * @param ilogger The logger this instance will log to.
    */
   explicit ChassisControllerBuilder(
-    const std::shared_ptr<Logger> &ilogger = Logger::getDefaultLogger());
+      const std::shared_ptr<Logger> &ilogger = Logger::getDefaultLogger());
 
   /**
    * Sets the motors using a skid-steer layout.
@@ -48,7 +49,8 @@ class ChassisControllerBuilder {
    * @param iright The right motor.
    * @return An ongoing builder.
    */
-  ChassisControllerBuilder &withMotors(const MotorGroup &ileft, const MotorGroup &iright);
+  ChassisControllerBuilder &withMotors(const MotorGroup &ileft,
+                                       const MotorGroup &iright);
 
   /**
    * Sets the motors using a skid-steer layout.
@@ -57,8 +59,9 @@ class ChassisControllerBuilder {
    * @param iright The right motor.
    * @return An ongoing builder.
    */
-  ChassisControllerBuilder &withMotors(const std::shared_ptr<AbstractMotor> &ileft,
-                                       const std::shared_ptr<AbstractMotor> &iright);
+  ChassisControllerBuilder &
+  withMotors(const std::shared_ptr<AbstractMotor> &ileft,
+             const std::shared_ptr<AbstractMotor> &iright);
 
   /**
    * Sets the motors using an x-drive layout.
@@ -97,10 +100,46 @@ class ChassisControllerBuilder {
    * @param ibottomLeft The bottom left motor.
    * @return An ongoing builder.
    */
-  ChassisControllerBuilder &withMotors(const std::shared_ptr<AbstractMotor> &itopLeft,
-                                       const std::shared_ptr<AbstractMotor> &itopRight,
-                                       const std::shared_ptr<AbstractMotor> &ibottomRight,
-                                       const std::shared_ptr<AbstractMotor> &ibottomLeft);
+  ChassisControllerBuilder &
+  withMotors(const std::shared_ptr<AbstractMotor> &itopLeft,
+             const std::shared_ptr<AbstractMotor> &itopRight,
+             const std::shared_ptr<AbstractMotor> &ibottomRight,
+             const std::shared_ptr<AbstractMotor> &ibottomLeft);
+
+  /**
+   * Sets the motors using an h-drive layout.
+   *
+   * @param ileft The left motor.
+   * @param iright The right motor.
+   * @param imiddle The middle motor.
+   * @return An ongoing builder.
+   */
+  ChassisControllerBuilder &withMotors(const Motor &ileft, const Motor &iright,
+                                       const Motor &imiddle);
+
+  /**
+   * Sets the motors using an h-drive layout.
+   *
+   * @param ileft The left motor.
+   * @param iright The right motor.
+   * @param imiddle The middle motor.
+   * @return An ongoing builder.
+   */
+  ChassisControllerBuilder &withMotors(const MotorGroup &ileft,
+                                       const MotorGroup &iright,
+                                       const MotorGroup &imiddle);
+
+  /**
+   * Sets the motors using an h-drive layout.
+   *
+   * @param ileft The left motor.
+   * @param iright The right motor.
+   * @param imiddle The middle motor.
+   * @return An ongoing builder.
+   */
+  ChassisControllerBuilder &withMotors(const MotorGroup &ileft,
+                                       const MotorGroup &iright,
+                                       const Motor &imiddle);
 
   /**
    * Sets the motors using an h-drive layout.
@@ -111,41 +150,9 @@ class ChassisControllerBuilder {
    * @return An ongoing builder.
    */
   ChassisControllerBuilder &
-  withMotors(const Motor &ileft, const Motor &iright, const Motor &imiddle);
-
-  /**
-   * Sets the motors using an h-drive layout.
-   *
-   * @param ileft The left motor.
-   * @param iright The right motor.
-   * @param imiddle The middle motor.
-   * @return An ongoing builder.
-   */
-  ChassisControllerBuilder &
-  withMotors(const MotorGroup &ileft, const MotorGroup &iright, const MotorGroup &imiddle);
-
-  /**
-   * Sets the motors using an h-drive layout.
-   *
-   * @param ileft The left motor.
-   * @param iright The right motor.
-   * @param imiddle The middle motor.
-   * @return An ongoing builder.
-   */
-  ChassisControllerBuilder &
-  withMotors(const MotorGroup &ileft, const MotorGroup &iright, const Motor &imiddle);
-
-  /**
-   * Sets the motors using an h-drive layout.
-   *
-   * @param ileft The left motor.
-   * @param iright The right motor.
-   * @param imiddle The middle motor.
-   * @return An ongoing builder.
-   */
-  ChassisControllerBuilder &withMotors(const std::shared_ptr<AbstractMotor> &ileft,
-                                       const std::shared_ptr<AbstractMotor> &iright,
-                                       const std::shared_ptr<AbstractMotor> &imiddle);
+  withMotors(const std::shared_ptr<AbstractMotor> &ileft,
+             const std::shared_ptr<AbstractMotor> &iright,
+             const std::shared_ptr<AbstractMotor> &imiddle);
 
   /**
    * Sets the sensors. The default sensors are the motor's integrated encoders.
@@ -154,7 +161,8 @@ class ChassisControllerBuilder {
    * @param iright The right side sensor.
    * @return An ongoing builder.
    */
-  ChassisControllerBuilder &withSensors(const ADIEncoder &ileft, const ADIEncoder &iright);
+  ChassisControllerBuilder &withSensors(const ADIEncoder &ileft,
+                                        const ADIEncoder &iright);
 
   /**
    * Sets the sensors. The default sensors are the motor's integrated encoders.
@@ -164,8 +172,9 @@ class ChassisControllerBuilder {
    * @param imiddle The middle sensor.
    * @return An ongoing builder.
    */
-  ChassisControllerBuilder &
-  withSensors(const ADIEncoder &ileft, const ADIEncoder &iright, const ADIEncoder &imiddle);
+  ChassisControllerBuilder &withSensors(const ADIEncoder &ileft,
+                                        const ADIEncoder &iright,
+                                        const ADIEncoder &imiddle);
 
   /**
    * Sets the sensors. The default sensors are the motor's integrated encoders.
@@ -196,8 +205,9 @@ class ChassisControllerBuilder {
    * @param iright The right side sensor.
    * @return An ongoing builder.
    */
-  ChassisControllerBuilder &withSensors(const std::shared_ptr<ContinuousRotarySensor> &ileft,
-                                        const std::shared_ptr<ContinuousRotarySensor> &iright);
+  ChassisControllerBuilder &
+  withSensors(const std::shared_ptr<ContinuousRotarySensor> &ileft,
+              const std::shared_ptr<ContinuousRotarySensor> &iright);
 
   /**
    * Sets the sensors. The default sensors are the motor's integrated encoders.
@@ -207,76 +217,87 @@ class ChassisControllerBuilder {
    * @param imiddle The middle sensor.
    * @return An ongoing builder.
    */
-  ChassisControllerBuilder &withSensors(const std::shared_ptr<ContinuousRotarySensor> &ileft,
-                                        const std::shared_ptr<ContinuousRotarySensor> &iright,
-                                        const std::shared_ptr<ContinuousRotarySensor> &imiddle);
+  ChassisControllerBuilder &
+  withSensors(const std::shared_ptr<ContinuousRotarySensor> &ileft,
+              const std::shared_ptr<ContinuousRotarySensor> &iright,
+              const std::shared_ptr<ContinuousRotarySensor> &imiddle);
 
   /**
-   * Sets the PID controller gains, causing the builder to generate a ChassisControllerPID. Uses the
-   * turn controller's gains for the angle controller's gains.
+   * Sets the PID controller gains, causing the builder to generate a
+   * ChassisControllerPID. Uses the turn controller's gains for the angle
+   * controller's gains.
    *
    * @param idistanceGains The distance controller's gains.
    * @param iturnGains The turn controller's gains.
    * @return An ongoing builder.
    */
-  ChassisControllerBuilder &withGains(const IterativePosPIDController::Gains &idistanceGains,
-                                      const IterativePosPIDController::Gains &iturnGains);
+  ChassisControllerBuilder &
+  withGains(const IterativePosPIDController::Gains &idistanceGains,
+            const IterativePosPIDController::Gains &iturnGains);
 
   /**
-   * Sets the PID controller gains, causing the builder to generate a ChassisControllerPID.
+   * Sets the PID controller gains, causing the builder to generate a
+   * ChassisControllerPID.
    *
    * @param idistanceGains The distance controller's gains.
    * @param iturnGains The turn controller's gains.
    * @param iangleGains The angle controller's gains.
    * @return An ongoing builder.
    */
-  ChassisControllerBuilder &withGains(const IterativePosPIDController::Gains &idistanceGains,
-                                      const IterativePosPIDController::Gains &iturnGains,
-                                      const IterativePosPIDController::Gains &iangleGains);
+  ChassisControllerBuilder &
+  withGains(const IterativePosPIDController::Gains &idistanceGains,
+            const IterativePosPIDController::Gains &iturnGains,
+            const IterativePosPIDController::Gains &iangleGains);
 
   /**
-   * Sets the odometry information, causing the builder to generate an Odometry variant.
+   * Sets the odometry information, causing the builder to generate an Odometry
+   * variant.
    *
-   * @param imode The new default StateMode used to interpret target points and query the Odometry
-   * state.
+   * @param imode The new default StateMode used to interpret target points and
+   * query the Odometry state.
    * @param imoveThreshold The minimum length movement.
    * @param iturnThreshold The minimum angle turn.
    * @return An ongoing builder.
    */
-  ChassisControllerBuilder &withOdometry(const StateMode &imode = StateMode::FRAME_TRANSFORMATION,
-                                         const QLength &imoveThreshold = 0_mm,
-                                         const QAngle &iturnThreshold = 0_deg);
+  ChassisControllerBuilder &
+  withOdometry(const StateMode &imode = StateMode::FRAME_TRANSFORMATION,
+               const QLength &imoveThreshold = 0_mm,
+               const QAngle &iturnThreshold = 0_deg);
 
   /**
-   * Sets the odometry information, causing the builder to generate an Odometry variant.
+   * Sets the odometry information, causing the builder to generate an Odometry
+   * variant.
    *
-   * @param iodomScales The ChassisScales used just for odometry (if they are different than those
-   * for the drive).
-   * @param imode The new default StateMode used to interpret target points and query the Odometry
-   * state.
+   * @param iodomScales The ChassisScales used just for odometry (if they are
+   * different than those for the drive).
+   * @param imode The new default StateMode used to interpret target points and
+   * query the Odometry state.
    * @param imoveThreshold The minimum length movement.
    * @param iturnThreshold The minimum angle turn.
    * @return An ongoing builder.
    */
-  ChassisControllerBuilder &withOdometry(const ChassisScales &iodomScales,
-                                         const StateMode &imode = StateMode::FRAME_TRANSFORMATION,
-                                         const QLength &imoveThreshold = 0_mm,
-                                         const QAngle &iturnThreshold = 0_deg);
+  ChassisControllerBuilder &
+  withOdometry(const ChassisScales &iodomScales,
+               const StateMode &imode = StateMode::FRAME_TRANSFORMATION,
+               const QLength &imoveThreshold = 0_mm,
+               const QAngle &iturnThreshold = 0_deg);
 
   /**
-   * Sets the odometry information, causing the builder to generate an Odometry variant.
+   * Sets the odometry information, causing the builder to generate an Odometry
+   * variant.
    *
    * @param iodometry The odometry object.
-   * @param imode The new default StateMode used to interpret target points and query the Odometry
-   * state.
+   * @param imode The new default StateMode used to interpret target points and
+   * query the Odometry state.
    * @param imoveThreshold The minimum length movement.
    * @param iturnThreshold The minimum angle turn.
    * @return An ongoing builder.
    */
-  ChassisControllerBuilder &withOdometry(std::shared_ptr<Odometry> iodometry,
-                                         const StateMode &imode = StateMode::FRAME_TRANSFORMATION,
-                                         const QLength &imoveThreshold = 0_mm,
-                                         const QAngle &iturnThreshold = 0_deg);
+  ChassisControllerBuilder &
+  withOdometry(std::shared_ptr<Odometry> iodometry,
+               const StateMode &imode = StateMode::FRAME_TRANSFORMATION,
+               const QLength &imoveThreshold = 0_mm,
+               const QAngle &iturnThreshold = 0_deg);
 
   /**
    * Sets the derivative filters. Uses a PassthroughFilter by default.
@@ -286,10 +307,12 @@ class ChassisControllerBuilder {
    * @param iangleFilter The angle controller's filter.
    * @return An ongoing builder.
    */
-  ChassisControllerBuilder &withDerivativeFilters(
-    std::unique_ptr<Filter> idistanceFilter,
-    std::unique_ptr<Filter> iturnFilter = std::make_unique<PassthroughFilter>(),
-    std::unique_ptr<Filter> iangleFilter = std::make_unique<PassthroughFilter>());
+  ChassisControllerBuilder &
+  withDerivativeFilters(std::unique_ptr<Filter> idistanceFilter,
+                        std::unique_ptr<Filter> iturnFilter =
+                            std::make_unique<PassthroughFilter>(),
+                        std::unique_ptr<Filter> iangleFilter =
+                            std::make_unique<PassthroughFilter>());
 
   /**
    * Sets the chassis dimensions.
@@ -298,8 +321,9 @@ class ChassisControllerBuilder {
    * @param iscales The ChassisScales for the base.
    * @return An ongoing builder.
    */
-  ChassisControllerBuilder &withDimensions(const AbstractMotor::gearset &igearset,
-                                           const ChassisScales &iscales);
+  ChassisControllerBuilder &
+  withDimensions(const AbstractMotor::gearset &igearset,
+                 const ChassisScales &iscales);
 
   /**
    * Sets the max velocity. Overrides the max velocity of the gearset.
@@ -318,9 +342,9 @@ class ChassisControllerBuilder {
   ChassisControllerBuilder &withMaxVoltage(double imaxVoltage);
 
   /**
-   * Sets the TimeUtilFactory used when building a ChassisController. This instance will be given
-   * to the ChassisController (not to controllers it uses). The default is the static
-   * TimeUtilFactory.
+   * Sets the TimeUtilFactory used when building a ChassisController. This
+   * instance will be given to the ChassisController (not to controllers it
+   * uses). The default is the static TimeUtilFactory.
    *
    * @param itimeUtilFactory The TimeUtilFactory.
    * @return An ongoing builder.
@@ -329,36 +353,41 @@ class ChassisControllerBuilder {
   withChassisControllerTimeUtilFactory(const TimeUtilFactory &itimeUtilFactory);
 
   /**
-   * Sets the TimeUtilFactory used when building a ClosedLoopController. This instance will be given
-   * to any ClosedLoopController instances. The default is the static TimeUtilFactory.
+   * Sets the TimeUtilFactory used when building a ClosedLoopController. This
+   * instance will be given to any ClosedLoopController instances. The default
+   * is the static TimeUtilFactory.
+   *
+   * @param itimeUtilFactory The TimeUtilFactory.
+   * @return An ongoing builder.
+   */
+  ChassisControllerBuilder &withClosedLoopControllerTimeUtilFactory(
+      const TimeUtilFactory &itimeUtilFactory);
+
+  /**
+   * Creates a new ConfigurableTimeUtilFactory with the given parameters. Given
+   * to any ClosedLoopController instances.
+   *
+   * @param iatTargetError The minimum error to be considered settled.
+   * @param iatTargetDerivative The minimum error derivative to be considered
+   * settled.
+   * @param iatTargetTime The minimum time within atTargetError to be considered
+   * settled.
+   * @return An ongoing builder.
+   */
+  ChassisControllerBuilder &
+  withClosedLoopControllerTimeUtil(double iatTargetError = 50,
+                                   double iatTargetDerivative = 5,
+                                   const QTime &iatTargetTime = 250_ms);
+
+  /**
+   * Sets the TimeUtilFactory used when building an Odometry. The default is the
+   * static TimeUtilFactory.
    *
    * @param itimeUtilFactory The TimeUtilFactory.
    * @return An ongoing builder.
    */
   ChassisControllerBuilder &
-  withClosedLoopControllerTimeUtilFactory(const TimeUtilFactory &itimeUtilFactory);
-
-  /**
-   * Creates a new ConfigurableTimeUtilFactory with the given parameters. Given to any
-   * ClosedLoopController instances.
-   *
-   * @param iatTargetError The minimum error to be considered settled.
-   * @param iatTargetDerivative The minimum error derivative to be considered settled.
-   * @param iatTargetTime The minimum time within atTargetError to be considered settled.
-   * @return An ongoing builder.
-   */
-  ChassisControllerBuilder &withClosedLoopControllerTimeUtil(double iatTargetError = 50,
-                                                             double iatTargetDerivative = 5,
-                                                             const QTime &iatTargetTime = 250_ms);
-
-  /**
-   * Sets the TimeUtilFactory used when building an Odometry. The default is the static
-   * TimeUtilFactory.
-   *
-   * @param itimeUtilFactory The TimeUtilFactory.
-   * @return An ongoing builder.
-   */
-  ChassisControllerBuilder &withOdometryTimeUtilFactory(const TimeUtilFactory &itimeUtilFactory);
+  withOdometryTimeUtilFactory(const TimeUtilFactory &itimeUtilFactory);
 
   /**
    * Sets the logger used for the ChassisController and ClosedLoopControllers.
@@ -369,9 +398,10 @@ class ChassisControllerBuilder {
   ChassisControllerBuilder &withLogger(const std::shared_ptr<Logger> &ilogger);
 
   /**
-   * Parents the internal tasks started by this builder to the current task, meaning they will be
-   * deleted once the current task is deleted. The `initialize` and `competition_initialize` tasks
-   * are never parented to. This is the default behavior.
+   * Parents the internal tasks started by this builder to the current task,
+   * meaning they will be deleted once the current task is deleted. The
+   * `initialize` and `competition_initialize` tasks are never parented to. This
+   * is the default behavior.
    *
    * Read more about this in the [builders and tasks tutorial]
    * (docs/tutorials/concepts/builders-and-tasks.md).
@@ -381,9 +411,10 @@ class ChassisControllerBuilder {
   ChassisControllerBuilder &parentedToCurrentTask();
 
   /**
-   * Prevents parenting the internal tasks started by this builder to the current task, meaning they
-   * will not be deleted once the current task is deleted. This can cause runaway tasks, but is
-   * sometimes the desired behavior (e.x., if you want to use this builder once in `autonomous` and
+   * Prevents parenting the internal tasks started by this builder to the
+   * current task, meaning they will not be deleted once the current task is
+   * deleted. This can cause runaway tasks, but is sometimes the desired
+   * behavior (e.x., if you want to use this builder once in `autonomous` and
    * then again in `opcontrol`).
    *
    * Read more about this in the [builders and tasks tutorial]
@@ -394,22 +425,23 @@ class ChassisControllerBuilder {
   ChassisControllerBuilder &notParentedToCurrentTask();
 
   /**
-   * Builds the ChassisController. Throws a std::runtime_exception if no motors were set or if no
-   * dimensions were set.
+   * Builds the ChassisController. Throws a std::runtime_exception if no motors
+   * were set or if no dimensions were set.
    *
    * @return A fully built ChassisController.
    */
   std::shared_ptr<ChassisController> build();
 
   /**
-   * Builds the OdomChassisController. Throws a std::runtime_exception if no motors were set, if no
-   * dimensions were set, or if no odometry information was passed.
+   * Builds the OdomChassisController. Throws a std::runtime_exception if no
+   * motors were set, if no dimensions were set, or if no odometry information
+   * was passed.
    *
    * @return A fully built OdomChassisController.
    */
   std::shared_ptr<OdomChassisController> buildOdometry();
 
-  private:
+private:
   std::shared_ptr<Logger> logger;
 
   struct SkidSteerMotors {
@@ -438,14 +470,16 @@ class ChassisControllerBuilder {
   XDriveMotors xDriveMotors;
   HDriveMotors hDriveMotors;
 
-  bool sensorsSetByUser{false}; // Used so motors don't overwrite sensors set manually
+  bool sensorsSetByUser{
+      false}; // Used so motors don't overwrite sensors set manually
   std::shared_ptr<ContinuousRotarySensor> leftSensor{nullptr};
   std::shared_ptr<ContinuousRotarySensor> rightSensor{nullptr};
   std::shared_ptr<ContinuousRotarySensor> middleSensor{nullptr};
 
   bool hasGains{false}; // Whether gains were passed, no gains means CCI
   IterativePosPIDController::Gains distanceGains;
-  std::unique_ptr<Filter> distanceFilter = std::make_unique<PassthroughFilter>();
+  std::unique_ptr<Filter> distanceFilter =
+      std::make_unique<PassthroughFilter>();
   IterativePosPIDController::Gains angleGains;
   std::unique_ptr<Filter> angleFilter = std::make_unique<PassthroughFilter>();
   IterativePosPIDController::Gains turnGains;

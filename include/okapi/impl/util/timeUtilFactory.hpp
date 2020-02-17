@@ -11,7 +11,7 @@
 
 namespace okapi {
 class TimeUtilFactory {
-  public:
+public:
   virtual ~TimeUtilFactory() = default;
 
   /**

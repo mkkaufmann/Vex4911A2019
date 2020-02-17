@@ -12,8 +12,8 @@ public:
   void run();
 
 protected:
-  static lv_res_t btnAction(lv_obj_t* ibtnm, const char* itxt);
+  static lv_res_t btnAction(lv_obj_t *ibtnm, const char *itxt);
 
-  int currentIndex {0};
+  int currentIndex{0};
 };
 } // namespace lib7842::GUI

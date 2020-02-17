@@ -13,12 +13,13 @@
 
 namespace okapi {
 class HDriveModel : public ChassisModel {
-  public:
+public:
   /**
-   * Model for an h-drive (wheels parallel with robot's direction of motion, with an additional
-   * wheel perpendicular to those). When the left and right side motors are powered +100%, the robot
-   * should move forward in a straight line. When the middle motor is powered +100%, the robot
-   * should strafe right in a straight line.
+   * Model for an h-drive (wheels parallel with robot's direction of motion,
+   * with an additional wheel perpendicular to those). When the left and right
+   * side motors are powered +100%, the robot should move forward in a straight
+   * line. When the middle motor is powered +100%, the robot should strafe right
+   * in a straight line.
    *
    * @param ileftSideMotor The left side motor.
    * @param irightSideMotor The right side motor.
@@ -33,20 +34,19 @@ class HDriveModel : public ChassisModel {
               std::shared_ptr<ContinuousRotarySensor> ileftEnc,
               std::shared_ptr<ContinuousRotarySensor> irightEnc,
               std::shared_ptr<ContinuousRotarySensor> imiddleEnc,
-              double imaxVelocity,
-              double imaxVoltage);
+              double imaxVelocity, double imaxVoltage);
 
   /**
-   * Drive the robot forwards (using open-loop control). Uses velocity mode. Sets the middle motor
-   * to zero velocity.
+   * Drive the robot forwards (using open-loop control). Uses velocity mode.
+   * Sets the middle motor to zero velocity.
    *
    * @param ispeed motor power
    */
   void forward(double ispeed) override;
 
   /**
-   * Drive the robot in an arc (using open-loop control). Uses velocity mode. Sets the middle motor
-   * to zero velocity.
+   * Drive the robot in an arc (using open-loop control). Uses velocity mode.
+   * Sets the middle motor to zero velocity.
    *
    * The algorithm is (approximately):
    *    leftPower = ySpeed + zRotation
@@ -58,7 +58,8 @@ class HDriveModel : public ChassisModel {
   void driveVector(double iySpeed, double izRotation) override;
 
   /**
-   * Drive the robot in an arc. Uses voltage mode. Sets the middle motor to zero velocity.
+   * Drive the robot in an arc. Uses voltage mode. Sets the middle motor to zero
+   * velocity.
    *
    * The algorithm is (approximately):
    *   leftPower = forwardSpeed + yaw
@@ -70,8 +71,8 @@ class HDriveModel : public ChassisModel {
   void driveVectorVoltage(double iforwardSpeed, double iyaw) override;
 
   /**
-   * Turn the robot clockwise (using open-loop control). Uses velocity mode. Sets the middle motor
-   * to zero velocity.
+   * Turn the robot clockwise (using open-loop control). Uses velocity mode.
+   * Sets the middle motor to zero velocity.
    *
    * @param ispeed motor power
    */
@@ -83,24 +84,26 @@ class HDriveModel : public ChassisModel {
   void stop() override;
 
   /**
-   * Drive the robot with a tank drive layout. Uses voltage mode. Sets the middle motor to zero
-   * velocity.
+   * Drive the robot with a tank drive layout. Uses voltage mode. Sets the
+   * middle motor to zero velocity.
    *
    * @param ileftSpeed left side speed
    * @param irightSpeed right side speed
    * @param ithreshold deadband on joystick values
    */
-  void tank(double ileftSpeed, double irightSpeed, double ithreshold = 0) override;
+  void tank(double ileftSpeed, double irightSpeed,
+            double ithreshold = 0) override;
 
   /**
-   * Drive the robot with an arcade drive layout. Uses voltage mode. Sets the middle motor to zero
-   * velocity.
+   * Drive the robot with an arcade drive layout. Uses voltage mode. Sets the
+   * middle motor to zero velocity.
    *
    * @param iforwardSpeed speed in the forward direction
    * @param iyaw speed around the vertical axis
    * @param ithreshold deadband on joystick values
    */
-  void arcade(double iforwardSpeed, double iyaw, double ithreshold = 0) override;
+  void arcade(double iforwardSpeed, double iyaw,
+              double ithreshold = 0) override;
 
   /**
    * Drive the robot with an arcade drive layout. Uses voltage mode.
@@ -110,8 +113,8 @@ class HDriveModel : public ChassisModel {
    * @param iyaw speed around the vertical axis
    * @param ithreshold deadband on joystick values
    */
-  virtual void
-  hArcade(double irightSpeed, double iforwardSpeed, double iyaw, double ithreshold = 0);
+  virtual void hArcade(double irightSpeed, double iforwardSpeed, double iyaw,
+                       double ithreshold = 0);
 
   /**
    * Power the left side motors. Uses velocity mode.
@@ -168,10 +171,11 @@ class HDriveModel : public ChassisModel {
   void setGearing(AbstractMotor::gearset gearset) override;
 
   /**
-   * Sets a new maximum velocity in RPM. The usable maximum depends on the maximum velocity of the
-   * currently installed gearset. If the configured maximum velocity is greater than the attainable
-   * maximum velocity from the currently installed gearset, the ChassisModel will still scale to
-   * that velocity.
+   * Sets a new maximum velocity in RPM. The usable maximum depends on the
+   * maximum velocity of the currently installed gearset. If the configured
+   * maximum velocity is greater than the attainable maximum velocity from the
+   * currently installed gearset, the ChassisModel will still scale to that
+   * velocity.
    *
    * @param imaxVelocity The new maximum velocity.
    */
@@ -213,7 +217,7 @@ class HDriveModel : public ChassisModel {
    */
   std::shared_ptr<AbstractMotor> getMiddleMotor() const;
 
-  protected:
+protected:
   double maxVelocity;
   double maxVoltage;
   std::shared_ptr<AbstractMotor> leftSideMotor;

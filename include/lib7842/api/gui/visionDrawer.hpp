@@ -15,7 +15,7 @@ public:
   /**
    * Clear all objects on screen. Call this function before redrawing objects.
    */
-  VisionPage& clear();
+  VisionPage &clear();
 
   /**
    * Draw a single object to the screen. Use a single color.
@@ -23,7 +23,7 @@ public:
    * @param  object The object
    * @param  color  The color
    */
-  VisionPage& draw(const Vision::Object& object, const lv_color_t& color);
+  VisionPage &draw(const Vision::Object &object, const lv_color_t &color);
 
   /**
    * Draw a single object to the screen. Use a border color.
@@ -32,7 +32,8 @@ public:
    * @param  main   The main color
    * @param  border The border color
    */
-  VisionPage& draw(const Vision::Object& object, const lv_color_t& main, const lv_color_t& border);
+  VisionPage &draw(const Vision::Object &object, const lv_color_t &main,
+                   const lv_color_t &border);
 
   /**
    * Draw a container to the screen. Use a single color.
@@ -40,7 +41,8 @@ public:
    * @param  icontainer The container
    * @param  color      The color
    */
-  VisionPage& draw(const Vision::Container& icontainer, const lv_color_t& color);
+  VisionPage &draw(const Vision::Container &icontainer,
+                   const lv_color_t &color);
 
   /**
    * Draw a container to the screen. Use a border color.
@@ -49,28 +51,29 @@ public:
    * @param  main       The main color
    * @param  border     The border color
    */
-  VisionPage& draw(const Vision::Container& icontainer, const lv_color_t& main,
-                   const lv_color_t& border);
+  VisionPage &draw(const Vision::Container &icontainer, const lv_color_t &main,
+                   const lv_color_t &border);
 
   /**
-   * Create a layer for the screen. Used to draw different colors for different signatures.
+   * Create a layer for the screen. Used to draw different colors for different
+   * signatures.
    *
    * @return The vision layer.
    */
   VisionLayer makeLayer();
 
 protected:
-  using ScreenObject = std::pair<lv_obj_t*, lv_style_t>;
+  using ScreenObject = std::pair<lv_obj_t *, lv_style_t>;
 
   /**
    * Allocate or return a previously allocated object.
    *
    * @return The allocated object.
    */
-  ScreenObject& addObject();
+  ScreenObject &addObject();
 
-  std::forward_list<ScreenObject> objects {};
-  std::forward_list<ScreenObject>::iterator iterator {objects.before_begin()};
+  std::forward_list<ScreenObject> objects{};
+  std::forward_list<ScreenObject>::iterator iterator{objects.before_begin()};
 };
 
 /**
@@ -79,25 +82,25 @@ protected:
 class VisionLayer {
 public:
   /**
-   * Create a vision layer. Prefer using VisionPage::makeLayer. 
+   * Create a vision layer. Prefer using VisionPage::makeLayer.
    *
    * @param idrawer The vision page
    */
-  explicit VisionLayer(VisionPage& idrawer);
+  explicit VisionLayer(VisionPage &idrawer);
 
   /**
    * Set a color for all objects drawn by this layer.
    *
    * @param  color The color
    */
-  VisionLayer& withColor(const lv_color_t& color);
+  VisionLayer &withColor(const lv_color_t &color);
 
   /**
    * Set a color and border for all objects drawn by this layer.
    *
    * @param  color The color
    */
-  VisionLayer& withColor(const lv_color_t& main, const lv_color_t& border);
+  VisionLayer &withColor(const lv_color_t &main, const lv_color_t &border);
 
   /**
    * Set a color for all objects of a specific signature drawn by this layer.
@@ -105,28 +108,30 @@ public:
    * @param  color The color
    * @param  sig   The signature
    */
-  VisionLayer& withColor(const lv_color_t& color, uint16_t sig);
+  VisionLayer &withColor(const lv_color_t &color, uint16_t sig);
 
   /**
-   * Set a color and border for all objects of a specific signature drawn by this layer.
+   * Set a color and border for all objects of a specific signature drawn by
+   * this layer.
    *
    * @param  color The color
    * @param  sig   The signature
    */
-  VisionLayer& withColor(const lv_color_t& main, const lv_color_t& border, uint16_t sig);
+  VisionLayer &withColor(const lv_color_t &main, const lv_color_t &border,
+                         uint16_t sig);
 
   /**
    * Draw a container to the screen, using the predefined colors.
    *
    * @param container The container
    */
-  void draw(const Vision::Container& container);
+  void draw(const Vision::Container &container);
 
 protected:
-  VisionPage& drawer;
+  VisionPage &drawer;
   using Style = std::pair<lv_color_t, lv_color_t>;
-  Style defaultColor {LV_COLOR_BLACK, LV_COLOR_WHITE};
-  std::map<uint16_t, Style> sigColors {};
+  Style defaultColor{LV_COLOR_BLACK, LV_COLOR_WHITE};
+  std::map<uint16_t, Style> sigColors{};
 };
 
 } // namespace lib7842::GUI

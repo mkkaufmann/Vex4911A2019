@@ -11,15 +11,15 @@
 
 namespace okapi {
 /**
- * Closed-loop controller that steps on its own in another thread and automatically writes to the
- * output.
+ * Closed-loop controller that steps on its own in another thread and
+ * automatically writes to the output.
  */
 template <typename Input, typename Output>
 class AsyncController : public ClosedLoopController<Input, Output> {
-  public:
+public:
   /**
-   * Blocks the current task until the controller has settled. Determining what settling means is
-   * implementation-dependent.
+   * Blocks the current task until the controller has settled. Determining what
+   * settling means is implementation-dependent.
    */
   virtual void waitUntilSettled() = 0;
 };

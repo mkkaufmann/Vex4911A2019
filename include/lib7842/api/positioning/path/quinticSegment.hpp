@@ -18,7 +18,8 @@ public:
    * @param iend        The end value
    * @param iendSlope   The end slope
    */
-  QuinticPolynomial(double istart, double istartSlope, double iend, double iendSlope);
+  QuinticPolynomial(double istart, double istartSlope, double iend,
+                    double iendSlope);
 
   /**
    * Calculate the value of the polynomial at t
@@ -29,10 +30,10 @@ public:
   double calculate(double t) const;
 
 protected:
-  double start {};
-  double startSlope {};
-  double end {};
-  double endSlope {};
+  double start{};
+  double startSlope{};
+  double end{};
+  double endSlope{};
 };
 
 /**
@@ -41,30 +42,31 @@ protected:
 class QuinticSegment : public TemplatePath<QuinticSegment> {
 public:
   /**
-   * Create a spline from two points, both containing a position, angle, and slope. Slope, which is
-   * the importance of a point's angle, must be provided as data named "slope".
+   * Create a spline from two points, both containing a position, angle, and
+   * slope. Slope, which is the importance of a point's angle, must be provided
+   * as data named "slope".
    *
    * @param istart The start point
    * @param iend   The end point
    */
-  QuinticSegment(const DataState& istart, const DataState& iend);
+  QuinticSegment(const DataState &istart, const DataState &iend);
 
   /**
    * Interpolate the path
    *
-   * @param  isteps How many points to interpolate per segment, counting from the start to just
-   *                before the end of the segment. This means is 1 step will return the first point
-   *                and 2 steps will return the first point as well as a midway point. The end point
-   *                is not included in the count.
-   * @param  iend   Whether to return the end of the segment. This can be turned off to prevent the
-   *                start of the next segment from being redundant.
+   * @param  isteps How many points to interpolate per segment, counting from
+   * the start to just before the end of the segment. This means is 1 step will
+   * return the first point and 2 steps will return the first point as well as a
+   * midway point. The end point is not included in the count.
+   * @param  iend   Whether to return the end of the segment. This can be turned
+   * off to prevent the start of the next segment from being redundant.
    * @return generated path
    */
   SimplePath generate(int isteps = 1, bool iend = true) const override;
 
 protected:
-  DataState start {};
-  DataState end {};
+  DataState start{};
+  DataState end{};
 };
 
 } // namespace lib7842

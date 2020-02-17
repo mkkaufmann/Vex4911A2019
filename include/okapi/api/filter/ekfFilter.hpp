@@ -12,24 +12,26 @@
 
 namespace okapi {
 class EKFFilter : public Filter {
-  public:
+public:
   /**
-   * One dimensional extended Kalman filter. The default arguments should work fine for most signal
-   * filtering. It won't hurt to graph your signal and the filtered result, and check if the filter
-   * is doing its job.
+   * One dimensional extended Kalman filter. The default arguments should work
+   * fine for most signal filtering. It won't hurt to graph your signal and the
+   * filtered result, and check if the filter is doing its job.
    *
    * Q is the covariance of the process noise and R is the
-   * covariance of the observation noise. The default values for Q and R should be a modest balance
-   * between trust in the sensor and FIR filtering.
+   * covariance of the observation noise. The default values for Q and R should
+   * be a modest balance between trust in the sensor and FIR filtering.
    *
-   * Think of R as how noisy your sensor is. Its value can be found mathematically by computing the
-   * standard deviation of your sensor reading vs. "truth" (of course, "truth" is still an estimate;
-   * try to calibrate your robot in a controlled setting where you can minimize the error in what
+   * Think of R as how noisy your sensor is. Its value can be found
+   * mathematically by computing the standard deviation of your sensor reading
+   * vs. "truth" (of course, "truth" is still an estimate; try to calibrate your
+   * robot in a controlled setting where you can minimize the error in what
    * "truth" is).
    *
-   * Think of Q as how noisy your model is. It decides how much "smoothing" the filter does and how
-   * far it lags behind the true signal. This parameter is most often used as a "tuning" parameter
-   * to adjust the response of the filter.
+   * Think of Q as how noisy your model is. It decides how much "smoothing" the
+   * filter does and how far it lags behind the true signal. This parameter is
+   * most often used as a "tuning" parameter to adjust the response of the
+   * filter.
    *
    * @param iQ process noise covariance
    * @param iR measurement noise covariance
@@ -60,7 +62,7 @@ class EKFFilter : public Filter {
    */
   double getOutput() const override;
 
-  protected:
+protected:
   const double Q, R;
   double xHat = 0;
   double xHatPrev = 0;

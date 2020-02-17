@@ -17,11 +17,11 @@
 
 namespace okapi {
 class ChassisController {
-  public:
+public:
   /**
-   * A ChassisController adds a closed-loop layer on top of a ChassisModel. moveDistance and
-   * turnAngle both use closed-loop control to move the robot. There are passthrough functions for
-   * everything defined in ChassisModel.
+   * A ChassisController adds a closed-loop layer on top of a ChassisModel.
+   * moveDistance and turnAngle both use closed-loop control to move the robot.
+   * There are passthrough functions for everything defined in ChassisModel.
    *
    * @param imodel underlying ChassisModel
    */
@@ -44,14 +44,16 @@ class ChassisController {
   virtual void moveRaw(double itarget) = 0;
 
   /**
-   * Sets the target distance for the robot to drive straight (using closed-loop control).
+   * Sets the target distance for the robot to drive straight (using closed-loop
+   * control).
    *
    * @param itarget distance to travel
    */
   virtual void moveDistanceAsync(QLength itarget) = 0;
 
   /**
-   * Sets the target distance for the robot to drive straight (using closed-loop control).
+   * Sets the target distance for the robot to drive straight (using closed-loop
+   * control).
    *
    * @param itarget distance to travel in motor degrees
    */
@@ -72,14 +74,16 @@ class ChassisController {
   virtual void turnRaw(double idegTarget) = 0;
 
   /**
-   * Sets the target angle for the robot to turn clockwise in place (using closed-loop control).
+   * Sets the target angle for the robot to turn clockwise in place (using
+   * closed-loop control).
    *
    * @param idegTarget angle to turn for
    */
   virtual void turnAngleAsync(QAngle idegTarget) = 0;
 
   /**
-   * Sets the target angle for the robot to turn clockwise in place (using closed-loop control).
+   * Sets the target angle for the robot to turn clockwise in place (using
+   * closed-loop control).
    *
    * @param idegTarget angle to turn for in motor degrees
    */

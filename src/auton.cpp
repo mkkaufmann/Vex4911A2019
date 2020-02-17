@@ -21,19 +21,20 @@ std::shared_ptr<Motor> stackerMotor2{
 // This is the model of the robot chassis
 // It keeps track of the motors, encoder wheels, max Velocity (in RPM), and max
 // Voltage
-std::shared_ptr<ThreeEncoderXDriveModel> model = std::make_shared<ThreeEncoderXDriveModel>(
-    // motors
-    topLeft,     // topLeft
-    topRight,    // topRight
-    bottomRight, // bottomRight
-    bottomLeft,  // bottomLeft
-    // sensors
-    std::make_shared<ADIEncoder>(5, 6, true), // left
-    std::make_shared<ADIEncoder>(1, 2, true), // right
-    std::make_shared<ADIEncoder>(3, 4, true), // middle
-    // limits
-    200,  // max Velocity
-    12000 // max Voltage
+std::shared_ptr<ThreeEncoderXDriveModel> model =
+    std::make_shared<ThreeEncoderXDriveModel>(
+        // motors
+        topLeft,     // topLeft
+        topRight,    // topRight
+        bottomRight, // bottomRight
+        bottomLeft,  // bottomLeft
+        // sensors
+        std::make_shared<ADIEncoder>(5, 6, true), // left
+        std::make_shared<ADIEncoder>(1, 2, true), // right
+        std::make_shared<ADIEncoder>(3, 4, true), // middle
+        // limits
+        200,  // max Velocity
+        12000 // max Voltage
     );
 
 ChassisScales odomChassisScales = ChassisScales(
@@ -51,40 +52,42 @@ ChassisScales driveChassisScales = ChassisScales(
     imev5GreenTPR); // Encoder ticks per rotstion
 
 // keeps track of position and orientation based on bot measurements
-std::shared_ptr<CustomOdometry> odom{std::make_shared<CustomOdometry>(model, odomChassisScales,
-                                           TimeUtilFactory().create())};
+std::shared_ptr<CustomOdometry> odom{std::make_shared<CustomOdometry>(
+    model, odomChassisScales, TimeUtilFactory().create())};
 
-std::shared_ptr<OdomXController> odomController{std::make_shared<OdomXController>(
-    model, odom,
-    // Distance PID - To mm
-    // Used for strafing and driving
-    std::make_unique<IterativePosPIDController>(
-        0.0178*1.5, 0.000001, 0.0009, 0,
-        TimeUtilFactory::withSettledUtilParams(10, 10, 100_ms)),
-    // Turn PID - To Degree
-    // Used for turning
-    std::make_unique<IterativePosPIDController>(
-        0.03, 0.00, 0.0003, 0,
-        TimeUtilFactory::withSettledUtilParams(2, 2, 100_ms)),
-    // Angle PID - To Degree
-    // Used for turning
-    std::make_unique<IterativePosPIDController>(
-        0.02, 0, 0.0, 0, TimeUtilFactory::withSettledUtilParams(4, 2, 100_ms)),
-    TimeUtilFactory().create())};
+std::shared_ptr<OdomXController> odomController{
+    std::make_shared<OdomXController>(
+        model, odom,
+        // Distance PID - To mm
+        // Used for strafing and driving
+        std::make_unique<IterativePosPIDController>(
+            0.0178 * 1.5, 0.000001, 0.0009, 0,
+            TimeUtilFactory::withSettledUtilParams(10, 10, 100_ms)),
+        // Turn PID - To Degree
+        // Used for turning
+        std::make_unique<IterativePosPIDController>(
+            0.03, 0.00, 0.0003, 0,
+            TimeUtilFactory::withSettledUtilParams(2, 2, 100_ms)),
+        // Angle PID - To Degree
+        // Used for turning
+        std::make_unique<IterativePosPIDController>(
+            0.02, 0, 0.0, 0,
+            TimeUtilFactory::withSettledUtilParams(4, 2, 100_ms)),
+        TimeUtilFactory().create())};
 
 PathFollower follower(model, odom, driveChassisScales, 1_ft,
                       TimeUtilFactory().create());
 
 PursuitLimits fullSpeedLimits{0.2_mps,  1.1_mps2, 0.75_mps,
                               0.4_mps2, 0_mps,    40_mps};
-PursuitLimits halfSpeedLimits{0.1_mps,  1.1_mps2/2, 0.75_mps/2,
-                              0.4_mps2/2, 0_mps,    40_mps/2};
+PursuitLimits halfSpeedLimits{0.1_mps,      1.1_mps2 / 2, 0.75_mps / 2,
+                              0.4_mps2 / 2, 0_mps,        40_mps / 2};
 
 // Wraps the odomController calls for easier autonomous programming
 // Takes a target position and orientation
 
-void driveToPoint(Vector target, QAngle targetAngle,
-                  double turnPriority, Settler&& settler){
+void driveToPoint(Vector target, QAngle targetAngle, double turnPriority,
+                  Settler &&settler) {
   odomController->strafeToPoint(
       target, OdomController::makeAngleCalculator(targetAngle), turnPriority,
       std::move(settler));
@@ -130,17 +133,21 @@ void rollerStop() {
 void sixCubeRed() {
 
   // full speed to line
-  driveToPoint({0_in, 12_in}, 0_deg, 1, Settler().distanceErr(7_in).angleErr(5_deg));
+  driveToPoint({0_in, 12_in}, 0_deg, 1,
+               Settler().distanceErr(7_in).angleErr(5_deg));
   rollerIntake();
   // first cube
   model->setMaxVoltage(8000);
-  driveToPoint({0_in, 15_in}, 0_deg, 1, Settler().distanceErr(7_in).angleErr(5_deg));
+  driveToPoint({0_in, 15_in}, 0_deg, 1,
+               Settler().distanceErr(7_in).angleErr(5_deg));
   // second cube
   model->setMaxVoltage(7000);
-  driveToPoint({0_in, 20_in}, 0_deg, 1, Settler().distanceErr(7_in).angleErr(5_deg));
+  driveToPoint({0_in, 20_in}, 0_deg, 1,
+               Settler().distanceErr(7_in).angleErr(5_deg));
   // third cube
   model->setMaxVoltage(5300);
-  driveToPoint({0_in, 40_in}, 0_deg, 1, Settler().distanceErr(7_in).angleErr(5_deg));
+  driveToPoint({0_in, 40_in}, 0_deg, 1,
+               Settler().distanceErr(7_in).angleErr(5_deg));
   // rest of line
   model->setMaxVoltage(4000);
   driveToPoint({0_in, 48_in}, 0_deg);
@@ -151,31 +158,39 @@ void sixCubeRed() {
   model->setMaxVoltage(12000);
   driveToPoint({15_in, 12_in}, 135_deg, 2);
   setTilterMiddle();
-  driveToPoint({16_in, 9_in}, 135_deg, 1, Settler().distanceErr(2_in).angleErr(5_deg));
+  driveToPoint({16_in, 9_in}, 135_deg, 1,
+               Settler().distanceErr(2_in).angleErr(5_deg));
   setTilterUp();
   pros::delay(2000);
   rollerOuttake(0.5);
-  driveToPoint({0_in, 21_in}, 135_deg, 2, Settler().distanceErr(1_in).angleErr(2_deg));
+  driveToPoint({0_in, 21_in}, 135_deg, 2,
+               Settler().distanceErr(1_in).angleErr(2_deg));
 }
 
 void eightCubeRed() {
 
   setArmLowMiddle();
   // full speed to line
-  driveToPoint({0_in, 13_in}, 0_deg, 1, Settler().distanceErr(7_in).angleErr(5_deg));
+  driveToPoint({0_in, 13_in}, 0_deg, 1,
+               Settler().distanceErr(7_in).angleErr(5_deg));
   rollerIntake();
   // first cube
   model->setMaxVoltage(5000);
-  driveToPoint({0_in, 48_in}, 0_deg, 1, Settler().distanceErr(7_in).angleErr(5_deg));
+  driveToPoint({0_in, 48_in}, 0_deg, 1,
+               Settler().distanceErr(7_in).angleErr(5_deg));
   // second cube
   model->setMaxVoltage(12000);
-  driveToPoint({20_in, 9_in}, -30_deg, 1.5, Settler().distanceErr(7_in).angleErr(5_deg));
-  driveToPoint({20_in, 9_in}, 0_deg, 1.5, Settler().distanceErr(7_in).angleErr(5_deg));
+  driveToPoint({20_in, 9_in}, -30_deg, 1.5,
+               Settler().distanceErr(7_in).angleErr(5_deg));
+  driveToPoint({20_in, 9_in}, 0_deg, 1.5,
+               Settler().distanceErr(7_in).angleErr(5_deg));
   // third cube
   model->setMaxVoltage(6000);
-  driveToPoint({20_in, 30_in}, 0_deg, 1, Settler().distanceErr(7_in).angleErr(5_deg));
+  driveToPoint({20_in, 30_in}, 0_deg, 1,
+               Settler().distanceErr(7_in).angleErr(5_deg));
   model->setMaxVoltage(4000);
-  driveToPoint({20_in, 48_in}, 0_deg, 1, Settler().distanceErr(7_in).angleErr(5_deg));
+  driveToPoint({20_in, 48_in}, 0_deg, 1,
+               Settler().distanceErr(7_in).angleErr(5_deg));
   pros::delay(350);
   stackerMotor1->moveRelative(300, 12000);
   stackerMotor2->moveRelative(300, 12000);
@@ -183,32 +198,40 @@ void eightCubeRed() {
   model->setMaxVoltage(12000);
   driveToPoint({21_in, 17_in}, 135_deg, 1);
   driveToPoint({27_in, 15_in}, 135_deg, 1);
-  driveToPoint({31_in, 7_in}, 135_deg, 1, Settler().distanceErr(6_in).angleErr(90_deg));
+  driveToPoint({31_in, 7_in}, 135_deg, 1,
+               Settler().distanceErr(6_in).angleErr(90_deg));
   setArmDown();
   setTilterUp();
   pros::delay(2200);
   rollerOuttake(0.5);
-  driveToPoint({31_in - 10_in, 7_in + 10_in}, 135_deg, 1, Settler().distanceErr(2_in).angleErr(5_deg));
+  driveToPoint({31_in - 10_in, 7_in + 10_in}, 135_deg, 1,
+               Settler().distanceErr(2_in).angleErr(5_deg));
 }
 
 void eightCubeBlue() {
 
   setArmLowMiddle();
   // full speed to line
-  driveToPoint({0_in, 13_in}, 0_deg, 1, Settler().distanceErr(7_in).angleErr(5_deg));
+  driveToPoint({0_in, 13_in}, 0_deg, 1,
+               Settler().distanceErr(7_in).angleErr(5_deg));
   rollerIntake();
   // first cube
   model->setMaxVoltage(5000);
-  driveToPoint({0_in, 48_in}, 0_deg, 1, Settler().distanceErr(7_in).angleErr(5_deg));
+  driveToPoint({0_in, 48_in}, 0_deg, 1,
+               Settler().distanceErr(7_in).angleErr(5_deg));
   // second cube
   model->setMaxVoltage(12000);
-  driveToPoint({-20_in, 9_in}, 30_deg, 1.5, Settler().distanceErr(7_in).angleErr(5_deg));
-  driveToPoint({-20_in, 9_in}, 0_deg, 1.5, Settler().distanceErr(7_in).angleErr(5_deg));
+  driveToPoint({-20_in, 9_in}, 30_deg, 1.5,
+               Settler().distanceErr(7_in).angleErr(5_deg));
+  driveToPoint({-20_in, 9_in}, 0_deg, 1.5,
+               Settler().distanceErr(7_in).angleErr(5_deg));
   // third cube
   model->setMaxVoltage(6000);
-  driveToPoint({-20_in, 30_in}, 0_deg, 1, Settler().distanceErr(7_in).angleErr(5_deg));
+  driveToPoint({-20_in, 30_in}, 0_deg, 1,
+               Settler().distanceErr(7_in).angleErr(5_deg));
   model->setMaxVoltage(4000);
-  driveToPoint({-20_in, 48_in}, 0_deg, 1, Settler().distanceErr(7_in).angleErr(5_deg));
+  driveToPoint({-20_in, 48_in}, 0_deg, 1,
+               Settler().distanceErr(7_in).angleErr(5_deg));
   pros::delay(350);
   stackerMotor1->moveRelative(300, 12000);
   stackerMotor2->moveRelative(300, 12000);
@@ -216,12 +239,14 @@ void eightCubeBlue() {
   model->setMaxVoltage(12000);
   driveToPoint({-21_in, 17_in}, -135_deg, 1);
   driveToPoint({-27_in, 15_in}, -135_deg, 1);
-  driveToPoint({-31_in, 7_in}, -135_deg, 1, Settler().distanceErr(6_in).angleErr(90_deg));
+  driveToPoint({-31_in, 7_in}, -135_deg, 1,
+               Settler().distanceErr(6_in).angleErr(90_deg));
   setArmDown();
   setTilterUp();
   pros::delay(2200);
   rollerOuttake(0.5);
-  driveToPoint({-(31_in - 10_in), 7_in + 10_in}, -135_deg, 1, Settler().distanceErr(2_in).angleErr(5_deg));
+  driveToPoint({-(31_in - 10_in), 7_in + 10_in}, -135_deg, 1,
+               Settler().distanceErr(2_in).angleErr(5_deg));
 }
 
 void oneCube() {
@@ -239,31 +264,38 @@ void oneCube() {
 void sixCubeBlue() {
 
   // full speed to line
-  driveToPoint({0_in, 12_in}, 0_deg, 1, Settler().distanceErr(7_in).angleErr(5_deg));
+  driveToPoint({0_in, 12_in}, 0_deg, 1,
+               Settler().distanceErr(7_in).angleErr(5_deg));
   rollerIntake();
   // first cube
   model->setMaxVoltage(7000);
-  driveToPoint({0_in, 15_in}, 0_deg, 1, Settler().distanceErr(7_in).angleErr(5_deg));
+  driveToPoint({0_in, 15_in}, 0_deg, 1,
+               Settler().distanceErr(7_in).angleErr(5_deg));
   // second cube
   model->setMaxVoltage(6000);
-  driveToPoint({0_in, 20_in}, 0_deg, 1, Settler().distanceErr(7_in).angleErr(5_deg));
+  driveToPoint({0_in, 20_in}, 0_deg, 1,
+               Settler().distanceErr(7_in).angleErr(5_deg));
   // third cube
   model->setMaxVoltage(5300);
-  driveToPoint({0_in, 40_in}, 0_deg, 1, Settler().distanceErr(7_in).angleErr(5_deg));
+  driveToPoint({0_in, 40_in}, 0_deg, 1,
+               Settler().distanceErr(7_in).angleErr(5_deg));
   // rest of line
   model->setMaxVoltage(6000);
-  driveToPoint({0_in, 44_in}, 0_deg, 1, Settler().distanceErr(5_in).angleErr(30_deg));
+  driveToPoint({0_in, 44_in}, 0_deg, 1,
+               Settler().distanceErr(5_in).angleErr(30_deg));
   // line up
   model->setMaxVoltage(12000);
   driveToPoint({-12_in, 7_in}, -135_deg, 2);
   setTilterMiddle();
   stackerMotor1->moveRelative(600, 12000);
   stackerMotor2->moveRelative(600, 12000);
-  driveToPoint({-14_in, 5_in}, -135_deg, 1, Settler().distanceErr(2_in).angleErr(5_deg));
+  driveToPoint({-14_in, 5_in}, -135_deg, 1,
+               Settler().distanceErr(2_in).angleErr(5_deg));
   setTilterUp();
   pros::delay(2000);
   rollerOuttake(0.5);
-  driveToPoint({0_in, 21_in}, -135_deg, 2, Settler().distanceErr(1_in).angleErr(2_deg));
+  driveToPoint({0_in, 21_in}, -135_deg, 2,
+               Settler().distanceErr(1_in).angleErr(2_deg));
 }
 void nineCubeRed() {
   model->setMaxVoltage(12000);

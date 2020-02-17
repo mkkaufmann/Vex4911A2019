@@ -5,8 +5,8 @@ namespace lib7842 {
 AutonSelector::Color AutonSelector::color = AutonSelector::Color::RED;
 AutonSelector::Auton AutonSelector::auton = AutonSelector::Auton::TEST;
 const char *AutonSelector::colormap[3] = {"Red", "Blue", ""};
-const char *AutonSelector::autonmap[9] = {
-    "Demo", "one", "six", "seven", "\n", "ONE", "THREE", "FOUR", ""};
+const char *AutonSelector::autonmap[10] = {
+    "TEST", "one", "five", "six", "seven", "nine", "\n", "THREE", "FOUR", ""};
 void AutonSelector::initialize() {
   initializeAuton();
   initializeColor();
@@ -81,23 +81,21 @@ lv_res_t AutonSelector::colorAction(lv_obj_t *btnm, const char *txt) {
  * auton selector
  */
 lv_res_t AutonSelector::autonAction(lv_obj_t *btnm, const char *txt) {
-  if (strcmp(txt, "ONE") == 0) {
-    auton = AutonSelector::Auton::BIG_ZONE_ONE_CUBE;
-  } else if (strcmp(txt, "TWO") == 0) {
-    auton = AutonSelector::Auton::BIG_ZONE_PUSH;
+  if (strcmp(txt, "one") == 0) {
+    auton = AutonSelector::Auton::one;
   } else if (strcmp(txt, "THREE") == 0) {
-    auton = AutonSelector::Auton::BIG_ZONE_3STACK;
+    auton = AutonSelector::Auton::THREE;
   } else if (strcmp(txt, "FOUR") == 0) {
-    auton = AutonSelector::Auton::BIG_ZONE_LARGESTACK;
-  } else if (strcmp(txt, "one") == 0) {
-    auton = AutonSelector::Auton::SMALL_ZONE_ONE_CUBE;
+    auton = AutonSelector::Auton::FOUR;
   } else if (strcmp(txt, "five") == 0) {
-    auton = AutonSelector::Auton::SMALL_ZONE_5STACK;
+    auton = AutonSelector::Auton::five;
   } else if (strcmp(txt, "six") == 0) {
-    auton = AutonSelector::Auton::SMALL_ZONE_6STACK;
+    auton = AutonSelector::Auton::six;
   } else if (strcmp(txt, "seven") == 0) {
-    auton = AutonSelector::Auton::SMALL_ZONE_7STACK;
-  } else if (strcmp(txt, "Demo") == 0) {
+    auton = AutonSelector::Auton::seven;
+  } else if (strcmp(txt, "nine") == 0) {
+    auton = AutonSelector::Auton::nine;
+  } else if (strcmp(txt, "TEST") == 0) {
     auton = AutonSelector::Auton::TEST;
   }
 

@@ -13,7 +13,7 @@
 
 namespace okapi {
 class ADIMotor : public ControllerOutput<double> {
-  public:
+public:
   /**
    * A motor on the ADI ports.
    *
@@ -21,8 +21,7 @@ class ADIMotor : public ControllerOutput<double> {
    * @param ireverse Whether the motor is reversed.
    * @param logger The logger that initialization warnings will be logged to.
    */
-  ADIMotor(std::uint8_t iport,
-           bool ireverse = false,
+  ADIMotor(std::uint8_t iport, bool ireverse = false,
            const std::shared_ptr<Logger> &logger = Logger::getDefaultLogger());
 
   /**
@@ -33,14 +32,15 @@ class ADIMotor : public ControllerOutput<double> {
   virtual void moveVoltage(std::int8_t ivoltage) const;
 
   /**
-   * Writes the value of the controller output. This method might be automatically called in another
-   * thread by the controller. The range of input values is expected to be [-1, 1].
+   * Writes the value of the controller output. This method might be
+   * automatically called in another thread by the controller. The range of
+   * input values is expected to be [-1, 1].
    *
    * @param ivalue the controller's output in the range [-1, 1]
    */
   void controllerSet(double ivalue) override;
 
-  protected:
+protected:
   const std::uint8_t port;
   const std::int8_t reversed;
 };

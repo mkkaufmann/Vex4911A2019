@@ -20,7 +20,7 @@ public:
    *
    * @param ilimits The pursuit limits
    */
-  void setLimits(const PursuitLimits& ilimits);
+  void setLimits(const PursuitLimits &ilimits);
 
   /**
    * Get the limits. Will throw an exception if no limits are set.
@@ -35,6 +35,6 @@ public:
   bool hasLimits() const;
 
 protected:
-  std::optional<PursuitLimits> limits {std::nullopt};
+  std::optional<PursuitLimits> limits{std::nullopt};
 };
 } // namespace lib7842

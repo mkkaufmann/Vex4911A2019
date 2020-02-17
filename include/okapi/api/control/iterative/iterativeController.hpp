@@ -14,12 +14,12 @@ namespace okapi {
 /**
  * Closed-loop controller that steps iteratively using the step method below.
  *
- * `ControllerOutput::controllerSet()` should set the controller's target to the input scaled by
- * the output bounds.
+ * `ControllerOutput::controllerSet()` should set the controller's target to the
+ * input scaled by the output bounds.
  */
 template <typename Input, typename Output>
 class IterativeController : public ClosedLoopController<Input, Output> {
-  public:
+public:
   /**
    * Do one iteration of the controller.
    *
@@ -42,13 +42,15 @@ class IterativeController : public ClosedLoopController<Input, Output> {
   virtual void setOutputLimits(Output imax, Output imin) = 0;
 
   /**
-   * Sets the (soft) limits for the target range that controllerSet() scales into. The target
-   * computed by `controllerSet()` is scaled into the range `[-itargetMin, itargetMax]`.
+   * Sets the (soft) limits for the target range that controllerSet() scales
+   * into. The target computed by `controllerSet()` is scaled into the range
+   * `[-itargetMin, itargetMax]`.
    *
    * @param itargetMax The new max target for `controllerSet()`.
    * @param itargetMin The new min target for `controllerSet()`.
    */
-  virtual void setControllerSetTargetLimits(Output itargetMax, Output itargetMin) = 0;
+  virtual void setControllerSetTargetLimits(Output itargetMax,
+                                            Output itargetMin) = 0;
 
   /**
    * Get the upper output bound.

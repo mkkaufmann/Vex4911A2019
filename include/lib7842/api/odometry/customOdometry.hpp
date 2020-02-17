@@ -9,7 +9,8 @@
 namespace lib7842 {
 
 /**
- * Odometry algorithm that directly uses 5225A's tracking algorithm. Statemode is assumed to be cartesian.
+ * Odometry algorithm that directly uses 5225A's tracking algorithm. Statemode
+ * is assumed to be cartesian.
  */
 class CustomOdometry : public Odometry, public TaskWrapper {
 public:
@@ -21,9 +22,10 @@ public:
    * @param itimeUtil      The time utility
    * @param ilogger        The logger
    */
-  CustomOdometry(const std::shared_ptr<ChassisModel>& imodel, const ChassisScales& ichassisScales,
-                 const TimeUtil& itimeUtil,
-                 const std::shared_ptr<Logger>& ilogger = Logger::getDefaultLogger());
+  CustomOdometry(
+      const std::shared_ptr<ChassisModel> &imodel,
+      const ChassisScales &ichassisScales, const TimeUtil &itimeUtil,
+      const std::shared_ptr<Logger> &ilogger = Logger::getDefaultLogger());
 
   virtual ~CustomOdometry() = default;
 
@@ -32,14 +34,14 @@ public:
    *
    * @return The state.
    */
-  virtual const State& getState() const;
+  virtual const State &getState() const;
 
   /**
    * Set a new state to be the current state.
    *
    * @param istate The state
    */
-  virtual void setState(const State& istate);
+  virtual void setState(const State &istate);
 
   /**
    * Reset state to {0, 0, 0}
@@ -56,7 +58,7 @@ public:
    *
    * @param ichassisScales The chassis scales
    */
-  void setScales(const ChassisScales& ichassisScales) override;
+  void setScales(const ChassisScales &ichassisScales) override;
 
   /**
    * Do one odometry step.
@@ -84,20 +86,20 @@ public:
 
 private:
   // bass class overrides for polymorphism
-  OdomState getState(const StateMode& imode) const override;
-  void setState(const OdomState& istate, const StateMode& imode) override;
+  OdomState getState(const StateMode &imode) const override;
+  void setState(const OdomState &istate, const StateMode &imode) override;
 
 protected:
-  std::shared_ptr<ChassisModel> model {nullptr};
+  std::shared_ptr<ChassisModel> model{nullptr};
 
   ChassisScales chassisScales;
   double chassisWidth;
   double middleDistance;
 
   TimeUtil timeUtil;
-  std::shared_ptr<Logger> logger {nullptr};
+  std::shared_ptr<Logger> logger{nullptr};
 
   State state;
-  std::valarray<std::int32_t> lastTicks {0, 0, 0};
+  std::valarray<std::int32_t> lastTicks{0, 0, 0};
 };
 } // namespace lib7842

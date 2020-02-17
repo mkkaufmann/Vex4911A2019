@@ -1,6 +1,6 @@
 #pragma once
-#include "main.h"
 #include "lib7842/api.hpp"
+#include "main.h"
 
 using namespace lib7842;
 using namespace lib7842::units;
@@ -28,8 +28,9 @@ void rollerOuttake(double t);
 void rollerIntake();
 void rollerStop();
 
-void driveToPoint(Vector target, QAngle targetAngle = 0_deg,
-                  double turnPriority = 1, Settler&& settler = Settler().distanceErr(4_in).angleErr(5_deg));
+void driveToPoint(
+    Vector target, QAngle targetAngle = 0_deg, double turnPriority = 1,
+    Settler &&settler = Settler().distanceErr(4_in).angleErr(5_deg));
 
 void driveToPoint(Vector target, Vector pointToFace, double turnPriority = 1,
                   QLength settleDistance = 4_in, QAngle settleAngle = 5_deg);

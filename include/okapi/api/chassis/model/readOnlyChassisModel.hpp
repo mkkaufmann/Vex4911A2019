@@ -12,12 +12,12 @@
 
 namespace okapi {
 /**
- * A version of the ChassisModel that only supports read methods, such as querying sensor values.
- * This class does not let you write to motors, so it supports having multiple owners and as a
- * result copying is enabled.
+ * A version of the ChassisModel that only supports read methods, such as
+ * querying sensor values. This class does not let you write to motors, so it
+ * supports having multiple owners and as a result copying is enabled.
  */
 class ReadOnlyChassisModel {
-  public:
+public:
   virtual ~ReadOnlyChassisModel() = default;
 
   /**

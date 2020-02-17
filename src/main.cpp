@@ -1,4 +1,5 @@
 #include "main.h"
+#include "auton.hpp"
 #include "lib7842/api.hpp"
 #include "subsystems/arm.hpp"
 #include "subsystems/stacker.hpp"
@@ -6,7 +7,6 @@
 #include "ui/autonselector.hpp"
 #include "util/timedelayedboolean.hpp"
 #include "util/util.hpp"
-#include "auton.hpp"
 
 using namespace lib7842;
 using namespace lib7842::units;
@@ -15,12 +15,7 @@ using namespace okapi;
 Controller controller{ControllerId::master};
 Controller partner{ControllerId::partner};
 
-
-
 GUI::Screen scr{lv_scr_act(), LV_COLOR_RED};
-
-
-
 
 // Constant distances used for autonomous plotting
 const QLength botWidth{17.5_in};
@@ -60,8 +55,6 @@ void disabled() {}
 
 void competition_initialize() {}
 
-
-
 void ppTest() {
   auto path = SimplePath({odom->getState(),
                           {0_ft, 0_ft},
@@ -87,27 +80,23 @@ void autonomous() {
   switch (currentAuton) {
   case AutonSelector::Auton::TEST: {
     sixCubeBlue();
-    //			switch(alliance){
-    //				case AutonSelector::Color::RED:{
-    //					sixCubeRed();
-    //				}
-    //				case AutonSelector::Color::BLUE:{
-    //					sixCubeBlue();
-    //				}
-    //			}
     break;
   }
-  case AutonSelector::Auton::SMALL_ZONE_ONE_CUBE: {
+  case AutonSelector::Auton::one: {
     break;
   }
-  case AutonSelector::Auton::BIG_ZONE_ONE_CUBE: {
+  case AutonSelector::Auton::five: {
+    switch (alliance) {
+    case AutonSelector::Color::RED: {
+      fiveCubeRed();
+    }
+    case AutonSelector::Color::BLUE: {
+      fiveCubeBlue();
+    }
+    }
     break;
   }
-  case AutonSelector::Auton::SMALL_ZONE_5STACK: {
-
-    break;
-  }
-  case AutonSelector::Auton::SMALL_ZONE_6STACK: {
+  case AutonSelector::Auton::six: {
     switch (alliance) {
     case AutonSelector::Color::RED: {
       sixCubeRed();
@@ -118,13 +107,13 @@ void autonomous() {
     }
     break;
   }
-  case AutonSelector::Auton::SMALL_ZONE_7STACK: {
+  case AutonSelector::Auton::seven: {
     break;
   }
-  case AutonSelector::Auton::SMALL_ZONE_8STACK: {
+  case AutonSelector::Auton::nine: {
     break;
   }
-  case AutonSelector::Auton::BIG_ZONE_3STACK: {
+  case AutonSelector::Auton::THREE: {
     rollerIntake();
     // drive forward, grab cube
     driveToPoint({0_in, 1_tile});
@@ -175,7 +164,7 @@ void autonomous() {
     break;
     setTilterDown();
   }
-  case AutonSelector::Auton::BIG_ZONE_LARGESTACK: {
+  case AutonSelector::Auton::FOUR: {
     driveToPoint({0_in, 14_in});
     // deploy tray
     driveToPoint({0_in, 1_in});
@@ -250,9 +239,6 @@ void autonomous() {
     }
     break;
     setTilterDown();
-  }
-  case AutonSelector::Auton::BIG_ZONE_PUSH: {
-    break;
   }
   default:
     break;

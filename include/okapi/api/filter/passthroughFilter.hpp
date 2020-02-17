@@ -11,7 +11,7 @@
 
 namespace okapi {
 class PassthroughFilter : public Filter {
-  public:
+public:
   /**
    * A simple filter that does no filtering and just passes the input through.
    */
@@ -32,7 +32,7 @@ class PassthroughFilter : public Filter {
    */
   double getOutput() const override;
 
-  protected:
+protected:
   double lastOutput = 0;
 };
 } // namespace okapi

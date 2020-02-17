@@ -3,8 +3,8 @@
  * @author Benjamin Jurke
  * @author Ryan Benasutti, WPI
  *
- * This code is a modified version of Benjamin Jurke's work in 2015. You can read his blog post
- * here:
+ * This code is a modified version of Benjamin Jurke's work in 2015. You can
+ * read his blog post here:
  * https://benjaminjurke.com/content/articles/2015/compile-time-numerical-unit-dimension-checking/
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -25,9 +25,7 @@ constexpr QTime hour = 60 * minute;
 constexpr QTime day = 24 * hour;
 
 inline namespace literals {
-constexpr QTime operator"" _s(long double x) {
-  return QTime(x);
-}
+constexpr QTime operator"" _s(long double x) { return QTime(x); }
 constexpr QTime operator"" _ms(long double x) {
   return static_cast<double>(x) * millisecond;
 }

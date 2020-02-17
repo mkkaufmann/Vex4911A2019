@@ -13,15 +13,17 @@
 namespace okapi {
 template <typename Input, typename Output>
 class AsyncPositionController : virtual public AsyncController<Input, Output> {
-  public:
+public:
   /**
-   * Sets the "absolute" zero position of the controller to its current position.
+   * Sets the "absolute" zero position of the controller to its current
+   * position.
    */
   virtual void tarePosition() = 0;
 
   /**
-   * Sets a new maximum velocity (typically motor RPM [0-600]). The interpretation of the units
-   * of this velocity and whether it will be respected is implementation-dependent.
+   * Sets a new maximum velocity (typically motor RPM [0-600]). The
+   * interpretation of the units of this velocity and whether it will be
+   * respected is implementation-dependent.
    *
    * @param imaxVelocity The new maximum velocity.
    */

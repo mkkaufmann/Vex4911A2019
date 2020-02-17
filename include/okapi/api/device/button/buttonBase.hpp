@@ -11,10 +11,10 @@
 
 namespace okapi {
 class ButtonBase : public AbstractButton {
-  public:
+public:
   /**
-   * @param iinverted Whether the button is inverted (`true` meaning default pressed and `false`
-   * meaning default not pressed).
+   * @param iinverted Whether the button is inverted (`true` meaning default
+   * pressed and `false` meaning default not pressed).
    */
   explicit ButtonBase(bool iinverted = false);
 
@@ -24,23 +24,24 @@ class ButtonBase : public AbstractButton {
   bool isPressed() override;
 
   /**
-   * Return whether the state of the button changed since the last time this method was called.
+   * Return whether the state of the button changed since the last time this
+   *method was called.
    **/
   bool changed() override;
 
   /**
-   * Return whether the state of the button changed to pressed since the last time this method was
-   *called.
+   * Return whether the state of the button changed to pressed since the last
+   *time this method was called.
    **/
   bool changedToPressed() override;
 
   /**
-   * Return whether the state of the button to not pressed since the last time this method was
-   *called.
+   * Return whether the state of the button to not pressed since the last time
+   *this method was called.
    **/
   bool changedToReleased() override;
 
-  protected:
+protected:
   bool inverted{false};
   bool wasPressedLast_c{false};
   bool wasPressedLast_ctp{false};
@@ -48,7 +49,7 @@ class ButtonBase : public AbstractButton {
 
   virtual bool currentlyPressed() = 0;
 
-  private:
+private:
   bool changedImpl(bool &prevState);
 };
 } // namespace okapi

@@ -8,8 +8,8 @@ namespace lib7842 {
  */
 class MathPoint {
 public:
-  double x {0}; // in meters
-  double y {0}; // in meters
+  double x{0}; // in meters
+  double y{0}; // in meters
 
   MathPoint() = default;
   virtual ~MathPoint() = default;
@@ -27,7 +27,7 @@ public:
    *
    * @param ipoint The point
    */
-  MathPoint(const Vector& ipoint);
+  MathPoint(const Vector &ipoint);
 
   /**
    * Convert a MathPoint to a Vector
@@ -37,10 +37,10 @@ public:
   /**
    * Binary operators
    */
-  MathPoint operator+(const MathPoint& rhs) const;
-  MathPoint operator-(const MathPoint& rhs) const;
-  bool operator==(const MathPoint& rhs) const;
-  bool operator!=(const MathPoint& rhs) const;
+  MathPoint operator+(const MathPoint &rhs) const;
+  MathPoint operator-(const MathPoint &rhs) const;
+  bool operator==(const MathPoint &rhs) const;
+  bool operator!=(const MathPoint &rhs) const;
 
   /**
    * Scale operators
@@ -51,13 +51,13 @@ public:
   /**
    * Utility functions
    */
-  static double dist(const MathPoint& lhs, const MathPoint& rhs);
+  static double dist(const MathPoint &lhs, const MathPoint &rhs);
 
   /**
    * MathPoint operations
    */
-  static MathPoint normalize(const MathPoint& point);
-  static double dot(const MathPoint& lhs, const MathPoint& rhs);
-  static double mag(const MathPoint& point);
+  static MathPoint normalize(const MathPoint &point);
+  static double dot(const MathPoint &lhs, const MathPoint &rhs);
+  static double mag(const MathPoint &point);
 };
 } // namespace lib7842

@@ -15,11 +15,11 @@
 
 namespace okapi {
 class ComposableFilter : public Filter {
-  public:
+public:
   /**
-   * A composable filter is a filter that consists of other filters. The input signal is passed
-   * through each filter in sequence. The final output of this filter is the output of the last
-   * filter.
+   * A composable filter is a filter that consists of other filters. The input
+   * signal is passed through each filter in sequence. The final output of this
+   * filter is the output of the last filter.
    *
    * @param ilist The filters to use in sequence.
    */
@@ -45,7 +45,7 @@ class ComposableFilter : public Filter {
    */
   virtual void addFilter(std::shared_ptr<Filter> ifilter);
 
-  protected:
+protected:
   std::vector<std::shared_ptr<Filter>> filters;
   double output = 0;
 };

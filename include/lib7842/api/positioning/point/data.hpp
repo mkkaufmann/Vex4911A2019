@@ -16,7 +16,7 @@ using DataPoint = Data<Vector>;
 using DataState = Data<State>;
 
 /**
- * A class that contains information of any type. 
+ * A class that contains information of any type.
  */
 template <typename T> class Data : public T {
 public:
@@ -27,7 +27,7 @@ public:
    *
    * @param ibase The base
    */
-  explicit Data(const T& ibase) : T(ibase) {}
+  explicit Data(const T &ibase) : T(ibase) {}
 
   /**
    * Set the data.
@@ -35,7 +35,7 @@ public:
    * @param iid   The data name
    * @param idata The data
    */
-  void setData(const std::string& iid, const std::any& idata) {
+  void setData(const std::string &iid, const std::any &idata) {
     data[iid] = idata;
   }
 
@@ -46,12 +46,13 @@ public:
    * @tparam U   The data type
    * @return The data
    */
-  template <typename U> U getData(const std::string& iid) const {
-    const std::any& idata = getID(iid);
+  template <typename U> U getData(const std::string &iid) const {
+    const std::any &idata = getID(iid);
     try {
       return std::any_cast<U>(idata);
-    } catch (const std::bad_any_cast& e) {
-      throw std::runtime_error("Data::getData:: \"" + iid + "\" contains wrong type \"" +
+    } catch (const std::bad_any_cast &e) {
+      throw std::runtime_error("Data::getData:: \"" + iid +
+                               "\" contains wrong type \"" +
                                idata.type().name() + "\"");
     }
   }
@@ -63,14 +64,15 @@ protected:
    * @param  iid The iid
    * @return The data.
    */
-  const std::any& getID(const std::string& iid) const {
+  const std::any &getID(const std::string &iid) const {
     try {
       return data.at(iid);
-    } catch (const std::out_of_range& e) {
-      throw std::runtime_error("Data::getID:: \"" + iid + "\" does not exist in data");
+    } catch (const std::out_of_range &e) {
+      throw std::runtime_error("Data::getID:: \"" + iid +
+                               "\" does not exist in data");
     }
   }
 
-  std::map<std::string, std::any> data {};
+  std::map<std::string, std::any> data{};
 };
 } // namespace lib7842

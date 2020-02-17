@@ -14,10 +14,10 @@
 
 namespace okapi {
 class Odometry {
-  public:
+public:
   /**
-   * Odometry. Tracks the movement of the robot and estimates its position in coordinates
-   * relative to the start (assumed to be (0, 0, 0)).
+   * Odometry. Tracks the movement of the robot and estimates its position in
+   * coordinates relative to the start (assumed to be (0, 0, 0)).
    */
   explicit Odometry() = default;
 
@@ -39,7 +39,8 @@ class Odometry {
    * @param imode The mode to return the state in.
    * @return The current state in the given format.
    */
-  virtual OdomState getState(const StateMode &imode = StateMode::FRAME_TRANSFORMATION) const = 0;
+  virtual OdomState
+  getState(const StateMode &imode = StateMode::FRAME_TRANSFORMATION) const = 0;
 
   /**
    * Sets a new state to be the current state.
@@ -47,8 +48,9 @@ class Odometry {
    * @param istate The new state in the given format.
    * @param imode The mode to treat the input state as.
    */
-  virtual void setState(const OdomState &istate,
-                        const StateMode &imode = StateMode::FRAME_TRANSFORMATION) = 0;
+  virtual void
+  setState(const OdomState &istate,
+           const StateMode &imode = StateMode::FRAME_TRANSFORMATION) = 0;
 
   /**
    * @return The internal ChassisModel.

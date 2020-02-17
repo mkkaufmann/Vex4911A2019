@@ -29,15 +29,13 @@ public:
   AutonSelector &attachAuton(const std::shared_ptr<Auton> &iodom);
 
   enum Auton {
-    SMALL_ZONE_ONE_CUBE,
-    BIG_ZONE_ONE_CUBE,
-    SMALL_ZONE_5STACK,
-    SMALL_ZONE_6STACK,
-    SMALL_ZONE_7STACK,
-    SMALL_ZONE_8STACK,
-    BIG_ZONE_3STACK,
-    BIG_ZONE_LARGESTACK,
-    BIG_ZONE_PUSH,
+    one,
+    five,
+    six,
+    seven,
+    nine,
+    THREE,
+    FOUR,
     TEST
   };
 
@@ -66,7 +64,7 @@ private:
   static lv_res_t
   colorAction(lv_obj_t *, const char *); // action when color button is pressed
   static const char *colormap[3];
-  static const char *autonmap[9];
+  static const char *autonmap[10];
 };
 
 } // namespace lib7842

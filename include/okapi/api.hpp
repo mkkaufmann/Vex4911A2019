@@ -11,14 +11,15 @@
  *
  * @section intro_sec Introduction
  *
- * **OkapiLib** is a PROS library for programming VEX V5 robots. This library is intended to raise
- * the floor for teams with all levels of experience. New teams should have an easier time getting
- * their robot up and running, and veteran teams should find that OkapiLib doesn't get in the way or
- * place any limits on functionality.
+ * **OkapiLib** is a PROS library for programming VEX V5 robots. This library is
+ * intended to raise the floor for teams with all levels of experience. New
+ * teams should have an easier time getting their robot up and running, and
+ * veteran teams should find that OkapiLib doesn't get in the way or place any
+ * limits on functionality.
  *
  * For tutorials on how to get the most out of OkapiLib, see the
- * [Tutorials](docs/tutorials/index.md) section. For documentation on using the OkapiLib API, see
- * the [API](docs/api/index.md) section.
+ * [Tutorials](docs/tutorials/index.md) section. For documentation on using the
+ * OkapiLib API, see the [API](docs/api/index.md) section.
  *
  * @section getting_started Getting Started
  * Not sure where to start? Take a look at the
@@ -28,13 +29,14 @@
  *
  * @section using_docs Using The Documentation
  *
- * Start with reading the [Tutorials](docs/tutorials/index.md). Use the [API](docs/api/index.md)
- * section to explore the class hierarchy. To see a list of all available classes, use the
- * [Classes](annotated.html) section.
+ * Start with reading the [Tutorials](docs/tutorials/index.md). Use the
+ * [API](docs/api/index.md) section to explore the class hierarchy. To see a
+ * list of all available classes, use the [Classes](annotated.html) section.
  *
- * This documentation has a powerful search feature, which can be brought up with the keyboard
- * shortcuts `Tab` or `T`. All exports to the `okapi` namespace such as enums, constants, units, or
- * functions can be found [here](@ref okapi).
+ * This documentation has a powerful search feature, which can be brought up
+ * with the keyboard shortcuts `Tab` or `T`. All exports to the `okapi`
+ * namespace such as enums, constants, units, or functions can be found
+ * [here](@ref okapi).
  */
 
 #include "okapi/api/chassis/controller/chassisControllerIntegrated.hpp"

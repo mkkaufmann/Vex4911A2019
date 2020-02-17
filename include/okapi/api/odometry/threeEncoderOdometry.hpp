@@ -14,24 +14,26 @@
 
 namespace okapi {
 class ThreeEncoderOdometry : public TwoEncoderOdometry {
-  public:
+public:
   /**
-   * Odometry. Tracks the movement of the robot and estimates its position in coordinates
-   * relative to the start (assumed to be (0, 0)).
+   * Odometry. Tracks the movement of the robot and estimates its position in
+   * coordinates relative to the start (assumed to be (0, 0)).
    *
    * @param itimeUtil The TimeUtil.
    * @param imodel The chassis model for reading sensors.
-   * @param ichassisScales See ChassisScales docs (the middle wheel scale is the third member)
-   * @param iwheelVelDelta The maximum delta between wheel velocities to consider the robot as
-   * driving straight.
+   * @param ichassisScales See ChassisScales docs (the middle wheel scale is the
+   * third member)
+   * @param iwheelVelDelta The maximum delta between wheel velocities to
+   * consider the robot as driving straight.
    * @param ilogger The logger this instance will log to.
    */
-  ThreeEncoderOdometry(const TimeUtil &itimeUtil,
-                       const std::shared_ptr<ReadOnlyChassisModel> &imodel,
-                       const ChassisScales &ichassisScales,
-                       const std::shared_ptr<Logger> &ilogger = Logger::getDefaultLogger());
+  ThreeEncoderOdometry(
+      const TimeUtil &itimeUtil,
+      const std::shared_ptr<ReadOnlyChassisModel> &imodel,
+      const ChassisScales &ichassisScales,
+      const std::shared_ptr<Logger> &ilogger = Logger::getDefaultLogger());
 
-  protected:
+protected:
   /**
    * Does the math, side-effect free, for one odom step.
    *

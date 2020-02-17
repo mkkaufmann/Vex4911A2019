@@ -12,7 +12,7 @@
 
 namespace okapi {
 class RotarySensor : public ControllerInput<double> {
-  public:
+public:
   virtual ~RotarySensor();
 
   /**
