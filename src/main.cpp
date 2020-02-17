@@ -111,7 +111,6 @@ void rollerStop() {
   stackerMotor1->moveVoltage(0);
   stackerMotor2->moveVoltage(0);
 }
-
 // Constant distances used for autonomous plotting
 const QLength botWidth{17.5_in};
 const QLength botLength{17.5_in};
