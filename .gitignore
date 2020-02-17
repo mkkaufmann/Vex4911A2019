@@ -14,5 +14,3 @@ temp.log
 temp.errors
 *.ini
 .d/
-
-.ccls-cache
