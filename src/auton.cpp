@@ -141,6 +141,58 @@ void oneCube() {
   bottomRight->moveRelative(900 / (4.0 * 3.1415) * -8, 8000);
 }
 
+void fiveCubeBluePP(){
+  odom->setState(State({9.7_ft, 11.4_ft}, 180_deg));
+  auto line = QuinticPath 
+    ( 
+        {
+            odom -> getState (),
+            { 9.7_ft, 7.4_ft, 180_deg }
+        },
+
+        0.2
+    )
+    .generate ( 50 ); 
+  auto lineup = QuinticPath 
+    ( 
+        {
+            { 9.7_ft, 7.4_ft, 180_deg },
+            { 10_ft, 10_ft, 135_deg }
+        },
+
+        0.2
+    )
+    .generate ( 50 ); 
+  follower.followPath(PathGenerator::generate(line, halfSpeedLimits));
+  follower.followPath(PathGenerator::generate(lineup, halfSpeedLimits), true);
+  odomController->turnToAngle(45_deg, lib7842::OdomController::pointTurn, Settler().angleErr(3_deg));
+  auto scoringPosition = QuinticPath 
+    ( 
+        {
+            odom -> getState (),
+            { 11_ft, 11_ft, 45_deg }
+        },
+
+        0.2
+    )
+    .generate ( 50 ); 
+  auto backup = QuinticPath 
+    ( 
+        {
+            odom -> getState (),
+            { 10_ft, 10_ft, 45_deg }
+        },
+
+        0.2
+    )
+    .generate ( 50 ); 
+  follower.followPath(PathGenerator::generate(scoringPosition, halfSpeedLimits));
+  setTilterUp();
+  pros::delay(2000);
+  follower.followPath(PathGenerator::generate(backup, halfSpeedLimits), true);
+
+}
+
 void fiveCubeRed() {
 
   // full speed to line
