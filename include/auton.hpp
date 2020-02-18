@@ -38,6 +38,7 @@ void driveToPoint(Vector target, Vector pointToFace, double turnPriority = 1,
 void oneCube();
 void fiveCubeRed();
 void fiveCubeBlue();
+void fiveCubeBluePP();
 void sixCubeRed();
 void sixCubeBlue();
 void sevenCubeRed();

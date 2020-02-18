@@ -79,7 +79,7 @@ void autonomous() {
   // setArmLowMiddle();
   switch (currentAuton) {
   case AutonSelector::Auton::TEST: {
-    sixCubeBlue();
+    fiveCubeBluePP();
     break;
   }
   case AutonSelector::Auton::one: {

@@ -163,8 +163,9 @@ void fiveCubeBluePP(){
         0.2
     )
     .generate ( 50 ); 
-  follower.followPath(PathGenerator::generate(line, halfSpeedLimits));
-  follower.followPath(PathGenerator::generate(lineup, halfSpeedLimits), true);
+  rollerIntake();
+  follower.followPath(PathGenerator::generate(line, fullSpeedLimits));
+  follower.followPath(PathGenerator::generate(lineup, fullSpeedLimits), true);
   odomController->turnToAngle(45_deg, lib7842::OdomController::pointTurn, Settler().angleErr(3_deg));
   auto scoringPosition = QuinticPath 
     ( 
@@ -179,17 +180,17 @@ void fiveCubeBluePP(){
   auto backup = QuinticPath 
     ( 
         {
-            odom -> getState (),
+        {11_ft, 11_ft, 45_deg},
             { 10_ft, 10_ft, 45_deg }
         },
 
         0.2
     )
     .generate ( 50 ); 
-  follower.followPath(PathGenerator::generate(scoringPosition, halfSpeedLimits));
+  follower.followPath(PathGenerator::generate(scoringPosition, fullSpeedLimits));
   setTilterUp();
   pros::delay(2000);
-  follower.followPath(PathGenerator::generate(backup, halfSpeedLimits), true);
+  follower.followPath(PathGenerator::generate(backup, fullSpeedLimits), true);
 
 }
 
@@ -249,20 +250,21 @@ void fiveCubeBlue() {
   driveToPoint({0_in, 40_in}, 0_deg, 1,
                Settler().distanceErr(7_in).angleErr(5_deg));
   // rest of line
-  model->setMaxVoltage(6000);
-  driveToPoint({0_in, 44_in}, 0_deg, 1,
+  model->setMaxVoltage(4000);
+  driveToPoint({0_in, 46_in}, 0_deg, 1,
                Settler().distanceErr(5_in).angleErr(30_deg));
   // line up
   model->setMaxVoltage(12000);
   driveToPoint({-12_in, 7_in}, -135_deg, 2);
   setTilterMiddle();
-  stackerMotor1->moveRelative(600, 12000);
-  stackerMotor2->moveRelative(600, 12000);
+  stackerMotor1->moveRelative(800, 12000);
+  stackerMotor2->moveRelative(800, 12000);
   driveToPoint({-14_in, 5_in}, -135_deg, 1,
                Settler().distanceErr(2_in).angleErr(5_deg));
   setTilterUp();
   pros::delay(2000);
   rollerOuttake(0.5);
+  model->setMaxVoltage(7000);
   driveToPoint({0_in, 21_in}, -135_deg, 2,
                Settler().distanceErr(1_in).angleErr(2_deg));
 }
