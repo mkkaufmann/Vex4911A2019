@@ -7,8 +7,8 @@ int Constants::LEFT_FRONT_MOTOR_PORT = 4;
 int Constants::LEFT_REAR_MOTOR_PORT = 6;
 int Constants::RIGHT_FRONT_MOTOR_PORT = -5;
 int Constants::RIGHT_REAR_MOTOR_PORT = -7;
-int Constants::STACKER_TREAD_2_MOTOR_PORT = 10;
-int Constants::STACKER_TREAD_1_MOTOR_PORT = -15;
+int Constants::STACKER_TREAD_2_MOTOR_PORT = 17;
+int Constants::STACKER_TREAD_1_MOTOR_PORT = -16;
 int Constants::TILTER_MOTOR_PORT = -18;
 int Constants::ARM_MOTOR_PORT = -3;
 

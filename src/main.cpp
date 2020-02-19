@@ -373,7 +373,7 @@ void opcontrol() {
     } else if (partner.getDigital(ControllerDigital::L2)) {
       armPID->flipDisable(false);
       setTilterTowers();
-      setArmAlliance();
+      setArmLowMiddle();
       tilterUp = true;
     } else if (partner.getDigital(ControllerDigital::right)) {
       armPID->flipDisable(false);
@@ -385,6 +385,15 @@ void opcontrol() {
       setArmLowMiddle();
     }
 
+    if(partner.getDigital(ControllerDigital::R1)){
+      //outtake
+      stackerMotor1->moveVoltage(8000);
+      stackerMotor2->moveVoltage(8000);
+    }else if(partner.getDigital(ControllerDigital::R2)){
+      //intake
+      stackerMotor1->moveVoltage(-8000);
+      stackerMotor2->moveVoltage(-8000);
+    }
     // slow the speed of the drivetrain for moving stacks
     if (toggleSpeed.update(controller.getDigital(ControllerDigital::Y))) {
       if (model->getMaxVoltage() == 12000) {
