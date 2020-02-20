@@ -76,7 +76,7 @@ void autonomous() {
   stackerMotor2->moveRelative(600, 12000);
   pros::delay(200);
   setTilterDown();
-  // setArmLowMiddle();
+  setArmLowMiddle();
   switch (currentAuton) {
   case AutonSelector::Auton::TEST: {
     fiveCubeBluePP();
@@ -375,10 +375,10 @@ void opcontrol() {
       setTilterTowers();
       setArmLowMiddle();
       tilterUp = true;
-    } else if (partner.getDigital(ControllerDigital::right)) {
+    } else if (partner.getDigital(ControllerDigital::L1)) {
       armPID->flipDisable(false);
       setTilterTowers();
-      setArmHighMiddle();
+      setArmAlliance();
       tilterUp = true;
     } else if (reset) {
       armPID->flipDisable(false);
