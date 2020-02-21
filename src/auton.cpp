@@ -346,8 +346,40 @@ void sevenCubeBlue() {
 }
 
 
-void nineCubeRed() {}
-void nineCubeBlue() {}
+void nineCubeRed() {
+  deploy();
+  odom->setState({9.7_ft, 1_ft, 0_deg});
+  model->setMaxVoltage(8000);
+  driveToPoint({9.7_ft, 4.6_ft}, 0_deg, 1, Settler().distanceErr(4_in).maxTime(500_ms, TimeUtilFactory().create()));
+  rollerIntake();
+  driveToPoint({9.7_ft, 4.6_ft}, 0_deg, 1, Settler().distanceErr(4_in).angleErr(5_deg).maxTime(5_s, TimeUtilFactory().create()));
+  driveToPoint({9.0_ft, 5_ft}, -30_deg, 1, Settler().distanceErr(4_in).angleErr(5_deg).maxTime(5_s, TimeUtilFactory().create()));
+  driveToPoint({8.0_ft, 5_ft}, -135_deg, 1, Settler().distanceErr(4_in).angleErr(5_deg).maxTime(5_s, TimeUtilFactory().create()));
+  driveToPoint({7.7_ft, 4.5_ft}, -180_deg, 1, Settler().distanceErr(4_in).angleErr(5_deg).maxTime(5_s, TimeUtilFactory().create()));
+  driveToPoint({7.7_ft, 3_ft}, -180_deg, 1, Settler().distanceErr(4_in).angleErr(5_deg).maxTime(5_s, TimeUtilFactory().create()));
+  driveToPoint({10.5_ft, 1.5_ft}, 135_deg, 1, Settler().distanceErr(4_in).angleErr(5_deg).maxTime(5_s, TimeUtilFactory().create()));
+  driveToPoint({12_ft, 0_ft}, 135_deg, 1, Settler().distanceErr(4_in).angleErr(5_deg).maxTime(1_s, TimeUtilFactory().create()));
+  placeStack(1500);
+  rollerOuttake(0.3);
+  driveToPoint({9.5_ft, 2.5_ft}, 135_deg, 1, Settler().distanceErr(4_in).angleErr(5_deg).maxTime(5_s, TimeUtilFactory().create()));
+}
+void nineCubeBlue() {
+  deploy();
+  odom->setState({9.7_ft, 12_ft-1_ft, 180_deg+0_deg});
+  model->setMaxVoltage(8000);
+  driveToPoint({9.7_ft, 12_ft-4.6_ft}, 180_deg+0_deg, 1, Settler().distanceErr(4_in).maxTime(500_ms, TimeUtilFactory().create()));
+  rollerIntake();
+  driveToPoint({9.7_ft, 12_ft-4.6_ft}, 180_deg+0_deg, 1, Settler().distanceErr(4_in).angleErr(5_deg).maxTime(5_s, TimeUtilFactory().create()));
+  driveToPoint({9.0_ft, 12_ft-5_ft}, 180_deg-30_deg, 1, Settler().distanceErr(4_in).angleErr(5_deg).maxTime(5_s, TimeUtilFactory().create()));
+  driveToPoint({8.0_ft, 12_ft-5_ft}, 180_deg-135_deg, 1, Settler().distanceErr(4_in).angleErr(5_deg).maxTime(5_s, TimeUtilFactory().create()));
+  driveToPoint({7.7_ft, 12_ft-4.5_ft}, 180_deg-180_deg, 1, Settler().distanceErr(4_in).angleErr(5_deg).maxTime(5_s, TimeUtilFactory().create()));
+  driveToPoint({7.7_ft, 12_ft-3_ft}, 180_deg-180_deg, 1, Settler().distanceErr(4_in).angleErr(5_deg).maxTime(5_s, TimeUtilFactory().create()));
+  driveToPoint({10.5_ft, 12_ft-1.5_ft}, 180_deg-135_deg, 1, Settler().distanceErr(4_in).angleErr(5_deg).maxTime(5_s, TimeUtilFactory().create()));
+  driveToPoint({12_ft, 12_ft-0_ft}, 180_deg-135_deg, 1, Settler().distanceErr(4_in).angleErr(5_deg).maxTime(1_s, TimeUtilFactory().create()));
+  placeStack(1500);
+  rollerOuttake(0.3);
+  driveToPoint({9.5_ft, 12_ft-2.5_ft}, 180_deg-135_deg, 1, Settler().distanceErr(4_in).angleErr(5_deg).maxTime(5_s, TimeUtilFactory().create()));
+}
 void threeCubeBigRed() {}
 void threeCubeBigBlue() {}
 void fourCubeBigRed() {}
