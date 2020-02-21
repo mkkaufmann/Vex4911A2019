@@ -137,6 +137,14 @@ void placeStack(int waitMs){
   setArmLowMiddle();
 };
 
+void deploy(){
+  stackerMotor1->moveRelative(600, 12000);
+  stackerMotor2->moveRelative(600, 12000);
+  pros::delay(400);
+  setTilterDown();
+  setArmLowMiddle();
+}
+
 void oneCube() {
   topLeft->moveRelative(900 / (4.0 * 3.1415) * 8, 8000);
   topRight->moveRelative(900 / (4.0 * 3.1415) * 8, 8000);
@@ -150,6 +158,7 @@ void oneCube() {
 }
 
 void fiveCubeBluePP(){
+  deploy();
   odom->setState(State({9.7_ft, 11.4_ft}, 180_deg));
   auto line = QuinticPath 
     ( 
@@ -204,6 +213,7 @@ void fiveCubeBluePP(){
 
 void fiveCubeRed() {
 
+  deploy();
   // full speed to line
   driveToPoint({0_in, 12_in}, 0_deg, 1,
                Settler().distanceErr(7_in).angleErr(5_deg));
@@ -241,6 +251,7 @@ void fiveCubeRed() {
 
 void fiveCubeBlue() {
 
+  deploy();
   // full speed to line
   driveToPoint({0_in, 12_in}, 0_deg, 1,
                Settler().distanceErr(7_in).angleErr(5_deg));
@@ -281,17 +292,18 @@ void sixCubeRed() {}
 void sixCubeBlue() {}
 
 void sevenCubeRed() {
-  odom->setState({7.7_ft, 12_ft - 11.4_ft, 0_deg});
+  deploy();
+  odom->setState({7.7_ft, 12_ft - 11.5_ft, 0_deg});
   model->setMaxVoltage(12000);
-  driveToPoint({7.7_ft, 12_ft -8.5_ft}, 180_deg -180_deg, 1, Settler().distanceErr(4_in).maxTime(500_ms, TimeUtilFactory().create()));
+  driveToPoint({7.7_ft, 12_ft -8.3_ft}, 180_deg -180_deg, 1, Settler().distanceErr(4_in).maxTime(500_ms, TimeUtilFactory().create()));
   rollerIntake();
   model->setMaxVoltage(6000);
-  driveToPoint({7.7_ft, 12_ft -8.5_ft}, 180_deg -180_deg, 1, Settler().distanceErr(4_in).angleErr(5_deg).maxTime(3_s, TimeUtilFactory().create()));
+  driveToPoint({7.7_ft, 12_ft -8.3_ft}, 180_deg -180_deg, 1, Settler().distanceErr(4_in).angleErr(5_deg).maxTime(3_s, TimeUtilFactory().create()));
   model->setMaxVoltage(12000);
-  driveToPoint({9.7_ft, 12_ft -11.0_ft}, 180_deg -150_deg, 1.5, Settler().distanceErr(4_in).angleErr(5_deg).maxTime(8_s, TimeUtilFactory().create()));
-  driveToPoint({9.7_ft, 12_ft -11.0_ft}, 180_deg -180_deg, 1.5, Settler().distanceErr(4_in).angleErr(5_deg).maxTime(2_s, TimeUtilFactory().create()));
+  driveToPoint({9.8_ft, 12_ft -11.0_ft}, 180_deg -205_deg, 1.5, Settler().distanceErr(4_in).angleErr(5_deg).maxTime(8_s, TimeUtilFactory().create()));
+  driveToPoint({9.8_ft, 12_ft -11.0_ft}, 180_deg -180_deg, 1.5, Settler().distanceErr(4_in).angleErr(5_deg).maxTime(2_s, TimeUtilFactory().create()));
   model->setMaxVoltage(6000);
-  driveToPoint({9.7_ft, 12_ft -7.0_ft}, 180_deg -180_deg, 1.5, Settler().distanceErr(4_in).angleErr(5_deg).maxTime(6_s, TimeUtilFactory().create()));
+  driveToPoint({9.8_ft, 12_ft -7.3_ft}, 180_deg -180_deg, 1.5, Settler().distanceErr(4_in).angleErr(5_deg).maxTime(6_s, TimeUtilFactory().create()));
   model->setMaxVoltage(12000);
   driveToPoint({10.5_ft, 12_ft -10.5_ft}, 180_deg -45_deg, 1, Settler().distanceErr(4_in).angleErr(5_deg).maxTime(6_s, TimeUtilFactory().create()));
   stackerMotor1->moveRelative(800, 12000);
@@ -304,19 +316,23 @@ void sevenCubeRed() {
 }
 
 void sevenCubeBlue() {
-  odom->setState({7.7_ft, 11.4_ft, 180_deg});
-  model->setMaxVoltage(12000);
-  driveToPoint({7.7_ft, 8.5_ft}, 180_deg, 1, Settler().distanceErr(4_in).maxTime(500_ms, TimeUtilFactory().create()));
+  odom->setState({0_ft, 0_ft, 0_deg});
+  driveToPoint({0_ft, 0.5_ft}, 0_deg, 1, Settler().distanceErr(4_in).maxTime(500_ms, TimeUtilFactory().create()));
+  deploy();
+  odom->setState({7.7_ft, 11_ft, 180_deg});
+  model->setMaxVoltage(8000);
+  driveToPoint({7.7_ft, 8.8_ft}, 180_deg, 1, Settler().distanceErr(4_in).maxTime(500_ms, TimeUtilFactory().create()));
   rollerIntake();
   model->setMaxVoltage(6000);
-  driveToPoint({7.7_ft, 8.5_ft}, 180_deg, 1, Settler().distanceErr(4_in).angleErr(5_deg).maxTime(3_s, TimeUtilFactory().create()));
+  driveToPoint({7.7_ft, 8.8_ft}, 180_deg, 1, Settler().distanceErr(4_in).angleErr(5_deg).maxTime(3_s, TimeUtilFactory().create()));
   model->setMaxVoltage(12000);
-  driveToPoint({9.7_ft, 11.0_ft}, 150_deg, 1.5, Settler().distanceErr(4_in).angleErr(5_deg).maxTime(8_s, TimeUtilFactory().create()));
-  driveToPoint({9.7_ft, 11.0_ft}, 180_deg, 1.5, Settler().distanceErr(4_in).angleErr(5_deg).maxTime(2_s, TimeUtilFactory().create()));
+  driveToPoint({9.8_ft, 10.6_ft}, 205_deg, 1.5, Settler().distanceErr(4_in).angleErr(5_deg).maxTime(6_s, TimeUtilFactory().create()));
+  driveToPoint({9.8_ft, 10.6_ft}, 180_deg, 1.5, Settler().distanceErr(4_in).angleErr(5_deg).maxTime(2_s, TimeUtilFactory().create()));
   model->setMaxVoltage(6000);
-  driveToPoint({9.7_ft, 7.0_ft}, 180_deg, 1.5, Settler().distanceErr(4_in).angleErr(5_deg).maxTime(6_s, TimeUtilFactory().create()));
+  driveToPoint({9.8_ft, 7.3_ft}, 180_deg, 1.5, Settler().distanceErr(4_in).angleErr(5_deg).maxTime(6_s, TimeUtilFactory().create()));
   model->setMaxVoltage(12000);
-  driveToPoint({10.5_ft, 10.5_ft}, 45_deg, 1, Settler().distanceErr(4_in).angleErr(5_deg).maxTime(6_s, TimeUtilFactory().create()));
+  driveToPoint({10.5_ft, 10.5_ft}, 5_deg, 2, Settler().distanceErr(4_in).angleErr(5_deg).maxTime(6_s, TimeUtilFactory().create()));
+  driveToPoint({10.5_ft, 10.5_ft}, 45_deg, 1, Settler().distanceErr(4_in).angleErr(5_deg).maxTime(3_s, TimeUtilFactory().create()));
   stackerMotor1->moveRelative(800, 12000);
   stackerMotor2->moveRelative(800, 12000);
   model->setMaxVoltage(6000);

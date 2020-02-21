@@ -74,12 +74,12 @@ void autonomous() {
   currentAuton = AutonSelector::getAuton();
   stackerMotor1->moveRelative(600, 12000);
   stackerMotor2->moveRelative(600, 12000);
-  pros::delay(200);
+  pros::delay(400);
   setTilterDown();
   setArmLowMiddle();
   switch (currentAuton) {
   case AutonSelector::Auton::TEST: {
-    fiveCubeBluePP();
+    sevenCubeBlue();
     break;
   }
   case AutonSelector::Auton::one: {
