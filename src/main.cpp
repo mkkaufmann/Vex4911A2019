@@ -72,11 +72,6 @@ void autonomous() {
   // Get the chosen alliance and auton
   alliance = AutonSelector::getColor();
   currentAuton = AutonSelector::getAuton();
-  stackerMotor1->moveRelative(600, 12000);
-  stackerMotor2->moveRelative(600, 12000);
-  pros::delay(400);
-  setTilterDown();
-  setArmLowMiddle();
   switch (currentAuton) {
   case AutonSelector::Auton::TEST: {
     sevenCubeBlue();
@@ -100,10 +95,10 @@ void autonomous() {
   case AutonSelector::Auton::six: {
     switch (alliance) {
     case AutonSelector::Color::RED: {
-      sixCubeRed();
+      fiveCubeRed();
     }
     case AutonSelector::Color::BLUE: {
-      sixCubeBlue();
+      fiveCubeBlue();
     }
     }
     break;
@@ -131,6 +126,7 @@ void autonomous() {
     break;
   }
   case AutonSelector::Auton::THREE: {
+      deploy();
     rollerIntake();
     // drive forward, grab cube
     driveToPoint({0_in, 1_tile});
@@ -164,8 +160,7 @@ void autonomous() {
     }
 
     // place
-    setTilterUp();
-    pros::delay(2000);
+    placeStack(2000);
     model->setMaxVoltage(4000);
     // back up
     switch (alliance) {

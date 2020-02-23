@@ -8,7 +8,7 @@ using namespace lib7842;
 using namespace lib7842::units;
 using namespace okapi;
 
-std::shared_ptr<Motor> topLeft = std::make_shared<Motor>(4);
+std::shared_ptr<Motor> topLeft = std::make_shared<Motor>(11);
 std::shared_ptr<Motor> topRight = std::make_shared<Motor>(-5);
 std::shared_ptr<Motor> bottomRight = std::make_shared<Motor>(-7);
 std::shared_ptr<Motor> bottomLeft = std::make_shared<Motor>(6);
@@ -29,8 +29,8 @@ std::shared_ptr<ThreeEncoderXDriveModel> model =
         bottomRight, // bottomRight
         bottomLeft,  // bottomLeft
         // sensors
-        std::make_shared<ADIEncoder>(5, 6, true), // left
-        std::make_shared<ADIEncoder>(1, 2, true), // right
+        std::make_shared<ADIEncoder>(1, 2, false), // left
+        std::make_shared<ADIEncoder>(5, 6, true), // right
         std::make_shared<ADIEncoder>(3, 4, true), // middle
         // limits
         200,  // max Velocity
@@ -370,15 +370,15 @@ void nineCubeBlue() {
   driveToPoint({9.7_ft, 12_ft-4.6_ft}, 180_deg+0_deg, 1, Settler().distanceErr(4_in).maxTime(500_ms, TimeUtilFactory().create()));
   rollerIntake();
   driveToPoint({9.7_ft, 12_ft-4.6_ft}, 180_deg+0_deg, 1, Settler().distanceErr(4_in).angleErr(5_deg).maxTime(5_s, TimeUtilFactory().create()));
-  driveToPoint({9.0_ft, 12_ft-5_ft}, 180_deg-30_deg, 1, Settler().distanceErr(4_in).angleErr(5_deg).maxTime(5_s, TimeUtilFactory().create()));
-  driveToPoint({8.0_ft, 12_ft-5_ft}, 180_deg-135_deg, 1, Settler().distanceErr(4_in).angleErr(5_deg).maxTime(5_s, TimeUtilFactory().create()));
-  driveToPoint({7.7_ft, 12_ft-4.5_ft}, 180_deg-180_deg, 1, Settler().distanceErr(4_in).angleErr(5_deg).maxTime(5_s, TimeUtilFactory().create()));
-  driveToPoint({7.7_ft, 12_ft-3_ft}, 180_deg-180_deg, 1, Settler().distanceErr(4_in).angleErr(5_deg).maxTime(5_s, TimeUtilFactory().create()));
-  driveToPoint({10.5_ft, 12_ft-1.5_ft}, 180_deg-135_deg, 1, Settler().distanceErr(4_in).angleErr(5_deg).maxTime(5_s, TimeUtilFactory().create()));
-  driveToPoint({12_ft, 12_ft-0_ft}, 180_deg-135_deg, 1, Settler().distanceErr(4_in).angleErr(5_deg).maxTime(1_s, TimeUtilFactory().create()));
+  driveToPoint({9.0_ft, 12_ft-5_ft}, 30_deg, 1, Settler().distanceErr(4_in).angleErr(5_deg).maxTime(5_s, TimeUtilFactory().create()));
+  driveToPoint({8.0_ft, 12_ft-5_ft}, 135_deg, 1, Settler().distanceErr(4_in).angleErr(5_deg).maxTime(5_s, TimeUtilFactory().create()));
+  driveToPoint({7.7_ft, 12_ft-4.5_ft}, 0_deg, 1, Settler().distanceErr(4_in).angleErr(5_deg).maxTime(5_s, TimeUtilFactory().create()));
+  driveToPoint({7.7_ft, 12_ft-3_ft}, 0_deg, 1, Settler().distanceErr(4_in).angleErr(5_deg).maxTime(5_s, TimeUtilFactory().create()));
+  driveToPoint({10.5_ft, 12_ft-1.5_ft}, 45_deg, 1, Settler().distanceErr(4_in).angleErr(5_deg).maxTime(5_s, TimeUtilFactory().create()));
+  driveToPoint({12_ft, 12_ft-0_ft}, 45_deg, 1, Settler().distanceErr(4_in).angleErr(5_deg).maxTime(1_s, TimeUtilFactory().create()));
   placeStack(1500);
   rollerOuttake(0.3);
-  driveToPoint({9.5_ft, 12_ft-2.5_ft}, 180_deg-135_deg, 1, Settler().distanceErr(4_in).angleErr(5_deg).maxTime(5_s, TimeUtilFactory().create()));
+  driveToPoint({9.5_ft, 12_ft-2.5_ft}, 45_deg, 1, Settler().distanceErr(4_in).angleErr(5_deg).maxTime(5_s, TimeUtilFactory().create()));
 }
 void threeCubeBigRed() {}
 void threeCubeBigBlue() {}

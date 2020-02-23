@@ -28,6 +28,8 @@ void rollerOuttake(double t);
 void rollerIntake();
 void rollerStop();
 
+void deploy();
+void placeStack(double ms);
 void driveToPoint(
     Vector target, QAngle targetAngle = 0_deg, double turnPriority = 1,
     Settler &&settler = Settler().distanceErr(4_in).angleErr(5_deg));

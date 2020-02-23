@@ -3,7 +3,7 @@
 
 // initialize static values
 // ports
-int Constants::LEFT_FRONT_MOTOR_PORT = 4;
+int Constants::LEFT_FRONT_MOTOR_PORT = 11;
 int Constants::LEFT_REAR_MOTOR_PORT = 6;
 int Constants::RIGHT_FRONT_MOTOR_PORT = -5;
 int Constants::RIGHT_REAR_MOTOR_PORT = -7;
