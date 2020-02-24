@@ -74,7 +74,7 @@ void autonomous() {
   currentAuton = AutonSelector::getAuton();
   switch (currentAuton) {
   case AutonSelector::Auton::TEST: {
-    sevenCubeRed();
+    fiveCubeBlue();
     break;
   }
   case AutonSelector::Auton::one: {

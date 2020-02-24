@@ -15,10 +15,10 @@ void setArmPosition(double position) { armPID->setTarget(position); }
 
 void setArmDown() { armPID->setTarget(0); }
 
-void setArmAlliance() { armPID->setTarget(400); }
+void setArmAlliance() { armPID->setTarget(420); }
 
 void setArmHighMiddle() { armPID->setTarget(460); }
 
-void setArmLowMiddle() { armPID->setTarget(30); }
+void setArmLowMiddle() { armPID->setTarget(45); }
 
 void setArmManualSpeed(double speed) { armMotor.moveVoltage(12000 * speed); }
